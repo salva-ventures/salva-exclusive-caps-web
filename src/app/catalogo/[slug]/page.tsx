@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from 'react';
+import { use, useState } from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getProductBySlug } from '@/data/products';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export default function ProductDetailPage({ params }: Props) {
-  const product = getProductBySlug(params.slug);
+  const { slug } = use(params);
+  const product = getProductBySlug(slug);
   if (!product) notFound();
 
   const [activeImage, setActiveImage] = useState(0);
@@ -113,12 +115,12 @@ export default function ProductDetailPage({ params }: Props) {
             >
               Pedir por WhatsApp
             </a>
-            <a
+            <Link
               href="/catalogo"
               className="border border-[#333] hover:border-white text-[#888] hover:text-white px-8 py-4 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 text-center"
             >
               Volver al Catálogo
-            </a>
+            </Link>
           </div>
         </div>
       </div>
