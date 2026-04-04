@@ -84,7 +84,7 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-1 gap-4">
               {[
-                { label: 'Entrega Inmediata', desc: `Tampico, Madero, Altamira y Monterrey`, icon: '📍' },
+                { label: 'Entrega Inmediata', desc: DELIVERY_INFO.immediate.join(', '), icon: '📍' },
                 { label: 'Disponibilidad', desc: 'Sujeta a existencias y confirmación por WhatsApp', icon: '✅' },
                 { label: 'Envíos', desc: 'Nacionales e internacionales con costo extra', icon: '✈️' },
               ].map(item => (

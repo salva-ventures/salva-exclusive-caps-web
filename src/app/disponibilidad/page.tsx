@@ -32,9 +32,9 @@ export default function DisponibilidadPage() {
                 </div>
               ))}
             </div>
-              <p className="text-[#888] text-sm mt-6">
+            <p className="text-[#888] text-sm mt-6">
               El costo de entrega se confirma al coordinar por WhatsApp.
-              </p>
+            </p>
           </div>
         </div>
 
