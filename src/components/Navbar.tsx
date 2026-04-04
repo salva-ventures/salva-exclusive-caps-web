@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 
 const navLinks = [
   { href: '/', label: 'Inicio' },
@@ -14,9 +14,17 @@ const navLinks = [
   { href: '/contacto', label: 'Contacto' },
 ];
 
+const WHATSAPP_NUMBER = '528335340498'; // cambia si hace falta
+const WHATSAPP_MESSAGE =
+  'Hola, me interesa conocer la disponibilidad de sus gorras.';
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    WHATSAPP_MESSAGE
+  )}`;
 
   useEffect(() => {
     const onScroll = () => {
@@ -44,19 +52,19 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           isScrolled
-            ? 'border-b border-white/10 bg-black/75 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
+            ? 'border-b border-white/10 bg-black/70 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.30)]'
             : 'bg-transparent'
         }`}
       >
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="flex items-center gap-3 transition-opacity hover:opacity-90"
             onClick={() => setIsOpen(false)}
           >
-            <div className="relative h-10 w-10 overflow-hidden rounded-full border border-white/15 bg-white/5">
+            <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-white/15 bg-white/5">
               <Image
                 src="/star-logo.png"
                 alt="Salva Exclusive Caps"
@@ -67,83 +75,143 @@ export default function Navbar() {
             </div>
 
             <div className="flex flex-col leading-none">
-              <span className="text-sm font-medium uppercase tracking-[0.28em] text-white/60">
+              <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/60">
                 Salva
               </span>
-              <span className="text-base font-semibold tracking-[0.18em] text-white sm:text-lg">
+              <span className="text-sm font-semibold tracking-[0.18em] text-white sm:text-base">
                 Exclusive Caps
               </span>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex">
+          <nav className="hidden items-center gap-2 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium tracking-wide text-white/80 transition-colors duration-200 hover:text-white"
+                className="rounded-full px-4 py-2 text-sm font-medium tracking-wide text-white/80 transition-colors duration-200 hover:bg-white/10 hover:text-white"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
             <Link
-              href="https://wa.me/528331234567?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20sus%20gorras."
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white px-5 py-2.5 text-sm font-semibold text-black transition-all duration-200 hover:scale-[1.02] hover:bg-white/90"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-black transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-400"
             >
-              Pedir por WhatsApp
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
             </Link>
           </div>
 
-          <button
-            type="button"
-            aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10 lg:hidden"
-          >
-            {isOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Abrir WhatsApp"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-500 text-black transition hover:bg-emerald-400"
+            >
+              <MessageCircle className="h-5 w-5" />
+            </Link>
+
+            <button
+              type="button"
+              aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={isOpen}
+              onClick={() => setIsOpen((prev) => !prev)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+            >
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </header>
 
       <div
-        className={`fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transition-all duration-300 lg:hidden ${
+        className={`fixed inset-0 z-40 bg-black/55 backdrop-blur-sm transition-all duration-300 lg:hidden ${
           isOpen
             ? 'pointer-events-auto opacity-100'
             : 'pointer-events-none opacity-0'
         }`}
-      >
-        <div className="flex h-full flex-col px-6 pt-28">
-          <nav className="flex flex-col gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className="border-b border-white/10 pb-4 text-2xl font-semibold tracking-wide text-white/90 transition hover:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+        onClick={() => setIsOpen(false)}
+      />
 
-          <div className="mt-8">
-            <Link
-              href="https://wa.me/528335340498?text=Hola,%20me%20interesa%20conocer%20la%20disponibilidad%20de%20sus%20gorras."
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => setIsOpen(false)}
-              className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-base font-semibold text-black transition hover:bg-white/90"
-            >
-              Pedir por WhatsApp
-            </Link>
-          </div>
+      <aside
+        className={`fixed right-0 top-0 z-50 h-dvh w-[86%] max-w-sm border-l border-white/10 bg-black/95 p-6 backdrop-blur-2xl transition-transform duration-300 lg:hidden ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="mb-8 flex items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+            onClick={() => setIsOpen(false)}
+          >
+            <div className="relative h-10 w-10 overflow-hidden rounded-xl border border-white/15 bg-white/5">
+              <Image
+                src="/star-logo.png"
+                alt="Salva Exclusive Caps"
+                fill
+                className="object-contain p-1.5"
+                priority
+              />
+            </div>
+
+            <div className="flex flex-col leading-none">
+              <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-white/60">
+                Salva
+              </span>
+              <span className="text-sm font-semibold tracking-[0.18em] text-white sm:text-base">
+                Exclusive Caps
+              </span>
+            </div>
+          </Link>
+
+          <button
+            type="button"
+            aria-label="Cerrar menú"
+            onClick={() => setIsOpen(false)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+          >
+            <X size={20} />
+          </button>
         </div>
-      </div>
+
+        <nav className="flex flex-col gap-2">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsOpen(false)}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-base font-medium tracking-wide text-white/90 transition hover:bg-white/10 hover:text-white"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-6 border-t border-white/10 pt-6">
+          <Link
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setIsOpen(false)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 text-base font-semibold text-black transition hover:bg-emerald-400"
+          >
+            <MessageCircle className="h-5 w-5" />
+            Pedir por WhatsApp
+          </Link>
+
+          <p className="mt-3 text-sm leading-relaxed text-white/55">
+            Entrega inmediata en Tampico, Madero, Altamira y Monterrey.
+          </p>
+        </div>
+      </aside>
     </>
   );
 }
