@@ -15,31 +15,31 @@ const faqs: FAQ[] = [
   },
   {
     question: '¿Cuánto tiempo tarda la entrega inmediata?',
-    answer: `Las entregas inmediatas en ${DELIVERY_INFO.immediate.join(', ')} se realizan el mismo día o en menos de 24 horas. Coordinamos contigo el punto y horario de entrega por WhatsApp.`,
+    answer: `La entrega inmediata aplica en ${DELIVERY_INFO.immediate.join(', ')}, sujeta a disponibilidad del modelo y coordinación por WhatsApp.`,
   },
   {
     question: '¿Cuánto tarda el envío nacional?',
-    answer: 'Los envíos nacionales a cualquier estado de México tardan entre 3 y 7 días hábiles, dependiendo del destino y la paquetería disponible.',
+    answer: 'Los tiempos de envío pueden variar según ubicación, disponibilidad y coordinación.',
   },
   {
     question: '¿Realizan envíos internacionales?',
-    answer: 'Sí, enviamos a cualquier país del mundo. El tiempo de entrega varía entre 7 y 21 días hábiles según el destino. El costo se cotiza de manera personalizada y el comprador es responsable de los impuestos de importación en su país.',
+    answer: 'Sí, realizamos envíos internacionales. Los tiempos de entrega pueden variar según ubicación, disponibilidad y coordinación.',
   },
   {
     question: '¿Cuánto cuesta el envío?',
-    answer: `Las entregas inmediatas en ${DELIVERY_INFO.immediate.join(', ')} no tienen costo adicional. Los envíos nacionales e internacionales tienen un costo extra que varía según el destino, peso y paquetería. Te cotizamos antes de confirmar tu pedido.`,
+    answer: 'El costo de envío se confirma al momento de coordinar el pedido.',
   },
   {
     question: '¿Las fotos del catálogo corresponden al producto real?',
-    answer: 'Sí, todas las fotografías en nuestro catálogo son de los productos reales que vendemos. Lo que ves en la foto es exactamente lo que recibirás.',
+    answer: 'Las fotografías del catálogo son de referencia del producto. Si tienes dudas de un modelo, te compartimos detalles por WhatsApp.',
   },
   {
     question: '¿Cómo puedo confirmar la disponibilidad de un producto?',
-    answer: 'La disponibilidad depende del modelo y existencias al momento de confirmar. Contáctanos por WhatsApp con el SKU o nombre del producto que te interesa y te confirmamos si está disponible.',
+    answer: 'La disponibilidad se confirma directamente por WhatsApp con el SKU o nombre del producto.',
   },
   {
     question: '¿Qué métodos de pago aceptan?',
-    answer: 'Aceptamos transferencia bancaria, depósito en efectivo, y otros métodos que coordinamos directamente por WhatsApp según tu preferencia y ubicación.',
+    answer: 'Aceptamos transferencia, efectivo, depósito y tarjeta con terminal.',
   },
   {
     question: '¿Puedo apartar un producto?',
@@ -47,15 +47,15 @@ const faqs: FAQ[] = [
   },
   {
     question: '¿Manejan cambios o devoluciones?',
-    answer: 'Sí, manejamos cambios y devoluciones en casos específicos. Contáctanos por WhatsApp dentro de las primeras 48 horas de recibir tu producto para coordinar el proceso. Aplican condiciones según el caso.',
+    answer: 'Los cambios o devoluciones se revisan según cada caso.',
   },
   {
     question: '¿Las gorras son originales?',
-    answer: 'Sí, todas nuestras gorras son 100% originales y de alta calidad. Trabajamos directamente con proveedores confiables y cada pieza es seleccionada con criterio.',
+    answer: 'Trabajamos una selección curada de modelos. Si tienes dudas de un producto en particular, lo revisamos contigo por WhatsApp.',
   },
   {
     question: '¿Cuál es su horario de atención?',
-    answer: `Nuestro horario de atención es de ${DELIVERY_INFO.hours}. Puedes contactarnos por WhatsApp en cualquier momento y te responderemos a la brevedad.`,
+    answer: `Nuestro horario de atención es ${DELIVERY_INFO.hours}. Puedes escribirnos por WhatsApp para coordinar tu pedido.`,
   },
   {
     question: '¿Tienen tienda física?',

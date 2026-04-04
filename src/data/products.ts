@@ -155,7 +155,7 @@ export const products: Product[] = [
     shortDescription:
       'Gráfico bordado con lenguaje visual definido y urbano. Mantiene presencia frontal clara sin perder sobriedad. Una opción confiable para rotación diaria.',
     images: ['/products/31-hats-el-mago-magic-club/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 9,
     relatedSlugs: ['31-hats-el-mago-total-black', '31-hats-new-york-flames', '31-hats-ny-crystal'],
   },
@@ -171,7 +171,7 @@ export const products: Product[] = [
     shortDescription:
       'Colaboración con presencia sólida y enfoque urbano elegante. Su lectura visual es directa y equilibrada. Pensada para quienes priorizan estilo con identidad propia.',
     images: ['/products/dandy-hats-junior-h/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 10,
     relatedSlugs: ['dandy-hats-lost-hills-lost-dandy', 'dandy-hats-canelo-ca-tiffany', 'dandy-hats-la-plaid'],
   },
@@ -187,7 +187,7 @@ export const products: Product[] = [
     shortDescription:
       'Paleta con acento turquesa que aporta carácter inmediato. Conserva una base urbana seria y bien definida. Es una pieza versátil para elevar el look sin exceso.',
     images: ['/products/dandy-hats-canelo-ca-tiffany/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 11,
     relatedSlugs: ['dandy-hats-junior-h', 'dandy-hats-la-plaid', 'barbas-hats-chrome-gold'],
   },
@@ -203,7 +203,7 @@ export const products: Product[] = [
     shortDescription:
       'Versión oscura con estética limpia y contundente. Integra detalles que refuerzan una identidad urbana madura. Se adapta con facilidad a estilos de alto contraste.',
     images: ['/products/muratravis-innedit-flvwe-negro/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 12,
     relatedSlugs: ['innedit-anymore-muratravis-electric', '31-hats-el-mago-total-black', 'rude-awakenings-la-ultima-cena'],
   },
@@ -219,7 +219,7 @@ export const products: Product[] = [
     shortDescription:
       'Gráfico frontal con actitud urbana marcada y lectura clara. Ofrece presencia visual fuerte sin perder equilibrio. Ideal para quienes buscan una propuesta con personalidad.',
     images: ['/products/el-barbas-hats-skate-or-die/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 13,
     relatedSlugs: ['barbas-hats-ct-rockstar', '31-hats-el-mago-magic-club', 'gallo-fino-tito-double-p-la-people'],
   },
@@ -235,7 +235,7 @@ export const products: Product[] = [
     shortDescription:
       'Diseño con acentos equilibrados y enfoque metropolitano. Proyecta una imagen pulida para uso diario y nocturno. Combina bien con estilos urbanos de base neutra.',
     images: ['/products/dandy-hats-la-plaid/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 14,
     relatedSlugs: ['dandy-hats-junior-h', 'dandy-hats-canelo-ca-tiffany', '31-hats-ny-crystal'],
   },
@@ -251,7 +251,7 @@ export const products: Product[] = [
     shortDescription:
       'Detalle brillante integrado con una base urbana sobria. Logra una presencia premium sin perder funcionalidad diaria. Una pieza sólida para rotación frecuente.',
     images: ['/products/31-hats-ny-crystal/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 15,
     relatedSlugs: ['31-hats-new-york-flames', 'barbas-hats-ct-galaxy-ct', 'innedit-anymore-muratravis-electric'],
   },
@@ -267,7 +267,7 @@ export const products: Product[] = [
     shortDescription:
       'Edición de alto impacto visual con narrativa urbana clara. Su composición proyecta presencia seria y distintiva. Diseñada para quienes buscan un statement auténtico.',
     images: ['/products/rude-awakenings-la-ultima-cena/1.jpg'],
-    featured: false,
+    featured: true,
     sortOrder: 16,
     relatedSlugs: ['innedit-anymore-muratravis-electric', 'muratravis-innedit-flvwe-negro', 'gallo-fino-tito-double-p-la-people'],
   },
