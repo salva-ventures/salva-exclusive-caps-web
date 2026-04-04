@@ -1,25 +1,54 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/products';
+import { products, getAllTypes, getAllColors } from '@/data/products';
 
-const categories = ['Todos', 'snapback', 'dad-hat', 'fitted', 'trucker', 'bucket'];
-const colorOptions = ['Todos', 'negro', 'blanco', 'rojo', 'oliva', 'vino', 'beis'];
+type SortOption = 'featured' | 'name-asc' | 'name-desc' | 'newest';
 
 export default function CatalogoPage() {
   const [search, setSearch] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
+  const [selectedType, setSelectedType] = useState('Todos');
   const [selectedColor, setSelectedColor] = useState('Todos');
-  const [maxPrice, setMaxPrice] = useState(1200);
+  const [sortBy, setSortBy] = useState<SortOption>('featured');
 
-  const filtered = products.filter(p => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
-    const matchCat = selectedCategory === 'Todos' || p.category === selectedCategory;
-    const matchColor = selectedColor === 'Todos' || p.colors.includes(selectedColor);
-    const matchPrice = p.price <= maxPrice;
-    return matchSearch && matchCat && matchColor && matchPrice;
-  });
+  const types = ['Todos', ...getAllTypes()];
+  const colors = ['Todos', ...getAllColors()];
+
+  const filtered = useMemo(() => {
+    const result = products.filter(p => {
+      const searchLower = search.toLowerCase();
+      const matchSearch = !search ||
+        p.name.toLowerCase().includes(searchLower) ||
+        p.type.toLowerCase().includes(searchLower) ||
+        p.sku.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower) ||
+        p.colors.some(c => c.toLowerCase().includes(searchLower));
+
+      const matchType = selectedType === 'Todos' || p.type === selectedType;
+      const matchColor = selectedColor === 'Todos' || p.colors.includes(selectedColor);
+
+      return matchSearch && matchType && matchColor;
+    });
+
+    // Sort
+    switch (sortBy) {
+      case 'featured':
+        result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        break;
+      case 'name-asc':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        result.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'newest':
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+    }
+
+    return result;
+  }, [search, selectedType, selectedColor, sortBy]);
 
   return (
     <div className="bg-black min-h-screen">
@@ -32,29 +61,46 @@ export default function CatalogoPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Search + Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
+        {/* Search + Sort */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Buscar por nombre, tipo, color, SKU o descripción..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full bg-[#111] border border-[#222] text-white placeholder-[#444] px-4 py-3 text-sm focus:border-red-600 focus:outline-none transition-colors"
             />
           </div>
+          <div className="flex gap-3">
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as SortOption)}
+              className="bg-[#111] border border-[#222] text-white px-4 py-3 text-xs tracking-widest uppercase focus:border-red-600 focus:outline-none transition-colors"
+            >
+              <option value="featured">Destacados</option>
+              <option value="name-asc">A-Z</option>
+              <option value="name-desc">Z-A</option>
+              <option value="newest">Más Recientes</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Type Filters */}
+        <div className="mb-6">
+          <p className="text-[#888] text-xs tracking-widest uppercase mb-3">Tipo</p>
           <div className="flex gap-3 flex-wrap">
-            {categories.map(cat => (
+            {types.map(type => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={type}
+                onClick={() => setSelectedType(type)}
                 className={`px-4 py-2 text-xs tracking-widest uppercase transition-all border ${
-                  selectedCategory === cat
+                  selectedType === type
                     ? 'bg-red-600 border-red-600 text-white'
                     : 'bg-transparent border-[#222] text-[#888] hover:border-white hover:text-white'
                 }`}
               >
-                {cat}
+                {type}
               </button>
             ))}
           </div>
@@ -63,16 +109,16 @@ export default function CatalogoPage() {
         <div className="flex flex-col md:flex-row gap-8">
           {/* Sidebar Filters */}
           <aside className="md:w-48 flex-shrink-0">
-            <div className="bg-[#111] border border-[#222] p-5 mb-4">
+            <div className="bg-[#111] border border-[#222] p-5">
               <h3 className="text-white text-xs tracking-widest uppercase mb-4">Color</h3>
-              <div className="flex flex-wrap gap-2">
-                {colorOptions.map(color => (
+              <div className="flex flex-col gap-2">
+                {colors.map(color => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
-                    className={`px-3 py-1 text-xs tracking-wide border transition-all ${
+                    className={`px-3 py-2 text-xs text-left border transition-all ${
                       selectedColor === color
-                        ? 'border-red-600 text-red-600'
+                        ? 'border-red-600 text-red-600 bg-red-600/10'
                         : 'border-[#333] text-[#888] hover:border-white hover:text-white'
                     }`}
                   >
@@ -81,38 +127,34 @@ export default function CatalogoPage() {
                 ))}
               </div>
             </div>
-            <div className="bg-[#111] border border-[#222] p-5">
-              <h3 className="text-white text-xs tracking-widest uppercase mb-4">Precio máx: ${maxPrice}</h3>
-              <input
-                type="range"
-                min={500}
-                max={1200}
-                step={50}
-                value={maxPrice}
-                onChange={e => setMaxPrice(Number(e.target.value))}
-                className="w-full accent-red-600"
-              />
-              <div className="flex justify-between text-xs text-[#888] mt-2">
-                <span>$500</span>
-                <span>$1200</span>
-              </div>
-            </div>
           </aside>
 
           {/* Products Grid */}
           <div className="flex-1">
             {filtered.length === 0 ? (
               <div className="text-center py-20">
-                <p className="text-[#888] text-sm">No se encontraron productos.</p>
+                <p className="text-[#888] text-sm mb-2">No se encontraron productos.</p>
+                <button
+                  onClick={() => {
+                    setSearch('');
+                    setSelectedType('Todos');
+                    setSelectedColor('Todos');
+                  }}
+                  className="text-red-600 hover:text-white text-xs tracking-widest uppercase transition-colors"
+                >
+                  Limpiar filtros
+                </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filtered.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {filtered.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+                <p className="text-[#888] text-xs mt-6">{filtered.length} producto{filtered.length !== 1 ? 's' : ''}</p>
+              </>
             )}
-            <p className="text-[#888] text-xs mt-6">{filtered.length} producto{filtered.length !== 1 ? 's' : ''}</p>
           </div>
         </div>
       </div>

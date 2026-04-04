@@ -2,10 +2,18 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { SEO } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Salva Exclusive Caps — Gorras Premium México",
-  description: "Gorras premium con identidad propia. Diseño, exclusividad y una experiencia de compra distinta dentro del mercado mexicano.",
+  title: SEO.default.title,
+  description: SEO.default.description,
+  keywords: SEO.default.keywords,
+  openGraph: {
+    title: SEO.default.title,
+    description: SEO.default.description,
+    type: 'website',
+    locale: 'es_MX',
+  },
 };
 
 export default function RootLayout({

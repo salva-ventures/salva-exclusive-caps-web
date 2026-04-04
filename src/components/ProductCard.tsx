@@ -23,9 +23,16 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         {/* Info */}
         <div className="p-4 border-t border-[#222]">
-          <p className="text-[#888] text-xs tracking-widest uppercase mb-1">{product.category}</p>
+          <p className="text-red-600 text-xs tracking-widest uppercase mb-1">{product.type}</p>
           <h3 className="text-white font-medium text-sm tracking-wide mb-2">{product.name}</h3>
-          <p className="text-white font-bold">${product.price.toLocaleString('es-MX')} MXN</p>
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1">
+              {product.colors.slice(0, 3).map(color => (
+                <span key={color} className="text-[#666] text-xs">{color}</span>
+              ))}
+            </div>
+            <p className="text-[#888] text-xs">SKU: {product.sku}</p>
+          </div>
         </div>
       </div>
     </Link>
