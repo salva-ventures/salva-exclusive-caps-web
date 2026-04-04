@@ -14,8 +14,8 @@ const faqs: FAQ[] = [
     answer: 'Contáctanos directamente por WhatsApp seleccionando el producto que te interesa desde nuestro catálogo. Te confirmamos disponibilidad, coordinamos el método de pago y la entrega.',
   },
   {
-    question: '¿Cuánto tiempo tarda la entrega inmediata?',
-    answer: `La entrega inmediata aplica en ${DELIVERY_INFO.immediate.join(', ')}, sujeta a disponibilidad del modelo y coordinación por WhatsApp.`,
+    question: '¿Cómo funciona la entrega inmediata?',
+    answer: 'La entrega inmediata aplica en Tampico, Madero, Altamira y Monterrey, sujeta a disponibilidad del modelo y coordinación por WhatsApp.',
   },
   {
     question: '¿Cuánto tarda el envío nacional?',
