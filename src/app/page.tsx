@@ -3,6 +3,7 @@ import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
 import { getFeaturedProducts } from '@/data/products';
 import { BRAND, CONTACT, DELIVERY_INFO } from '@/config/brand';
+import HeroImageRotator from '@/components/HeroImageRotator';
 
 export default function HomePage() {
   const featured = getFeaturedProducts();
