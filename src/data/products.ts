@@ -18,7 +18,7 @@ export const products: Product[] = [
   {
     id: '1',
     slug: 'barbas-hats-ct-rockstar',
-    sku: 'SEC-001 Rockstar',
+    sku: 'SEC-001',
     name: 'Barbas Hats x CT | Rockstar',
     brand: 'Barbas Hats',
     collab: 'CT',
@@ -34,7 +34,7 @@ export const products: Product[] = [
   {
     id: '2',
     slug: 'barbas-hats-chrome-gold',
-    sku: 'SEC-002 Chrome Gold',
+    sku: 'SEC-002',
     name: 'Barbas Hats | Chrome Gold',
     brand: 'Barbas Hats',
     collab: null,
@@ -50,7 +50,7 @@ export const products: Product[] = [
   {
     id: '3',
     slug: '31-hats-el-mago-total-black',
-    sku: 'SEC-003 Total Black',
+    sku: 'SEC-003',
     name: '31 Hats x El Mago | Total Black',
     brand: '31 Hats',
     collab: 'El Mago',
@@ -66,7 +66,7 @@ export const products: Product[] = [
   {
     id: '4',
     slug: 'gallo-fino-tito-double-p-la-people',
-    sku: 'SEC-004 La People',
+    sku: 'SEC-004',
     name: 'Gallo Fino x Tito Double P | La People',
     brand: 'Gallo Fino',
     collab: 'Tito Double P',
@@ -82,7 +82,7 @@ export const products: Product[] = [
   {
     id: '5',
     slug: 'dandy-hats-lost-hills-lost-dandy',
-    sku: 'SEC-005 Lost Dandy',
+    sku: 'SEC-005',
     name: 'Dandy Hats x Lost Hills | Lost Dandy',
     brand: 'Dandy Hats',
     collab: 'Lost Hills',
@@ -98,7 +98,7 @@ export const products: Product[] = [
   {
     id: '6',
     slug: '31-hats-new-york-flames',
-    sku: 'SEC-006 New York Flames',
+    sku: 'SEC-006',
     name: '31 Hats | New York Flames',
     brand: '31 Hats',
     collab: null,
@@ -114,7 +114,7 @@ export const products: Product[] = [
   {
     id: '7',
     slug: 'barbas-hats-ct-galaxy-ct',
-    sku: 'SEC-007 Galaxy CT',
+    sku: 'SEC-007',
     name: 'Barbas Hats x CT | Galaxy CT',
     brand: 'Barbas Hats',
     collab: 'CT',
@@ -130,7 +130,7 @@ export const products: Product[] = [
   {
     id: '8',
     slug: 'innedit-anymore-muratravis-electric',
-    sku: 'SEC-008 Muratravis Electric',
+    sku: 'SEC-008',
     name: 'Innedit x Anymore | Muratravis Electric',
     brand: 'Innedit',
     collab: 'Anymore',
@@ -146,7 +146,7 @@ export const products: Product[] = [
   {
     id: '9',
     slug: '31-hats-el-mago-magic-club',
-    sku: 'SEC-009 Magic Club',
+    sku: 'SEC-009',
     name: '31 Hats x El Mago | Magic Club',
     brand: '31 Hats',
     collab: 'El Mago',
@@ -162,7 +162,7 @@ export const products: Product[] = [
   {
     id: '10',
     slug: 'dandy-hats-junior-h',
-    sku: 'SEC-010 Junior H',
+    sku: 'SEC-010',
     name: 'Dandy Hats x Junior H',
     brand: 'Dandy Hats',
     collab: 'Junior H',
@@ -178,7 +178,7 @@ export const products: Product[] = [
   {
     id: '11',
     slug: 'dandy-hats-canelo-ca-tiffany',
-    sku: 'SEC-011 CA Tiffany',
+    sku: 'SEC-011',
     name: 'Dandy Hats x Canelo | CA Tiffany',
     brand: 'Dandy Hats',
     collab: 'Canelo',
@@ -194,7 +194,7 @@ export const products: Product[] = [
   {
     id: '12',
     slug: 'muratravis-innedit-flvwe-negro',
-    sku: 'SEC-012 Flvwe Negro',
+    sku: 'SEC-012',
     name: 'Muratravis Innedit Flvwe Negro',
     brand: 'Muratravis',
     collab: 'Innedit',
@@ -210,7 +210,7 @@ export const products: Product[] = [
   {
     id: '13',
     slug: 'el-barbas-hats-skate-or-die',
-    sku: 'SEC-013 Skate Or Die',
+    sku: 'SEC-013',
     name: 'El Barbas Hats | Skate Or Die',
     brand: 'El Barbas Hats',
     collab: null,
@@ -226,7 +226,7 @@ export const products: Product[] = [
   {
     id: '14',
     slug: 'dandy-hats-la-plaid',
-    sku: 'SEC-014 LA Plaid',
+    sku: 'SEC-014',
     name: 'Dandy Hats | LA Plaid',
     brand: 'Dandy Hats',
     collab: null,
@@ -242,7 +242,7 @@ export const products: Product[] = [
   {
     id: '15',
     slug: '31-hats-ny-crystal',
-    sku: 'SEC-015 Ny Crystal',
+    sku: 'SEC-015',
     name: '31 Hats | Ny Crystal',
     brand: '31 Hats',
     collab: null,
@@ -258,7 +258,7 @@ export const products: Product[] = [
   {
     id: '16',
     slug: 'rude-awakenings-la-ultima-cena',
-    sku: 'SEC-016 La Última Cena',
+    sku: 'SEC-016',
     name: 'Rude Awakenings | La Última Cena',
     brand: 'Rude Awakenings',
     collab: null,

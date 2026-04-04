@@ -43,15 +43,15 @@ const faqs: FAQ[] = [
   },
   {
     question: '¿Puedo apartar un producto?',
-    answer: 'Sí, puedes apartar un producto contactándonos por WhatsApp. Te indicamos el proceso de apartado y el tiempo que puedes mantenerlo reservado.',
+    answer: 'Sí, puedes apartar un producto contactándonos por WhatsApp. Te compartimos las condiciones al momento de coordinarlo.',
   },
   {
     question: '¿Manejan cambios o devoluciones?',
     answer: 'Los cambios o devoluciones se revisan según cada caso.',
   },
   {
-    question: '¿Las gorras son originales?',
-    answer: 'Trabajamos con modelos originales y te compartimos la información del producto al coordinar por WhatsApp.',
+    question: '¿Cómo puedo conocer más detalles del producto?',
+    answer: 'Antes de confirmar tu pedido, te compartimos por WhatsApp la información disponible del modelo, fotos y detalles actualizados.',
   },
   {
     question: '¿Cuál es su horario de atención?',
