@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     locale: "es_MX",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Salva Exclusive Caps",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SEO.default.title,
     description: SEO.default.description,
-    images: ["/og-image.jpg"],
+    images: ["/og-image.png"],
   },
 };
 
