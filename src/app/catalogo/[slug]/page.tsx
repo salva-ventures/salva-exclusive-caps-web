@@ -23,9 +23,9 @@ export default function ProductDetailPage({ params }: Props) {
   );
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, '')}?text=${waMessage}`;
 
-  // Get related products (same type, exclude current)
-  const relatedProducts = products
-    .filter(p => p.type === product.type && p.slug !== product.slug)
+  const relatedProducts = product.relatedSlugs
+    .map(relatedSlug => products.find(p => p.slug === relatedSlug))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p))
     .slice(0, 4);
 
   return (
@@ -73,11 +73,11 @@ export default function ProductDetailPage({ params }: Props) {
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">{product.type}</p>
+            <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">{product.tipo}</p>
             <h1 className="text-white font-bold text-3xl md:text-4xl tracking-tight mb-4">{product.name}</h1>
             <p className="text-[#888] text-sm mb-6">SKU: {product.sku}</p>
 
-            <p className="text-[#ccc] leading-relaxed mb-8">{product.description}</p>
+            <p className="text-[#ccc] leading-relaxed mb-8">{product.shortDescription}</p>
 
             {/* Colors */}
             <div className="mb-6">

@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         {/* Info */}
         <div className="p-4 border-t border-[#222]">
-          <p className="text-red-600 text-xs tracking-widest uppercase mb-1">{product.type}</p>
+          <p className="text-red-600 text-xs tracking-widest uppercase mb-1">{product.tipo}</p>
           <h3 className="text-white font-medium text-sm tracking-wide mb-2">{product.name}</h3>
           <div className="flex items-center justify-between">
             <div className="flex flex-wrap gap-1">
