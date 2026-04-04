@@ -44,6 +44,7 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
+
     return () => {
       document.body.style.overflow = '';
     };
@@ -103,7 +104,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#E4405F] text-white transition hover:scale-[1.04] hover:brightness-110"
               >
                 <FaInstagram className="h-4 w-4" />
               </Link>
@@ -113,7 +114,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#1877F2] text-white transition hover:scale-[1.04] hover:brightness-110"
               >
                 <FaFacebookF className="h-4 w-4" />
               </Link>
@@ -123,7 +124,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black text-white transition hover:scale-[1.04] hover:bg-zinc-900"
               >
                 <FaTiktok className="h-4 w-4" />
               </Link>
@@ -133,7 +134,7 @@ export default function Navbar() {
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-black transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-400"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-black transition-all duration-200 hover:scale-[1.02] hover:brightness-110"
             >
               <FaWhatsapp className="h-4 w-4" />
               WhatsApp
@@ -146,7 +147,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Abrir WhatsApp"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-500 text-black transition hover:bg-emerald-400"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#25D366] text-black transition hover:scale-[1.04] hover:brightness-110"
             >
               <FaWhatsapp className="h-5 w-5" />
             </Link>
@@ -233,7 +234,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 text-base font-semibold text-black transition hover:bg-emerald-400"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4 text-base font-semibold text-black transition hover:brightness-110"
           >
             <FaWhatsapp className="h-5 w-5" />
             Pedir por WhatsApp
@@ -245,7 +246,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#E4405F] text-white transition hover:scale-[1.04] hover:brightness-110"
             >
               <FaInstagram className="h-5 w-5" />
             </Link>
@@ -255,7 +256,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Facebook"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#1877F2] text-white transition hover:scale-[1.04] hover:brightness-110"
             >
               <FaFacebookF className="h-5 w-5" />
             </Link>
@@ -265,7 +266,7 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black text-white transition hover:scale-[1.04] hover:bg-zinc-900"
             >
               <FaTiktok className="h-5 w-5" />
             </Link>
