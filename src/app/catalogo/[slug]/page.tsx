@@ -3,7 +3,9 @@
 import { use, useState } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getProductBySlug } from '@/data/products';
+import { getProductBySlug, products } from '@/data/products';
+import { CONTACT } from '@/config/brand';
+import ProductCard from '@/components/ProductCard';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -15,21 +17,26 @@ export default function ProductDetailPage({ params }: Props) {
   if (!product) notFound();
 
   const [activeImage, setActiveImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState('');
 
   const waMessage = encodeURIComponent(
-    `Hola, me interesa la gorra "${product.name}" (${product.price} MXN)${selectedSize ? `, talla ${selectedSize}` : ''}. ¿Está disponible?`
+    `Hola, me interesa la gorra "${product.name}" (SKU: ${product.sku}). ¿Está disponible?`
   );
+  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, '')}?text=${waMessage}`;
+
+  // Get related products (same type, exclude current)
+  const relatedProducts = products
+    .filter(p => p.type === product.type && p.slug !== product.slug)
+    .slice(0, 4);
 
   return (
     <div className="bg-black min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Gallery */}
           <div>
             <div className="relative aspect-square bg-[#111] border border-[#222] overflow-hidden mb-4 shadow-[0_0_30px_rgba(220,38,38,0.15)]">
               <div
-                className="w-full h-full transition-all duration-500"
+                className="w-full h-full transition-all duration-500 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
                 style={{
                   backgroundImage: `url(${product.images[activeImage]})`,
                   backgroundSize: 'cover',
@@ -51,7 +58,7 @@ export default function ProductDetailPage({ params }: Props) {
                     }`}
                   >
                     <div
-                      className="w-full h-full"
+                      className="w-full h-full bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
                       style={{
                         backgroundImage: `url(${img})`,
                         backgroundSize: 'cover',
@@ -66,11 +73,11 @@ export default function ProductDetailPage({ params }: Props) {
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">{product.category}</p>
+            <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">{product.type}</p>
             <h1 className="text-white font-bold text-3xl md:text-4xl tracking-tight mb-4">{product.name}</h1>
-            <p className="text-white text-2xl font-bold mb-6">${product.price.toLocaleString('es-MX')} MXN</p>
+            <p className="text-[#888] text-sm mb-6">SKU: {product.sku}</p>
 
-            <p className="text-[#888] leading-relaxed mb-8">{product.description}</p>
+            <p className="text-[#ccc] leading-relaxed mb-8">{product.description}</p>
 
             {/* Colors */}
             <div className="mb-6">
@@ -84,36 +91,22 @@ export default function ProductDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Sizes */}
-            {product.sizes.length > 1 && (
-              <div className="mb-8">
-                <p className="text-white text-xs tracking-widest uppercase mb-3">Talla</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`border px-4 py-2 text-sm transition-all ${
-                        selectedSize === size
-                          ? 'border-red-600 bg-red-600/10 text-white'
-                          : 'border-[#333] text-[#888] hover:border-white hover:text-white'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Availability Info */}
+            <div className="bg-[#111] border border-[#222] p-5 mb-8">
+              <p className="text-white text-sm font-medium mb-2">Disponibilidad</p>
+              <p className="text-[#888] text-sm">
+                La disponibilidad depende del modelo y existencias al momento de confirmar. Contáctanos por WhatsApp para verificar stock actual.
+              </p>
+            </div>
 
             {/* CTA */}
             <a
-              href={`https://wa.me/521XXXXXXXXXX?text=${waMessage}`}
+              href={waLink}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 text-center mb-4"
             >
-              Pedir por WhatsApp
+              Consultar por WhatsApp
             </a>
             <Link
               href="/catalogo"
@@ -123,6 +116,21 @@ export default function ProductDetailPage({ params }: Props) {
             </Link>
           </div>
         </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div className="border-t border-[#222] pt-16">
+            <div className="mb-12">
+              <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-3">Relacionados</p>
+              <h2 className="text-white font-bold text-3xl md:text-4xl tracking-tight">Productos Similares</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {relatedProducts.map(relatedProduct => (
+                <ProductCard key={relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
