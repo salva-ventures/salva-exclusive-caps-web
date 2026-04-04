@@ -4,11 +4,14 @@ import Image from 'next/image';
 import { useMemo } from 'react';
 
 const heroImages = [
-  '/products/barbas-hats-b-star/barbas-hats-b-star.jpg',
-  '/products/barbas-hats-chrome-gold/barbas-hats-chrome-gold.jpg',
-  '/products/barbas-hats-ct-galaxy-ct/barbas-hats-ct-galaxy-ct.jpg',
-  '/products/barbas-hats-ct-rockstar/barbas-hats-ct-rockstar.jpg',
-  '/products/dandy-hats-canelo-ca-tiffany/dandy-hats-canelo-ca-tiffany.jpg',
+  '/products/31-hats-el-mago-magic-club/1.jpg',
+  '/products/31-hats-el-mago-total-black/1.jpg',
+  '/products/barbas-hats-b-star/1.jpg',
+  '/products/barbas-hats-chrome-gold/1.jpg',
+  '/products/barbas-hats-ct-galaxy-ct/1.jpg',
+  '/products/barbas-hats-ct-rockstar/1.jpg',
+  '/products/dandy-hats-canelo-ca-tiffany/1.jpg',
+  '/products/dandy-hats-junior-h/1.jpg',
 ];
 
 export default function HeroImageRotator() {
