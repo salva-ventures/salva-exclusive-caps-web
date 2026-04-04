@@ -21,9 +21,10 @@ const navLinks = [
   { href: '/contacto', label: 'Contacto' },
 ];
 
-const WHATSAPP_NUMBER = '528335340498'; // cambia si hace falta
+const WHATSAPP_NUMBER = '528335340498';
 const WHATSAPP_MESSAGE =
   'Hola, me interesa conocer la disponibilidad de sus gorras.';
+
 const INSTAGRAM_URL = 'https://www.instagram.com/salvaexclusive.caps/';
 const FACEBOOK_URL = 'https://www.facebook.com/61588062491340';
 const TIKTOK_URL = 'https://www.tiktok.com/@lehisalva';
@@ -107,6 +108,38 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            <div className="flex items-center gap-2">
+              <Link
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              >
+                <Instagram className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              >
+                <Facebook className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href={TIKTOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+              >
+                <Music2 className="h-4 w-4" />
+              </Link>
+            </div>
+
             <Link
               href={whatsappHref}
               target="_blank"
@@ -216,6 +249,38 @@ export default function Navbar() {
             <MessageCircle className="h-5 w-5" />
             Pedir por WhatsApp
           </Link>
+
+          <div className="mt-4 flex items-center justify-center gap-3">
+            <Link
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+            >
+              <Instagram className="h-5 w-5" />
+            </Link>
+
+            <Link
+              href={FACEBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+            >
+              <Facebook className="h-5 w-5" />
+            </Link>
+
+            <Link
+              href={TIKTOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
+            >
+              <Music2 className="h-5 w-5" />
+            </Link>
+          </div>
 
           <p className="mt-3 text-sm leading-relaxed text-white/55">
             Entrega inmediata en Tampico, Madero, Altamira y Monterrey.
