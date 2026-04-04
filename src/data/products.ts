@@ -271,6 +271,22 @@ export const products: Product[] = [
     sortOrder: 16,
     relatedSlugs: ['innedit-anymore-muratravis-electric', 'muratravis-innedit-flvwe-negro', 'gallo-fino-tito-double-p-la-people'],
   },
+  {
+  id: '17',
+  slug: 'barbas-hats-b-star',
+  sku: 'SEC-017',
+  name: 'Barbas Hats | B Star',
+  brand: 'Barbas Hats',
+  collab: null,
+  tipo: 'Detalles metálicos',
+  colors: ['azul marino', 'rojo', 'plateado'],
+  shortDescription:
+    'Diseño premium con base azul marino, bordado rojo de alto contraste y estrella metálica al frente. Proyecta una presencia fuerte, limpia y distintiva dentro de la línea Barbas Hats.',
+  images: ['/products/barbas-hats-b-star/1.jpg'],
+  featured: true,
+  sortOrder: 17,
+  relatedSlugs: ['barbas-hats-ct-rockstar', 'barbas-hats-chrome-gold', 'barbas-hats-ct-galaxy-ct'],
+}
 ];
 
 export const getFeaturedProducts = () => products.filter(p => p.featured);
