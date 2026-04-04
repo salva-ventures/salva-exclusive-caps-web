@@ -144,7 +144,7 @@ export default function HomePage() {
             {[
               { q: '¿Cómo puedo realizar un pedido?', a: 'Contáctanos directamente por WhatsApp seleccionando el producto que te interesa. Te confirmamos disponibilidad y coordinamos el pago y entrega.' },
               { q: '¿Cómo manejan entregas y envíos?', a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(', ')}, sujeta a existencias y coordinación por WhatsApp. Envíos nacionales e internacionales con costo extra.` },
-              { q: '¿Las fotos corresponden al producto real?', a: 'Sí, todas las fotografías en nuestro catálogo son de los productos reales que vendemos. Lo que ves es lo que recibes.' },
+              { q: '¿Las fotos corresponden al producto real?', a: 'Sí, las fotografías del catálogo corresponden a los modelos reales disponibles.' },
             ].map((item, i) => (
               <div key={i} className="bg-[#111] border border-[#222] p-5">
                 <p className="text-white font-medium text-sm mb-2">{item.q}</p>
