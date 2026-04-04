@@ -14,7 +14,6 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] to-black" />
         <div className="absolute inset-0 bg-black/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-          <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-6">Tampico, México — Est. 2024</p>
           <h1 className="text-white font-bold text-5xl md:text-7xl lg:text-8xl tracking-tight leading-none mb-6">
             {BRAND.shortName}<br />
             <span className="text-red-600">EXCLUSIVE</span><br />
@@ -74,7 +73,7 @@ export default function HomePage() {
               <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-3">Entregas</p>
               <h2 className="text-white font-bold text-3xl md:text-4xl tracking-tight mb-6">Disponibilidad y Envíos</h2>
               <p className="text-[#888] leading-relaxed mb-8">
-                Entregamos en {DELIVERY_INFO.immediate.join(', ')} de forma inmediata. También realizamos envíos a todo México e internacional.
+                Entrega inmediata en {DELIVERY_INFO.immediate.join(', ')}. Sujeta a existencias. Envíos nacionales e internacionales con costo extra. Disponibilidad confirmada por WhatsApp.
               </p>
               <Link
                 href="/disponibilidad"
@@ -86,8 +85,8 @@ export default function HomePage() {
             <div className="grid grid-cols-1 gap-4">
               {[
                 { label: 'Entrega Inmediata', desc: DELIVERY_INFO.immediate.join(', '), icon: '📍' },
-                { label: 'Envío Nacional', desc: 'A cualquier estado de México con costo extra', icon: '🇲🇽' },
-                { label: 'Envío Internacional', desc: 'A cualquier país con costo extra', icon: '✈️' },
+                { label: 'Disponibilidad', desc: 'Sujeta a existencias y confirmación por WhatsApp', icon: '✅' },
+                { label: 'Envíos', desc: 'Nacionales e internacionales con costo extra', icon: '✈️' },
               ].map(item => (
                 <div key={item.label} className="bg-[#111] border border-[#222] p-5 flex items-start gap-4">
                   <span className="text-2xl">{item.icon}</span>
@@ -127,7 +126,7 @@ export default function HomePage() {
                 Identidad, Diseño y Confianza
               </h2>
               <p className="text-[#888] leading-relaxed">
-                Somos una marca mexicana enfocada en ofrecer gorras premium con identidad propia. Combinamos estilo urbano con calidad superior y un servicio comprometido con cada cliente.
+                Somos una marca mexicana enfocada en ofrecer gorras premium con identidad propia. Combinamos estilo urbano con una propuesta cuidada y un servicio serio para cada cliente.
               </p>
             </div>
           </div>
@@ -144,7 +143,7 @@ export default function HomePage() {
           <div className="space-y-px">
             {[
               { q: '¿Cómo puedo realizar un pedido?', a: 'Contáctanos directamente por WhatsApp seleccionando el producto que te interesa. Te confirmamos disponibilidad y coordinamos el pago y entrega.' },
-              { q: '¿Cuánto tiempo tarda el envío?', a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(', ')}. Los envíos nacionales tardan 3-7 días hábiles según la ubicación.` },
+              { q: '¿Cómo manejan entregas y envíos?', a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(', ')}, sujeta a existencias y coordinación por WhatsApp. Envíos nacionales e internacionales con costo extra.` },
               { q: '¿Las fotos corresponden al producto real?', a: 'Sí, todas las fotografías en nuestro catálogo son de los productos reales que vendemos. Lo que ves es lo que recibes.' },
             ].map((item, i) => (
               <div key={i} className="bg-[#111] border border-[#222] p-5">

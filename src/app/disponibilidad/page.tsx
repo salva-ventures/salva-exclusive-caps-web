@@ -33,7 +33,7 @@ export default function DisponibilidadPage() {
               ))}
             </div>
             <p className="text-[#888] text-sm mt-6">
-              Sin costo adicional de envío en estas ciudades. Contáctanos por WhatsApp para coordinar el punto de entrega.
+              El costo de entrega se confirma al coordinar por WhatsApp.
             </p>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function DisponibilidadPage() {
             <ul className="space-y-2 text-[#888] text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Tiempo de entrega: 3 a 7 días hábiles
+                Tiempo de entrega sujeto a ubicación, disponibilidad y coordinación
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
@@ -86,7 +86,7 @@ export default function DisponibilidadPage() {
             <ul className="space-y-2 text-[#888] text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Tiempo de entrega: 7 a 21 días hábiles según el país
+                Tiempo de entrega sujeto a ubicación, disponibilidad y coordinación
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
@@ -94,7 +94,7 @@ export default function DisponibilidadPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                El comprador es responsable de los impuestos de importación
+                Costo de envío con cargo adicional (cotización personalizada)
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
