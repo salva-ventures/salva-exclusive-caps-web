@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { motion } from "motion/react";
 import {
-  Instagram,
-  Facebook,
   MessageCircle,
   ArrowUpRight,
   MapPin,
@@ -102,10 +100,10 @@ export default function Footer() {
                 href={CONTACT.social.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] p-3 text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
                 aria-label="Instagram"
               >
-                <Instagram className="h-4 w-4" />
+                Instagram
               </motion.a>
 
               <motion.a
@@ -114,10 +112,11 @@ export default function Footer() {
                 href={CONTACT.social.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] p-3 text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
                 aria-label="TikTok"
               >
                 <Music2 className="h-4 w-4" />
+                TikTok
               </motion.a>
 
               <motion.a
@@ -126,10 +125,10 @@ export default function Footer() {
                 href={CONTACT.social.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] p-3 text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
                 aria-label="Facebook"
               >
-                <Facebook className="h-4 w-4" />
+                Facebook
               </motion.a>
             </div>
           </motion.div>
