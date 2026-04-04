@@ -100,15 +100,9 @@ export default function HomePage() {
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-              <div className="relative aspect-[4/5] w-full">
-                <Image
-                  src="/hero-cap.jpg"
-                  alt="Gorra premium de Salva Exclusive Caps"
-                  fill
-                  priority
-                  className="object-cover"
-                />
-              </div>
+<div className="relative aspect-[4/5] w-full">
+  <HeroImageRotator />
+</div>
 
               <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 sm:p-6">
                 <div>
