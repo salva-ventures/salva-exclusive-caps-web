@@ -1,139 +1,198 @@
-import { DELIVERY_INFO, CONTACT } from '@/config/brand';
+import { DELIVERY_INFO, CONTACT } from "@/config/brand";
 
 export default function DisponibilidadPage() {
-  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, '')}?text=${encodeURIComponent('Hola, tengo una pregunta sobre disponibilidad y envíos.')}`;
+  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(
+    /\+/g,
+    ""
+  )}?text=${encodeURIComponent(
+    "Hola, tengo una pregunta sobre disponibilidad y envíos."
+  )}`;
 
   return (
     <div className="bg-black min-h-screen">
-      <div className="bg-[#0a0a0a] border-b border-[#222] py-16 px-4">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-3">Envíos</p>
-          <h1 className="text-white font-bold text-4xl md:text-5xl tracking-tight">Disponibilidad y Entregas</h1>
-        </div>
-      </div>
+      <section className="relative border-b border-[#222] bg-[#0a0a0a] overflow-hidden">
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.18),transparent_40%)]" />
+        <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-24">
+          <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-4">
+            Envíos
+          </p>
+          <h1 className="text-white font-bold text-4xl md:text-6xl tracking-tight max-w-3xl">
+            Disponibilidad y entregas
+          </h1>
+          <p className="text-[#9a9a9a] text-base md:text-lg leading-relaxed mt-6 max-w-3xl">
+            Coordinamos entregas inmediatas en ciudades seleccionadas y envíos
+            nacionales e internacionales con atención directa por WhatsApp.
+          </p>
 
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        {/* Local delivery */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-red-600 flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-sm font-bold">1</span>
-            </div>
-            <h2 className="text-white font-bold text-xl tracking-tight">Entrega Inmediata</h2>
+          <div className="flex flex-wrap gap-3 mt-8">
+            <span className="border border-[#2a2a2a] bg-[#111] text-[#cfcfcf] text-xs tracking-widest uppercase px-4 py-2">
+              Entrega inmediata
+            </span>
+            <span className="border border-[#2a2a2a] bg-[#111] text-[#cfcfcf] text-xs tracking-widest uppercase px-4 py-2">
+              Cobertura nacional
+            </span>
+            <span className="border border-[#2a2a2a] bg-[#111] text-[#cfcfcf] text-xs tracking-widest uppercase px-4 py-2">
+              Envíos internacionales
+            </span>
           </div>
-          <div className="bg-[#111] border border-[#222] p-8 ml-11">
-            <p className="text-[#888] leading-relaxed mb-6">
-              Realizamos entregas <strong className="text-white">inmediatas</strong> en las siguientes ciudades:
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-4 py-16 md:py-20">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_1fr] gap-6">
+          <div className="bg-[#111] border border-[#222] p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 bg-red-600 flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-sm font-bold">1</span>
+              </div>
+              <h2 className="text-white font-bold text-2xl tracking-tight">
+                Entrega inmediata
+              </h2>
+            </div>
+
+            <p className="text-[#9a9a9a] leading-relaxed mb-6">
+              Realizamos entregas inmediatas en las siguientes ciudades, sujetas
+              a disponibilidad del modelo y coordinación previa.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {DELIVERY_INFO.immediate.map(city => (
-                <div key={city} className="border border-red-600/30 bg-red-600/5 p-4 text-center">
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {DELIVERY_INFO.immediate.map((city) => (
+                <div
+                  key={city}
+                  className="border border-red-600/30 bg-red-600/5 p-4 text-center"
+                >
                   <p className="text-white font-medium text-sm">{city}</p>
                 </div>
               ))}
             </div>
-            <p className="text-[#888] text-sm mt-6">
+
+            <p className="text-[#7f7f7f] text-sm mt-6">
               El costo de entrega se confirma al coordinar por WhatsApp.
             </p>
           </div>
-        </div>
 
-        {/* National */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-[#222] flex items-center justify-center flex-shrink-0">
-              <span className="text-[#888] text-sm font-bold">2</span>
+          <div className="bg-[#111] border border-[#222] p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 bg-[#222] flex items-center justify-center flex-shrink-0">
+                <span className="text-[#b0b0b0] text-sm font-bold">2</span>
+              </div>
+              <h2 className="text-white font-bold text-2xl tracking-tight">
+                Envío nacional
+              </h2>
             </div>
-            <h2 className="text-white font-bold text-xl tracking-tight">Envío Nacional</h2>
-          </div>
-          <div className="bg-[#111] border border-[#222] p-8 ml-11">
-            <p className="text-[#888] leading-relaxed mb-4">
-              Enviamos a <strong className="text-white">cualquier estado de la República Mexicana</strong> mediante paquetería confiable.
+
+            <p className="text-[#9a9a9a] leading-relaxed mb-5">
+              Enviamos a cualquier estado de la República Mexicana mediante
+              paquetería confiable.
             </p>
-            <ul className="space-y-2 text-[#888] text-sm">
+
+            <ul className="space-y-3 text-[#8a8a8a] text-sm leading-relaxed">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Tiempo de entrega sujeto a ubicación, disponibilidad y coordinación
+                Tiempo de entrega sujeto a ubicación, disponibilidad y coordinación.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Costo de envío con cargo adicional (varía según destino y paquetería)
+                Costo de envío con cargo adicional según destino y paquetería.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Se proporciona número de guía para rastreo
+                Se proporciona número de guía para rastreo.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Paquetería: Fedex, DHL, o Estafeta según disponibilidad
+                Paquetería: FedEx, DHL o Estafeta según disponibilidad.
               </li>
             </ul>
           </div>
-        </div>
 
-        {/* International */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-[#222] flex items-center justify-center flex-shrink-0">
-              <span className="text-[#888] text-sm font-bold">3</span>
+          <div className="bg-[#111] border border-[#222] p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 bg-[#222] flex items-center justify-center flex-shrink-0">
+                <span className="text-[#b0b0b0] text-sm font-bold">3</span>
+              </div>
+              <h2 className="text-white font-bold text-2xl tracking-tight">
+                Envío internacional
+              </h2>
             </div>
-            <h2 className="text-white font-bold text-xl tracking-tight">Envío Internacional</h2>
-          </div>
-          <div className="bg-[#111] border border-[#222] p-8 ml-11">
-            <p className="text-[#888] leading-relaxed mb-4">
-              Enviamos <strong className="text-white">a cualquier país del mundo</strong>. El costo de envío se cotiza según el destino.
+
+            <p className="text-[#9a9a9a] leading-relaxed mb-5">
+              Enviamos a distintos países con cotización personalizada según
+              destino, peso y logística de envío.
             </p>
-            <ul className="space-y-2 text-[#888] text-sm">
+
+            <ul className="space-y-3 text-[#8a8a8a] text-sm leading-relaxed">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Tiempo de entrega sujeto a ubicación, disponibilidad y coordinación
+                Tiempo de entrega sujeto a país, disponibilidad y coordinación.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Costo de envío con cargo adicional (cotización personalizada)
+                Costo de envío con cargo adicional mediante cotización personalizada.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Costo de envío con cargo adicional (cotización personalizada)
+                Te recomendamos contactarnos antes de confirmar tu pedido.
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">—</span>
-                Contáctanos antes de realizar tu pedido para coordinar envío
+                La cobertura depende del destino y del servicio logístico disponible.
               </li>
             </ul>
           </div>
-        </div>
 
-        {/* Important Info */}
-        <div className="mb-16">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-[#222] flex items-center justify-center flex-shrink-0">
-              <span className="text-[#888] text-sm font-bold">!</span>
+          <div className="bg-[#111] border border-[#222] p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 bg-[#222] flex items-center justify-center flex-shrink-0">
+                <span className="text-[#b0b0b0] text-sm font-bold">!</span>
+              </div>
+              <h2 className="text-white font-bold text-2xl tracking-tight">
+                Información importante
+              </h2>
             </div>
-            <h2 className="text-white font-bold text-xl tracking-tight">Información Importante</h2>
-          </div>
-          <div className="bg-[#111] border border-[#222] p-8 ml-11">
-            <ul className="space-y-3 text-[#888] text-sm">
+
+            <ul className="space-y-3 text-[#8a8a8a] text-sm leading-relaxed">
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>La disponibilidad depende del modelo y existencias al momento de confirmar.</span>
+                <span>
+                  La disponibilidad depende del modelo y existencias al momento
+                  de confirmar.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
-                <span>Para apartar o confirmar stock, contáctanos por WhatsApp.</span>
+                <span>
+                  Para apartar o confirmar stock, contáctanos por WhatsApp.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-600 mt-0.5">•</span>
                 <span>Horario de atención: {DELIVERY_INFO.hours}.</span>
               </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-600 mt-0.5">•</span>
+                <span>
+                  Las condiciones finales de envío y entrega se confirman antes
+                  del pago.
+                </span>
+              </li>
             </ul>
           </div>
         </div>
+      </section>
 
-        {/* CTA */}
-        <div className="bg-[#0a0a0a] border border-[#222] p-8 text-center">
-          <p className="text-white font-medium mb-2">¿Tienes dudas sobre tu envío?</p>
-          <p className="text-[#888] text-sm mb-6">Contáctanos por WhatsApp y te ayudamos a coordinarlo.</p>
+      <section className="max-w-6xl mx-auto px-4 pb-20">
+        <div className="bg-[#0a0a0a] border border-[#222] p-8 md:p-10 text-center">
+          <p className="text-red-600 text-xs tracking-[0.35em] uppercase mb-3">
+            Atención directa
+          </p>
+          <h3 className="text-white font-bold text-2xl mb-3">
+            ¿Tienes dudas sobre tu envío?
+          </h3>
+          <p className="text-[#8a8a8a] text-sm md:text-base mb-8 max-w-2xl mx-auto leading-relaxed">
+            Escríbenos por WhatsApp y te ayudamos a confirmar disponibilidad,
+            coordinar entrega o cotizar tu envío.
+          </p>
           <a
             href={waLink}
             target="_blank"
@@ -143,7 +202,7 @@ export default function DisponibilidadPage() {
             Consultar por WhatsApp
           </a>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
