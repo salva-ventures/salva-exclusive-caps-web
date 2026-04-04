@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
+import HeroImageRotator from '@/components/HeroImageRotator';
 import { getFeaturedProducts } from '@/data/products';
 import { BRAND, CONTACT, DELIVERY_INFO } from '@/config/brand';
-import HeroImageRotator from '@/components/HeroImageRotator';
 
 export default function HomePage() {
   const featured = getFeaturedProducts();
@@ -100,9 +100,9 @@ export default function HomePage() {
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-<div className="relative aspect-[4/5] w-full">
-  <HeroImageRotator />
-</div>
+              <div className="relative aspect-[4/5] w-full">
+                <HeroImageRotator />
+              </div>
 
               <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 sm:p-6">
                 <div>
