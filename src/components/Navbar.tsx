@@ -3,14 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import {
-  Menu,
-  X,
-  MessageCircle,
-  Camera,
-  BadgeInfo,
-  Music2,
-} from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { FaInstagram, FaFacebookF, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 
 const navLinks = [
   { href: '/', label: 'Inicio' },
@@ -49,12 +43,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
+    document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
@@ -116,7 +105,7 @@ export default function Navbar() {
                 aria-label="Instagram"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
               >
-                <Camera className="h-4 w-4" />
+                <FaInstagram className="h-4 w-4" />
               </Link>
 
               <Link
@@ -126,7 +115,7 @@ export default function Navbar() {
                 aria-label="Facebook"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
               >
-                <BadgeInfo className="h-4 w-4" />
+                <FaFacebookF className="h-4 w-4" />
               </Link>
 
               <Link
@@ -136,7 +125,7 @@ export default function Navbar() {
                 aria-label="TikTok"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
               >
-                <Music2 className="h-4 w-4" />
+                <FaTiktok className="h-4 w-4" />
               </Link>
             </div>
 
@@ -146,7 +135,7 @@ export default function Navbar() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-black transition-all duration-200 hover:scale-[1.02] hover:bg-emerald-400"
             >
-              <MessageCircle className="h-4 w-4" />
+              <FaWhatsapp className="h-4 w-4" />
               WhatsApp
             </Link>
           </div>
@@ -159,7 +148,7 @@ export default function Navbar() {
               aria-label="Abrir WhatsApp"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-500 text-black transition hover:bg-emerald-400"
             >
-              <MessageCircle className="h-5 w-5" />
+              <FaWhatsapp className="h-5 w-5" />
             </Link>
 
             <button
@@ -246,7 +235,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-6 py-4 text-base font-semibold text-black transition hover:bg-emerald-400"
           >
-            <MessageCircle className="h-5 w-5" />
+            <FaWhatsapp className="h-5 w-5" />
             Pedir por WhatsApp
           </Link>
 
@@ -258,7 +247,7 @@ export default function Navbar() {
               aria-label="Instagram"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
             >
-              <Camera className="h-5 w-5" />
+              <FaInstagram className="h-5 w-5" />
             </Link>
 
             <Link
@@ -268,7 +257,7 @@ export default function Navbar() {
               aria-label="Facebook"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
             >
-              <BadgeInfo className="h-5 w-5" />
+              <FaFacebookF className="h-5 w-5" />
             </Link>
 
             <Link
@@ -278,7 +267,7 @@ export default function Navbar() {
               aria-label="TikTok"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
             >
-              <Music2 className="h-5 w-5" />
+              <FaTiktok className="h-5 w-5" />
             </Link>
           </div>
 
