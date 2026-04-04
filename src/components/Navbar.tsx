@@ -7,8 +7,8 @@ import {
   Menu,
   X,
   MessageCircle,
-  Instagram,
-  Facebook,
+  Camera,
+  BadgeInfo,
   Music2,
 } from 'lucide-react';
 
@@ -116,7 +116,7 @@ export default function Navbar() {
                 aria-label="Instagram"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
               >
-                <Instagram className="h-4 w-4" />
+                <Camera className="h-4 w-4" />
               </Link>
 
               <Link
@@ -126,7 +126,7 @@ export default function Navbar() {
                 aria-label="Facebook"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
               >
-                <Facebook className="h-4 w-4" />
+                <BadgeInfo className="h-4 w-4" />
               </Link>
 
               <Link
@@ -258,7 +258,7 @@ export default function Navbar() {
               aria-label="Instagram"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
             >
-              <Instagram className="h-5 w-5" />
+              <Camera className="h-5 w-5" />
             </Link>
 
             <Link
@@ -268,7 +268,7 @@ export default function Navbar() {
               aria-label="Facebook"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:bg-white/10"
             >
-              <Facebook className="h-5 w-5" />
+              <BadgeInfo className="h-5 w-5" />
             </Link>
 
             <Link
