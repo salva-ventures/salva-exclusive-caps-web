@@ -3,7 +3,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { Menu, X, MessageCircle } from 'lucide-react';
+import {
+  Menu,
+  X,
+  MessageCircle,
+  Instagram,
+  Facebook,
+  Music2,
+} from 'lucide-react';
 
 const navLinks = [
   { href: '/', label: 'Inicio' },
