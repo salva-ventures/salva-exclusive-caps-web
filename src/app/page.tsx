@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
+import Image from "next/image";
 import {
   CheckCircle2,
   MessageCircle,
@@ -9,30 +9,64 @@ import {
   Truck,
   ArrowUpRight,
   Sparkles,
-} from 'lucide-react';
-import ProductCard from '@/components/ProductCard';
-import HeroImageRotator from '@/components/HeroImageRotator';
-import { getFeaturedProducts } from '@/data/products';
-import { BRAND, CONTACT, DELIVERY_INFO } from '@/config/brand';
+} from "lucide-react";
+import { motion } from "motion/react";
+import ProductCard from "@/components/ProductCard";
+import HeroImageRotator from "@/components/HeroImageRotator";
+import { getFeaturedProducts } from "@/data/products";
+import { BRAND, CONTACT, DELIVERY_INFO } from "@/config/brand";
 
 const testimonials = [
   {
-    quote: 'Muy buena atención y entrega rápida.',
-    author: 'A. R.',
+    quote: "Muy buena atención y entrega rápida.",
+    author: "A. R.",
   },
   {
-    quote: 'Se siente la diferencia en el diseño.',
-    author: 'M. T.',
+    quote: "Se siente la diferencia en el diseño.",
+    author: "M. T.",
   },
   {
-    quote: 'Proceso directo y sin complicaciones.',
-    author: 'J. L.',
+    quote: "Proceso directo y sin complicaciones.",
+    author: "J. L.",
   },
 ];
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+};
+
+const staggerContainer = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const softScale = {
+  hidden: { opacity: 0, scale: 0.96 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  },
+};
+
 export default function HomePage() {
   const featured = getFeaturedProducts();
-  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, '')}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
+  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
 
   return (
     <div className="bg-black">
@@ -42,9 +76,17 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.16),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.05),transparent_20%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.03),transparent_18%,transparent_82%,rgba(255,255,255,0.02))]" />
 
-        <div className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-14 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+          className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-14 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24"
+        >
           <div className="max-w-2xl">
-            <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur">
+            <motion.div
+              variants={fadeUp}
+              className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur"
+            >
               <div className="relative h-6 w-6">
                 <Image
                   src="/star-logo.png"
@@ -57,77 +99,96 @@ export default function HomePage() {
               <span className="text-[11px] uppercase tracking-[0.35em] text-white/70">
                 Marca mexicana de gorras premium
               </span>
-            </div>
+            </motion.div>
 
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-red-600/30 bg-red-600/10 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-red-500">
+            <motion.div
+              variants={fadeUp}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-red-600/30 bg-red-600/10 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-red-500"
+            >
               <Sparkles className="h-3.5 w-3.5" />
               Diseño, presencia y carácter
-            </div>
+            </motion.div>
 
-            <h1 className="text-5xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl">
+            <motion.h1
+              variants={fadeUp}
+              className="text-5xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
+            >
               Gorras exclusivas
               <span className="block text-red-600">con presencia real.</span>
-            </h1>
+            </motion.h1>
 
-            <p className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/90 sm:text-xl">
+            <motion.p
+              variants={fadeUp}
+              className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/90 sm:text-xl"
+            >
               {BRAND.tagline}
-            </p>
+            </motion.p>
 
-            <p className="mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
+            <motion.p
+              variants={fadeUp}
+              className="mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base"
+            >
               {BRAND.subtitle}
-            </p>
+            </motion.p>
 
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <Link
-                href="/catalogo"
-                className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:bg-white/90"
-              >
-                Ver catálogo
-              </Link>
+            <motion.div
+              variants={fadeUp}
+              className="mt-8 flex flex-col gap-4 sm:flex-row"
+            >
+              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/catalogo"
+                  className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90"
+                >
+                  Ver catálogo
+                </Link>
+              </motion.div>
 
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-red-600 hover:bg-white/10 hover:text-red-500"
-              >
-                Consultar por WhatsApp
-              </a>
-            </div>
+              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-red-600 hover:bg-white/10 hover:text-red-500"
+                >
+                  Consultar por WhatsApp
+                </a>
+              </motion.div>
+            </motion.div>
 
-            <div className="mt-10 grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-                <p className="text-[10px] uppercase tracking-[0.28em] text-white/40">
-                  Entrega
-                </p>
-                <p className="mt-2 text-sm font-medium text-white/85">
-                  Inmediata
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-                <p className="text-[10px] uppercase tracking-[0.28em] text-white/40">
-                  Cobertura
-                </p>
-                <p className="mt-2 text-sm font-medium text-white/85">
-                  Nacional e internacional
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-                <p className="text-[10px] uppercase tracking-[0.28em] text-white/40">
-                  Atención
-                </p>
-                <p className="mt-2 text-sm font-medium text-white/85">
-                  Directa por WhatsApp
-                </p>
-              </div>
-            </div>
+            <motion.div
+              variants={staggerContainer}
+              className="mt-10 grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-3"
+            >
+              {[
+                { label: "Entrega", value: "Inmediata" },
+                { label: "Cobertura", value: "Nacional e internacional" },
+                { label: "Atención", value: "Directa por WhatsApp" },
+              ].map((item) => (
+                <motion.div
+                  key={item.label}
+                  variants={fadeUp}
+                  whileHover={{ y: -4 }}
+                  className="rounded-2xl border border-white/8 bg-white/[0.02] p-4"
+                >
+                  <p className="text-[10px] uppercase tracking-[0.28em] text-white/40">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-white/85">
+                    {item.value}
+                  </p>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
 
-          <div className="relative">
+          <motion.div variants={softScale} className="relative">
             <div className="absolute -inset-8 rounded-[2.5rem] bg-red-600/10 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
+            <motion.div
+              whileHover={{ y: -6 }}
+              transition={{ type: "spring", stiffness: 220, damping: 22 }}
+              className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_30px_90px_rgba(0,0,0,0.55)]"
+            >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
               <div className="relative aspect-[4/5] w-full">
@@ -144,19 +205,28 @@ export default function HomePage() {
                   </p>
                 </div>
 
-                <div className="hidden rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-white/80 backdrop-blur sm:block">
+                <motion.div
+                  whileHover={{ scale: 1.04 }}
+                  className="hidden rounded-full border border-white/15 bg-black/30 px-4 py-2 text-[10px] font-medium uppercase tracking-[0.24em] text-white/80 backdrop-blur sm:block"
+                >
                   Premium
-                </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Trust */}
       <section className="border-b border-white/10 bg-[#070707]">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-12 max-w-3xl text-center">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+        >
+          <motion.div variants={fadeUp} className="mx-auto mb-12 max-w-3xl text-center">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
               Confianza directa
             </p>
@@ -167,52 +237,62 @@ export default function HomePage() {
               Queremos que el cliente sienta confianza desde el primer contacto:
               respuesta directa, confirmación clara y seguimiento real.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50 hover:shadow-[0_18px_50px_rgba(0,0,0,0.3)]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
-                <PackageCheck className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 text-xl font-semibold text-white">
-                Entrega inmediata
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-white/55">
-                Atención rápida y entregas en {DELIVERY_INFO.immediate.join(', ')}.
-              </p>
-            </div>
+            {[
+              {
+                icon: PackageCheck,
+                title: "Entrega inmediata",
+                text: `Atención rápida y entregas en ${DELIVERY_INFO.immediate.join(", ")}.`,
+              },
+              {
+                icon: Truck,
+                title: "Envíos nacionales e internacionales",
+                text: "Hacemos envíos a toda la República Mexicana y también al extranjero.",
+              },
+              {
+                icon: MessageCircle,
+                title: "Atención real y directa",
+                text: "Disponibilidad validada directamente por WhatsApp, sin vueltas ni complicaciones.",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
 
-            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50 hover:shadow-[0_18px_50px_rgba(0,0,0,0.3)]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
-                <Truck className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 text-xl font-semibold text-white">
-                Envíos nacionales e internacionales
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-white/55">
-                Hacemos envíos a toda la República Mexicana y también al extranjero.
-              </p>
-            </div>
-
-            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50 hover:shadow-[0_18px_50px_rgba(0,0,0,0.3)]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
-                <MessageCircle className="h-5 w-5" />
-              </div>
-              <h3 className="mt-5 text-xl font-semibold text-white">
-                Atención real y directa
-              </h3>
-              <p className="mt-3 text-sm leading-7 text-white/55">
-                Disponibilidad validada directamente por WhatsApp, sin vueltas ni complicaciones.
-              </p>
-            </div>
+              return (
+                <motion.div
+                  key={item.title}
+                  variants={fadeUp}
+                  whileHover={{ y: -6 }}
+                  transition={{ type: "spring", stiffness: 240, damping: 22 }}
+                  className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 hover:border-red-600/50 hover:shadow-[0_18px_50px_rgba(0,0,0,0.3)]"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-5 text-xl font-semibold text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-white/55">
+                    {item.text}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Featured */}
       <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-        <div className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+          className="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <motion.div variants={fadeUp} className="max-w-2xl">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
               Colección
             </p>
@@ -222,29 +302,45 @@ export default function HomePage() {
             <p className="leading-relaxed text-white/55">
               Una selección de modelos representativos de la propuesta de {BRAND.name}, con diseño, presencia y carácter.
             </p>
-          </div>
+          </motion.div>
 
-          <Link
-            href="/catalogo"
-            className="inline-flex items-center gap-2 self-start rounded-full border border-white/12 bg-white/[0.03] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-red-600 hover:text-red-500"
-          >
-            Ver catálogo completo
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
+          <motion.div variants={fadeUp} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+            <Link
+              href="/catalogo"
+              className="inline-flex items-center gap-2 self-start rounded-full border border-white/12 bg-white/[0.03] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-red-600 hover:text-red-500"
+            >
+              Ver catálogo completo
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </motion.div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.05 }}
+          variants={staggerContainer}
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {featured.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <motion.div key={product.id} variants={fadeUp}>
+              <ProductCard product={product} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* Availability */}
       <section className="border-y border-white/10 bg-[#080808] py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        >
           <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-            <div>
+            <motion.div variants={fadeUp}>
               <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
                 Entregas
               </p>
@@ -252,36 +348,40 @@ export default function HomePage() {
                 Disponibilidad y envíos
               </h2>
               <p className="mb-8 leading-relaxed text-white/55">
-                Entrega inmediata en {DELIVERY_INFO.immediate.join(', ')}. Sujeta a existencias. Los envíos nacionales e internacionales se cotizan por separado y toda disponibilidad se confirma directamente por WhatsApp.
+                Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. Sujeta a existencias. Los envíos nacionales e internacionales se cotizan por separado y toda disponibilidad se confirma directamente por WhatsApp.
               </p>
-              <Link
-                href="/disponibilidad"
-                className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-700"
-              >
-                Ver detalles de envío
-              </Link>
-            </div>
+              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href="/disponibilidad"
+                  className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-700"
+                >
+                  Ver detalles de envío
+                </Link>
+              </motion.div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <motion.div variants={staggerContainer} className="grid grid-cols-1 gap-4">
               {[
                 {
-                  label: 'Entrega inmediata',
-                  desc: DELIVERY_INFO.immediate.join(', '),
-                  icon: '📍',
+                  label: "Entrega inmediata",
+                  desc: DELIVERY_INFO.immediate.join(", "),
+                  icon: "📍",
                 },
                 {
-                  label: 'Disponibilidad',
-                  desc: 'Sujeta a existencias y confirmación directa por WhatsApp',
-                  icon: '✅',
+                  label: "Disponibilidad",
+                  desc: "Sujeta a existencias y confirmación directa por WhatsApp",
+                  icon: "✅",
                 },
                 {
-                  label: 'Envíos',
-                  desc: 'Cobertura nacional e internacional con costo adicional',
-                  icon: '✈️',
+                  label: "Envíos",
+                  desc: "Cobertura nacional e internacional con costo adicional",
+                  icon: "✈️",
                 },
               ].map((item) => (
-                <div
+                <motion.div
                   key={item.label}
+                  variants={fadeUp}
+                  whileHover={{ y: -4 }}
                   className="rounded-[1.5rem] border border-white/10 bg-[#111] p-6 transition-all duration-300 hover:border-red-600/40"
                 >
                   <div className="flex items-start gap-4">
@@ -293,19 +393,29 @@ export default function HomePage() {
                       <p className="text-sm leading-relaxed text-white/55">{item.desc}</p>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* About */}
       <section className="py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        >
           <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-            <div className="order-2 md:order-1">
-              <div className="rounded-[1.75rem] border border-white/10 bg-[#111] p-8 shadow-[0_18px_50px_rgba(0,0,0,0.25)]">
+            <motion.div variants={fadeUp} className="order-2 md:order-1">
+              <motion.div
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 240, damping: 22 }}
+                className="rounded-[1.75rem] border border-white/10 bg-[#111] p-8 shadow-[0_18px_50px_rgba(0,0,0,0.25)]"
+              >
                 <p className="mb-3 text-xs uppercase tracking-[0.35em] text-red-600">
                   Nuestra visión
                 </p>
@@ -322,10 +432,10 @@ export default function HomePage() {
                   Conocer más
                   <span>→</span>
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="order-1 md:order-2">
+            <motion.div variants={fadeUp} className="order-1 md:order-2">
               <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
                 Sobre nosotros
               </p>
@@ -335,15 +445,21 @@ export default function HomePage() {
               <p className="leading-relaxed text-white/55">
                 Somos una marca mexicana enfocada en ofrecer gorras premium con identidad propia. Apostamos por una imagen sólida, una operación seria y una propuesta pensada para clientes que valoran estilo, exclusividad y atención directa.
               </p>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Testimonials */}
       <section className="border-y border-white/10 bg-[#0a0a0a] py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-12 max-w-3xl text-center">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        >
+          <motion.div variants={fadeUp} className="mx-auto mb-12 max-w-3xl text-center">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
               Testimonios
             </p>
@@ -354,13 +470,16 @@ export default function HomePage() {
               Mensajes cortos, claros y directos que transmiten atención,
               respuesta y experiencia real.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((item) => (
-              <article
+              <motion.article
                 key={item.author + item.quote}
-                className="rounded-[1.75rem] border border-white/10 bg-[#111] p-7 shadow-[0_10px_30px_rgba(0,0,0,0.22)] transition-all duration-300 hover:-translate-y-1 hover:border-red-600/40"
+                variants={fadeUp}
+                whileHover={{ y: -6 }}
+                transition={{ type: "spring", stiffness: 240, damping: 22 }}
+                className="rounded-[1.75rem] border border-white/10 bg-[#111] p-7 shadow-[0_10px_30px_rgba(0,0,0,0.22)] hover:border-red-600/40"
               >
                 <div className="flex items-center gap-2 text-red-500">
                   <Quote className="h-5 w-5" />
@@ -377,64 +496,87 @@ export default function HomePage() {
                   <ShieldCheck className="h-4 w-4 text-red-500" />
                   {item.author}
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* FAQ Preview */}
       <section className="border-y border-white/10 bg-[#0a0a0a] py-24">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerContainer}
+          className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8"
+        >
+          <motion.div variants={fadeUp} className="mb-12 text-center">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
               Preguntas
             </p>
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
               Preguntas frecuentes
             </h2>
-          </div>
+          </motion.div>
 
           <div className="space-y-4">
             {[
               {
-                q: '¿Cómo puedo realizar un pedido?',
-                a: 'Contáctanos directamente por WhatsApp seleccionando el producto que te interesa. Ahí confirmamos disponibilidad, pago y entrega.',
+                q: "¿Cómo puedo realizar un pedido?",
+                a: "Contáctanos directamente por WhatsApp seleccionando el producto que te interesa. Ahí confirmamos disponibilidad, pago y entrega.",
               },
               {
-                q: '¿Cómo manejan entregas y envíos?',
-                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(', ')}, sujeta a existencias y coordinación directa. También realizamos envíos nacionales e internacionales con costo extra.`,
+                q: "¿Cómo manejan entregas y envíos?",
+                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(", ")}, sujeta a existencias y coordinación directa. También realizamos envíos nacionales e internacionales con costo extra.`,
               },
               {
-                q: '¿Las fotos corresponden al producto real?',
-                a: 'Sí. Las fotografías del catálogo corresponden a los modelos reales disponibles.',
+                q: "¿Las fotos corresponden al producto real?",
+                a: "Sí. Las fotografías del catálogo corresponden a los modelos reales disponibles.",
               },
             ].map((item, i) => (
-              <div
+              <motion.div
                 key={i}
+                variants={fadeUp}
+                whileHover={{ y: -3 }}
                 className="rounded-[1.5rem] border border-white/10 bg-[#111] p-6 transition-all duration-300 hover:border-red-600/35"
               >
                 <p className="mb-2 text-sm font-semibold text-white">{item.q}</p>
                 <p className="text-sm leading-relaxed text-white/55">{item.a}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          <div className="mt-8 text-center">
+          <motion.div
+            variants={fadeUp}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            className="mt-8 text-center"
+          >
             <Link
               href="/faq"
               className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:border-red-600 hover:text-red-600"
             >
               Ver todas las preguntas
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Final CTA */}
       <section className="py-24">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-[2rem] border border-red-600/20 bg-gradient-to-br from-[#111] via-[#0b0b0b] to-[#161616] px-6 py-14 text-center shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:px-10 md:py-16">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeUp}
+          className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8"
+        >
+          <motion.div
+            whileHover={{ y: -6 }}
+            transition={{ type: "spring", stiffness: 220, damping: 22 }}
+            className="relative overflow-hidden rounded-[2rem] border border-red-600/20 bg-gradient-to-br from-[#111] via-[#0b0b0b] to-[#161616] px-6 py-14 text-center shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:px-10 md:py-16"
+          >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.18),transparent_30%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03),transparent,rgba(255,255,255,0.01))]" />
 
@@ -451,40 +593,52 @@ export default function HomePage() {
               </p>
 
               <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-                <Link
-                  href="/catalogo"
-                  className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:bg-white/90"
-                >
-                  Ver catálogo
-                </Link>
+                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+                  <Link
+                    href="/catalogo"
+                    className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/90"
+                  >
+                    Ver catálogo
+                  </Link>
+                </motion.div>
 
-                <a
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-red-600 hover:bg-white/10 hover:text-red-500"
-                >
-                  Hablar por WhatsApp
-                </a>
+                <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }}>
+                  <a
+                    href={waLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-red-600 hover:bg-white/10 hover:text-red-500"
+                  >
+                    Hablar por WhatsApp
+                  </a>
+                </motion.div>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-white/60">
-                <div className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-red-500" />
-                  Entrega inmediata
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-red-500" />
-                  Atención directa
-                </div>
-                <div className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-red-500" />
-                  Envíos nacionales e internacionales
-                </div>
-              </div>
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-white/60"
+              >
+                {[
+                  "Entrega inmediata",
+                  "Atención directa",
+                  "Envíos nacionales e internacionales",
+                ].map((item) => (
+                  <motion.div
+                    key={item}
+                    variants={fadeUp}
+                    className="inline-flex items-center gap-2"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-red-500" />
+                    {item}
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
     </div>
   );
