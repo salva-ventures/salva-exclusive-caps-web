@@ -24,9 +24,9 @@ const navLinks = [
 const WHATSAPP_NUMBER = '528335340498'; // cambia si hace falta
 const WHATSAPP_MESSAGE =
   'Hola, me interesa conocer la disponibilidad de sus gorras.';
-const INSTAGRAM_URL = 'https://instagram.com/tu_cuenta';
-const FACEBOOK_URL = 'https://facebook.com/tu_pagina';
-const TIKTOK_URL = 'https://tiktok.com/@tu_cuenta';
+const INSTAGRAM_URL = 'https://www.instagram.com/salvaexclusive.caps/';
+const FACEBOOK_URL = 'https://www.facebook.com/61588062491340';
+const TIKTOK_URL = 'https://www.tiktok.com/@lehisalva';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
