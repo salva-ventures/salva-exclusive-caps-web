@@ -31,7 +31,7 @@ const faqs: FAQ[] = [
   },
   {
     question: '¿Las fotos del catálogo corresponden al producto real?',
-    answer: 'Las fotografías del catálogo son de referencia del producto. Si tienes dudas de un modelo, te compartimos detalles por WhatsApp.',
+    answer: 'Las fotografías del catálogo corresponden al modelo publicado. Antes de confirmar tu pedido, te compartimos detalles actualizados por WhatsApp.',
   },
   {
     question: '¿Cómo puedo confirmar la disponibilidad de un producto?',
@@ -51,7 +51,7 @@ const faqs: FAQ[] = [
   },
   {
     question: '¿Las gorras son originales?',
-    answer: 'Trabajamos una selección curada de modelos. Si tienes dudas de un producto en particular, lo revisamos contigo por WhatsApp.',
+    answer: 'Trabajamos con modelos originales y te compartimos la información del producto al coordinar por WhatsApp.',
   },
   {
     question: '¿Cuál es su horario de atención?',
