@@ -1,4 +1,4 @@
-import { BRAND, CONTACT, DELIVERY_INFO } from '@/config/brand';
+import { CONTACT, DELIVERY_INFO } from '@/config/brand';
 
 export default function ContactoPage() {
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, '')}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;

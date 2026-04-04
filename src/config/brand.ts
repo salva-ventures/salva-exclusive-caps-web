@@ -37,6 +37,6 @@ export const SEO = {
   default: {
     title: 'Salva Exclusive Caps — Gorras Premium México',
     description: 'Salva Exclusive Caps es una marca de venta de gorras exclusivas con entrega inmediata en Tampico, Madero, Altamira y Monterrey, además de envíos nacionales e internacionales.',
-    keywords: ['gorras exclusivas', 'gorras premium', 'gorras en Tampico', 'gorras en Ciudad Madero', 'gorras en Altamira', 'gorras en Monterrey', 'compra de gorras en México'],
+    keywords: ['gorras exclusivas', 'gorras premium', 'gorras en Tampico', 'gorras en Ciudad Madero', 'gorras en Altamira', 'gorras en Monterrey', 'compra de gorras en México'] as string[],
   },
-} as const;
+};

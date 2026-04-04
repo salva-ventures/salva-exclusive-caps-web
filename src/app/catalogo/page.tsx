@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'next';
+import { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { products, getAllTypes, getAllColors } from '@/data/products';
 
@@ -16,7 +16,7 @@ export default function CatalogoPage() {
   const colors = ['Todos', ...getAllColors()];
 
   const filtered = useMemo(() => {
-    let result = products.filter(p => {
+    const result = products.filter(p => {
       const searchLower = search.toLowerCase();
       const matchSearch = !search ||
         p.name.toLowerCase().includes(searchLower) ||
