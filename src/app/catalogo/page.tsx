@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { products, getAllTypes, getAllColors } from '@/data/products';
 
-type SortOption = 'featured' | 'name-asc' | 'name-desc' | 'newest';
+type SortOption = 'featured' | 'name-asc' | 'name-desc';
 
 export default function CatalogoPage() {
   const [search, setSearch] = useState('');
@@ -20,12 +20,12 @@ export default function CatalogoPage() {
       const searchLower = search.toLowerCase();
       const matchSearch = !search ||
         p.name.toLowerCase().includes(searchLower) ||
-        p.type.toLowerCase().includes(searchLower) ||
+        p.tipo.toLowerCase().includes(searchLower) ||
         p.sku.toLowerCase().includes(searchLower) ||
-        p.description.toLowerCase().includes(searchLower) ||
+        p.shortDescription.toLowerCase().includes(searchLower) ||
         p.colors.some(c => c.toLowerCase().includes(searchLower));
 
-      const matchType = selectedType === 'Todos' || p.type === selectedType;
+      const matchType = selectedType === 'Todos' || p.tipo === selectedType;
       const matchColor = selectedColor === 'Todos' || p.colors.includes(selectedColor);
 
       return matchSearch && matchType && matchColor;
@@ -34,16 +34,17 @@ export default function CatalogoPage() {
     // Sort
     switch (sortBy) {
       case 'featured':
-        result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+        result.sort((a, b) => {
+          const featuredDiff = (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+          if (featuredDiff !== 0) return featuredDiff;
+          return a.sortOrder - b.sortOrder;
+        });
         break;
       case 'name-asc':
         result.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'name-desc':
         result.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'newest':
-        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         break;
     }
 
@@ -81,7 +82,6 @@ export default function CatalogoPage() {
               <option value="featured">Destacados</option>
               <option value="name-asc">A-Z</option>
               <option value="name-desc">Z-A</option>
-              <option value="newest">Más Recientes</option>
             </select>
           </div>
         </div>
