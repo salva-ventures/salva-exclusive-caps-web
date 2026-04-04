@@ -1,9 +1,32 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import {
+  CheckCircle2,
+  MessageCircle,
+  PackageCheck,
+  Quote,
+  ShieldCheck,
+  Truck,
+} from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import HeroImageRotator from '@/components/HeroImageRotator';
 import { getFeaturedProducts } from '@/data/products';
 import { BRAND, CONTACT, DELIVERY_INFO } from '@/config/brand';
+
+const testimonials = [
+  {
+    quote: 'Muy buena atención y entrega rápida.',
+    author: 'A. R.',
+  },
+  {
+    quote: 'Se siente la diferencia en el diseño.',
+    author: 'M. T.',
+  },
+  {
+    quote: 'Proceso directo y sin complicaciones.',
+    author: 'J. L.',
+  },
+];
 
 export default function HomePage() {
   const featured = getFeaturedProducts();
@@ -123,34 +146,58 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trust / Availability Bar */}
+      {/* Trust / Availability Bar Mejorada */}
       <section className="border-y border-[#1a1a1a] bg-[#080808]">
-        <div className="mx-auto grid max-w-7xl gap-px bg-[#1a1a1a] px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
-          <div className="bg-[#0d0d0d] px-6 py-5">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-red-600">
-              Entrega inmediata
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto mb-10 max-w-3xl text-center">
+            <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
+              Confianza directa
             </p>
-            <p className="text-sm leading-relaxed text-white">
-              {DELIVERY_INFO.immediate.join(', ')}
-            </p>
-          </div>
-
-          <div className="bg-[#0d0d0d] px-6 py-5">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-red-600">
-              Cobertura
-            </p>
-            <p className="text-sm leading-relaxed text-white">
-              Envíos nacionales e internacionales con costo extra
+            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+              Atención real, entregas reales y proceso claro
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-[#888] sm:text-base">
+              Queremos que el cliente sienta confianza desde el primer contacto:
+              respuesta directa, confirmación clara y seguimiento real.
             </p>
           </div>
 
-          <div className="bg-[#0d0d0d] px-6 py-5">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-red-600">
-              Confirmación
-            </p>
-            <p className="text-sm leading-relaxed text-white">
-              Disponibilidad validada directamente por WhatsApp
-            </p>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
+                <PackageCheck className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-white">
+                Entrega inmediata
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-[#888]">
+                Atención rápida y entregas en {DELIVERY_INFO.immediate.join(', ')}.
+              </p>
+            </div>
+
+            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
+                <Truck className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-white">
+                Envíos nacionales e internacionales
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-[#888]">
+                Hacemos envíos a toda la República Mexicana y también al extranjero.
+              </p>
+            </div>
+
+            <div className="group rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-red-600/50">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500">
+                <MessageCircle className="h-5 w-5" />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-white">
+                Atención real y directa
+              </h3>
+              <p className="mt-3 text-sm leading-7 text-[#888]">
+                Disponibilidad validada directamente por WhatsApp, sin vueltas ni complicaciones.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -273,6 +320,49 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section className="border-y border-[#222] bg-[#0a0a0a] py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
+              Testimonios
+            </p>
+            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+              Comentarios que refuerzan la confianza
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-[#888] sm:text-base">
+              Mensajes cortos, claros y directos que transmiten atención,
+              respuesta y experiencia real.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {testimonials.map((item) => (
+              <article
+                key={item.author + item.quote}
+                className="rounded-[1.75rem] border border-white/10 bg-[#111] p-7 shadow-[0_10px_30px_rgba(0,0,0,0.22)]"
+              >
+                <div className="flex items-center gap-2 text-red-500">
+                  <Quote className="h-5 w-5" />
+                  <span className="text-xs font-medium uppercase tracking-[0.2em]">
+                    Cliente
+                  </span>
+                </div>
+
+                <p className="mt-5 text-lg leading-8 text-white">
+                  “{item.quote}”
+                </p>
+
+                <div className="mt-6 flex items-center gap-2 border-t border-white/10 pt-4 text-sm text-white/60">
+                  <ShieldCheck className="h-4 w-4 text-red-500" />
+                  {item.author}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Preview */}
       <section className="border-y border-[#222] bg-[#0a0a0a] py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -316,32 +406,58 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Contact CTA */}
+      {/* Final CTA */}
       <section className="py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="mb-4 text-xs uppercase tracking-[0.4em] text-red-600">Hablemos</p>
-          <h2 className="mb-6 text-4xl font-bold tracking-tight text-white md:text-5xl">
-            ¿Tienes dudas?
-          </h2>
-          <p className="mb-10 text-lg leading-relaxed text-[#888]">
-            Contáctanos por WhatsApp para consultas, confirmación de disponibilidad o cualquier pregunta sobre nuestros productos.
-          </p>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="relative overflow-hidden rounded-[2rem] border border-red-600/20 bg-gradient-to-br from-[#111] via-[#0b0b0b] to-[#161616] px-6 py-14 text-center shadow-[0_20px_60px_rgba(0,0,0,0.35)] md:px-10 md:py-16">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.18),transparent_30%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03),transparent,rgba(255,255,255,0.01))]" />
 
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-red-600 px-8 py-4 text-xs font-medium uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-700"
-            >
-              Consultar por WhatsApp
-            </a>
-            <Link
-              href="/contacto"
-              className="inline-block border border-white px-8 py-4 text-xs font-medium uppercase tracking-[0.2em] text-white transition-all duration-300 hover:border-red-600 hover:text-red-600"
-            >
-              Información de Contacto
-            </Link>
+            <div className="relative">
+              <p className="mb-4 text-xs uppercase tracking-[0.4em] text-red-500">
+                Cierre comercial
+              </p>
+              <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+                ¿Listo para elegir tu próxima gorra?
+              </h2>
+              <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#9a9a9a]">
+                Explora el catálogo o recibe atención directa por WhatsApp para
+                confirmar disponibilidad, entrega o envío.
+              </p>
+
+              <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+                <Link
+                  href="/catalogo"
+                  className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:scale-[1.02] hover:bg-white/90"
+                >
+                  Ver catálogo
+                </Link>
+
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur transition-all duration-300 hover:border-red-600 hover:bg-white/10 hover:text-red-500"
+                >
+                  Hablar por WhatsApp
+                </a>
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-sm text-white/60">
+                <div className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-red-500" />
+                  Entrega inmediata
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-red-500" />
+                  Atención directa
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-red-500" />
+                  Envíos nacionales e internacionales
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
