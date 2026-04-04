@@ -133,7 +133,7 @@ export default function Navbar() {
 
           <div className="mt-8">
             <Link
-              href="https://wa.me/528331234567?text=Hola,%20quiero%20informaci%C3%B3n%20sobre%20sus%20gorras."
+              href="https://wa.me/528335340498?text=Hola,%20me%20interesa%20conocer%20la%20disponibilidad%20de%20sus%20gorras."
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setIsOpen(false)}
