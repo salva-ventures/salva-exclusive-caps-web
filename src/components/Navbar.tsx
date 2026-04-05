@@ -29,7 +29,7 @@ const fadeDown = {
 };
 
 const mobilePanel = {
-  hidden: { opacity: 0, y: -16, scale: 0.98 },
+  hidden: { opacity: 0, y: -16, scale: 0.985 },
   show: {
     opacity: 1,
     y: 0,
@@ -42,7 +42,7 @@ const mobilePanel = {
   exit: {
     opacity: 0,
     y: -12,
-    scale: 0.98,
+    scale: 0.985,
     transition: {
       duration: 0.2,
       ease: [0.4, 0, 1, 1] as const,
@@ -145,22 +145,24 @@ export default function Navbar() {
       >
         <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
           <div
-            className={`relative overflow-hidden rounded-2xl border transition-all duration-300 ${
+            className={`relative overflow-hidden rounded-[1.4rem] border transition-all duration-300 ${
               isScrolled
-                ? "border-white/12 bg-black/75 shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur-xl"
-                : "border-white/8 bg-black/45 backdrop-blur-lg"
+                ? "border-white/12 bg-black/78 shadow-[0_20px_60px_rgba(0,0,0,0.36)] backdrop-blur-xl"
+                : "border-white/8 bg-black/48 backdrop-blur-lg"
             }`}
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_28%)]" />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_26%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_32%,transparent_70%,rgba(255,255,255,0.02))]" />
+            <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
+            <div className="pointer-events-none absolute inset-0 rounded-[1.4rem] ring-1 ring-inset ring-white/[0.03]" />
 
             <div className="relative flex h-16 items-center justify-between px-4 sm:px-5 lg:h-[72px] lg:px-6">
               <Link href="/" className="group flex items-center gap-3">
-                <div className="relative h-9 w-9 overflow-hidden rounded-full border border-white/10 bg-white/[0.04]">
+                <div className="relative h-9 w-9 overflow-hidden rounded-full border border-white/10 bg-white/[0.05] shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
                   <Image
                     src="/star-logo.png"
                     alt="Salva Exclusive Caps"
                     fill
-                    className="object-contain p-1.5"
+                    className="object-contain p-1.5 transition-transform duration-300 group-hover:scale-[1.04]"
                     priority
                   />
                 </div>
@@ -169,7 +171,7 @@ export default function Navbar() {
                   <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/45">
                     Salva Exclusive Caps
                   </p>
-                  <p className="mt-0.5 text-sm text-white/78">
+                  <p className="mt-0.5 text-sm text-white/80">
                     Gorras premium
                   </p>
                 </div>
@@ -203,7 +205,7 @@ export default function Navbar() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={item.ariaLabel}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-all duration-300 hover:border-red-600 hover:bg-white/[0.08] hover:text-red-500"
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] text-white/85 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.1] hover:text-red-500"
                     >
                       {item.icon}
                     </motion.a>
@@ -216,7 +218,7 @@ export default function Navbar() {
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-red-600/30 bg-red-600 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:bg-red-700"
+                  className="inline-flex items-center justify-center rounded-full border border-red-600/30 bg-red-600 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_10px_28px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-700"
                 >
                   WhatsApp
                 </motion.a>
@@ -226,7 +228,7 @@ export default function Navbar() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen((prev) => !prev)}
                 aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white transition-all duration-300 hover:border-white/25 hover:bg-white/[0.06] lg:hidden"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white transition-all duration-300 hover:border-white/22 hover:bg-white/[0.08] lg:hidden"
               >
                 {isOpen ? <X size={19} /> : <Menu size={19} />}
               </motion.button>
@@ -243,7 +245,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-40 bg-black/72 backdrop-blur-sm lg:hidden"
             />
 
             <motion.div
@@ -251,9 +253,12 @@ export default function Navbar() {
               initial="hidden"
               animate="show"
               exit="exit"
-              className="fixed inset-x-4 top-[88px] z-50 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b0b0b] shadow-[0_20px_60px_rgba(0,0,0,0.45)] lg:hidden"
+              className="fixed inset-x-4 top-[88px] z-50 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b0b0b] shadow-[0_24px_70px_rgba(0,0,0,0.48)] lg:hidden"
             >
-              <div className="border-b border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_35%)] px-5 py-5">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_28%,transparent_72%,rgba(255,255,255,0.02))]" />
+              <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/[0.03]" />
+
+              <div className="relative border-b border-white/10 px-5 py-5">
                 <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
                   Navegación
                 </p>
@@ -262,7 +267,7 @@ export default function Navbar() {
                 </h3>
               </div>
 
-              <div className="px-3 py-3">
+              <div className="relative px-3 py-3">
                 <div className="space-y-1">
                   {navLinks.map((item, index) => (
                     <motion.div
@@ -275,7 +280,7 @@ export default function Navbar() {
                       <Link
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-between rounded-2xl border border-transparent px-4 py-4 text-sm font-medium text-white/82 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04] hover:text-white"
+                        className="flex items-center justify-between rounded-2xl border border-transparent px-4 py-4 text-sm font-medium text-white/82 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.05] hover:text-white"
                       >
                         <span>{item.label}</span>
                         <ChevronRight size={16} className="text-white/35" />
@@ -297,7 +302,7 @@ export default function Navbar() {
                       rel="noopener noreferrer"
                       onClick={() => setIsOpen(false)}
                       aria-label={item.ariaLabel}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-all duration-300 hover:border-red-600 hover:bg-white/[0.08] hover:text-red-500"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] text-white/85 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.1] hover:text-red-500"
                     >
                       {item.icon}
                     </motion.a>
