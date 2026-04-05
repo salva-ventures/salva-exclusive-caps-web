@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { Product } from "@/data/products";
@@ -15,55 +16,72 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <motion.div
       layout
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
       className="h-full"
     >
       <Link href={`/catalogo/${product.slug}`} className="group block h-full">
-        <article className="relative flex h-full flex-col overflow-hidden rounded-[24px] border border-white/10 bg-[#0b0b0b] transition-colors duration-300 hover:border-red-600/60 hover:shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+        <article className="relative flex h-full flex-col overflow-hidden rounded-[26px] border border-white/10 bg-[#0b0b0b] shadow-[0_18px_50px_rgba(0,0,0,0.28),0_8px_20px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-white/15 hover:shadow-[0_28px_70px_rgba(0,0,0,0.38),0_10px_24px_rgba(0,0,0,0.16)]">
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.015)_24%,transparent_52%)]" />
+          <div className="pointer-events-none absolute inset-0 rounded-[26px] ring-1 ring-inset ring-white/[0.03]" />
+
           <motion.div
-            className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.10),transparent_40%)]"
+            className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_top,rgba(220,38,38,0.08),transparent_38%)]"
             initial={{ opacity: 0 }}
             whileHover={{ opacity: 1 }}
             transition={{ duration: 0.28 }}
           />
 
-          <div className="relative aspect-[4/4.2] overflow-hidden bg-[#080808]">
+          <div className="relative aspect-[4/4.25] overflow-hidden bg-[#080808]">
             <motion.div
-              className="h-full w-full bg-cover bg-center"
-              style={{
-                backgroundImage: `url(${product.images[0]})`,
-              }}
-              whileHover={{ scale: 1.06 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            />
+              whileHover={{ scale: 1.04 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="relative h-full w-full"
+            >
+              <Image
+                src={product.images[0]}
+                alt={product.name}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover"
+              />
+            </motion.div>
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80" />
+            <div className="pointer-events-none absolute inset-0 z-[2] bg-[linear-gradient(to_top,rgba(0,0,0,0.72),rgba(0,0,0,0.16)_42%,rgba(0,0,0,0.04))]" />
+            <div className="pointer-events-none absolute inset-x-10 top-4 z-[2] h-16 rounded-full bg-white/8 blur-3xl" />
+            <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.035] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
 
-            <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            <div className="absolute left-4 top-4 z-10 flex flex-wrap gap-2">
               <motion.span
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.24 }}
-                className="rounded-full border border-red-600/40 bg-red-600/15 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-red-400 backdrop-blur-sm"
+                className={`relative overflow-hidden rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] backdrop-blur-sm ${
+                  product.featured
+                    ? "border-red-600/35 bg-red-600/12 text-red-400"
+                    : "border-white/14 bg-black/35 text-white/78"
+                }`}
               >
-                {badgeText}
+                {product.featured && (
+                  <span className="pointer-events-none absolute inset-y-0 left-[-140%] w-[75%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent)] animate-[shine_4.8s_ease-in-out_infinite]" />
+                )}
+                <span className="relative z-10">{badgeText}</span>
               </motion.span>
 
               <motion.span
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.24, delay: 0.04 }}
-                className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/80 backdrop-blur-sm"
+                className="rounded-full border border-white/14 bg-black/35 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/78 backdrop-blur-sm"
               >
                 {product.tipo}
               </motion.span>
             </div>
 
             <motion.div
-              whileHover={{ scale: 1.08, rotate: 4 }}
-              transition={{ type: "spring", stiffness: 280, damping: 18 }}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white/75 backdrop-blur-sm"
+              whileHover={{ scale: 1.06, rotate: 3 }}
+              transition={{ type: "spring", stiffness: 280, damping: 20 }}
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/14 bg-black/35 text-white/75 backdrop-blur-sm transition-colors duration-300 group-hover:border-white/18 group-hover:text-white"
             >
               <ArrowUpRight size={16} />
             </motion.div>
@@ -75,7 +93,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {product.brand}
               </p>
 
-              <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-white/32">
                 {product.sku}
               </p>
             </div>
@@ -94,7 +112,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   layout
                   key={color}
                   whileHover={{ y: -2 }}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/60 transition-all duration-300 group-hover:border-white/20 group-hover:text-white/80"
+                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/60 transition-all duration-300 group-hover:border-white/16 group-hover:bg-white/[0.05] group-hover:text-white/82"
                 >
                   {color}
                 </motion.span>
@@ -107,13 +125,26 @@ export default function ProductCard({ product }: ProductCardProps) {
                 Ver detalle
               </div>
 
-              <span className="text-xs text-white/40 transition-colors duration-300 group-hover:text-white/70">
+              <span className="text-xs text-white/38 transition-colors duration-300 group-hover:text-white/70">
                 Exclusiva
               </span>
             </div>
           </div>
         </article>
       </Link>
+
+      <style jsx>{`
+        @keyframes shine {
+          0%,
+          70%,
+          100% {
+            left: -140%;
+          }
+          85% {
+            left: 145%;
+          }
+        }
+      `}</style>
     </motion.div>
   );
 }
