@@ -19,7 +19,7 @@ export const CONTACT = {
     tiktok: 'lehisalva',
     tiktokUrl: 'https://tiktok.com/@lehisalva',
     facebook: 'Salva Exclusive Caps',
-    facebookUrl: 'https://facebook.com/SalvaExclusiveCaps',
+    facebookUrl: 'https://www.facebook.com/SalvaExclusiveCaps',
   },
   showroom: {
     city: 'Monterrey',
