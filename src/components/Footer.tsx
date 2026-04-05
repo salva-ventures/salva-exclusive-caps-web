@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "motion/react";
 import {
   MessageCircle,
@@ -33,6 +34,11 @@ const staggerContainer = {
   },
 };
 
+const panelClass =
+  "relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03] shadow-[0_18px_50px_rgba(0,0,0,0.28),0_8px_20px_rgba(0,0,0,0.12)]";
+const panelOverlay =
+  "before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.015)_24%,transparent_52%)] before:content-['']";
+
 export default function Footer() {
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
 
@@ -47,7 +53,8 @@ export default function Footer() {
 
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-[#050505]">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_28%),linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent_35%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_26%),linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent_35%)]" />
+      <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:20px_20px]" />
 
       <motion.div
         initial="hidden"
@@ -59,8 +66,13 @@ export default function Footer() {
         <div className="grid gap-10 border-b border-white/10 pb-12 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
           <motion.div variants={fadeUp}>
             <div className="inline-flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-sm font-bold uppercase tracking-[0.2em] text-white">
-                {BRAND.shortName.charAt(0)}
+              <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/10 bg-white/[0.05] shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
+                <Image
+                  src="/star-logo.png"
+                  alt={BRAND.name}
+                  fill
+                  className="object-contain p-1.5"
+                />
               </div>
 
               <div>
@@ -78,7 +90,8 @@ export default function Footer() {
             </p>
 
             <p className="mt-3 max-w-md text-sm leading-7 text-white/45">
-              Diseño, exclusividad y una experiencia de compra sólida, directa y moderna.
+              Diseño, exclusividad y una experiencia de compra sólida, directa y
+              moderna.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -88,7 +101,7 @@ export default function Footer() {
                 href={waLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-red-600 bg-red-600 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:bg-red-700"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-red-600 bg-red-600 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_10px_28px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-700"
               >
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp
@@ -100,7 +113,7 @@ export default function Footer() {
                 href={CONTACT.social.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
                 aria-label="Instagram"
               >
                 Instagram
@@ -112,7 +125,7 @@ export default function Footer() {
                 href={CONTACT.social.tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
                 aria-label="TikTok"
               >
                 <Music2 className="h-4 w-4" />
@@ -125,7 +138,7 @@ export default function Footer() {
                 href={CONTACT.social.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.03] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/25 hover:text-white"
+                className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/[0.04] px-4 py-3 text-xs font-medium text-white/75 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
                 aria-label="Facebook"
               >
                 Facebook
@@ -193,30 +206,34 @@ export default function Footer() {
           </motion.div>
 
           <motion.div variants={fadeUp}>
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/45">
-                Atención directa
-              </p>
+            <div className={`${panelClass} ${panelOverlay} p-6`}>
+              <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/[0.03]" />
 
-              <h3 className="mt-3 text-xl font-semibold text-white">
-                ¿Buscas un modelo en específico?
-              </h3>
+              <div className="relative">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/45">
+                  Atención directa
+                </p>
 
-              <p className="mt-3 text-sm leading-7 text-white/55">
-                Escríbenos por WhatsApp y te confirmamos disponibilidad, entrega
-                o envío de forma directa.
-              </p>
+                <h3 className="mt-3 text-xl font-semibold text-white">
+                  ¿Buscas un modelo en específico?
+                </h3>
 
-              <motion.a
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-black transition-all duration-300 hover:bg-white/90"
-              >
-                Hablar ahora
-              </motion.a>
+                <p className="mt-3 text-sm leading-7 text-white/55">
+                  Escríbenos por WhatsApp y te confirmamos disponibilidad,
+                  entrega o envío de forma directa.
+                </p>
+
+                <motion.a
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-full border border-white/12 bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-black transition-all duration-300 hover:bg-white/90"
+                >
+                  Hablar ahora
+                </motion.a>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -226,7 +243,8 @@ export default function Footer() {
           className="flex flex-col gap-4 pt-6 text-sm text-white/40 md:flex-row md:items-center md:justify-between"
         >
           <p>
-            © {new Date().getFullYear()} {BRAND.name}. Todos los derechos reservados.
+            © {new Date().getFullYear()} {BRAND.name}. Todos los derechos
+            reservados.
           </p>
 
           <p>Tampico, Tamaulipas — México</p>
