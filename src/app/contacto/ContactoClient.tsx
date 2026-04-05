@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "motion/react";
 import {
   ArrowUpRight,
   Clock3,
-  Facebook,
-  Instagram,
   MapPin,
   MessageCircle,
-  Music2,
   ShieldCheck,
   Truck,
 } from "lucide-react";
@@ -73,21 +71,6 @@ export default function ContactoClient() {
             Contáctanos por WhatsApp para confirmar disponibilidad, coordinar
             entrega inmediata o revisar envío nacional e internacional.
           </motion.p>
-
-          <motion.div
-            variants={fadeUp}
-            className="mt-8 flex flex-wrap gap-3"
-          >
-            <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] uppercase tracking-[0.24em] text-white/75">
-              Atención directa
-            </span>
-            <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] uppercase tracking-[0.24em] text-white/75">
-              Confirmación por WhatsApp
-            </span>
-            <span className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-[11px] uppercase tracking-[0.24em] text-white/75">
-              Entregas y envíos
-            </span>
-          </motion.div>
         </motion.div>
       </section>
 
@@ -186,10 +169,6 @@ export default function ContactoClient() {
                 <p className="mt-2 text-lg font-semibold text-white">
                   {CONTACT.whatsapp.displayNumber}
                 </p>
-                <p className="mt-3 text-sm leading-7 text-white/55">
-                  Atención directa para disponibilidad, entregas, envíos y dudas
-                  sobre la colección.
-                </p>
               </div>
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -217,10 +196,7 @@ export default function ContactoClient() {
             </div>
           </motion.div>
 
-          <motion.div
-            variants={staggerContainer}
-            className="space-y-6"
-          >
+          <motion.div variants={staggerContainer} className="space-y-6">
             <motion.div
               variants={fadeUp}
               whileHover={{ y: -4 }}
@@ -281,7 +257,7 @@ export default function ContactoClient() {
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-white/75 transition-colors duration-300 hover:text-white"
                 >
                   <span className="inline-flex items-center gap-3">
-                    <Instagram className="h-4 w-4 text-red-500" />
+                    <Image src="/social/instagram.png" alt="Instagram" width={18} height={18} />
                     Instagram
                   </span>
                   <ArrowUpRight className="h-4 w-4 text-white/35" />
@@ -295,7 +271,7 @@ export default function ContactoClient() {
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-white/75 transition-colors duration-300 hover:text-white"
                 >
                   <span className="inline-flex items-center gap-3">
-                    <Music2 className="h-4 w-4 text-red-500" />
+                    <Image src="/social/tiktok.png" alt="TikTok" width={18} height={18} />
                     TikTok
                   </span>
                   <ArrowUpRight className="h-4 w-4 text-white/35" />
@@ -309,7 +285,7 @@ export default function ContactoClient() {
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.02] px-4 py-4 text-sm text-white/75 transition-colors duration-300 hover:text-white"
                 >
                   <span className="inline-flex items-center gap-3">
-                    <Facebook className="h-4 w-4 text-red-500" />
+                    <Image src="/social/facebook.png" alt="Facebook" width={18} height={18} />
                     Facebook
                   </span>
                   <ArrowUpRight className="h-4 w-4 text-white/35" />
