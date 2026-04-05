@@ -44,4 +44,3 @@ export const metadata: Metadata = {
 export default function DisponibilidadPage() {
   return <DisponibilidadClient />;
 }
-}
