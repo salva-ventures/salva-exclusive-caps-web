@@ -72,7 +72,7 @@ export default function HomePage() {
   const socialLinks = [
     {
       name: "Instagram",
-      href: CONTACT.instagram?.url,
+      href: CONTACT.social.instagramUrl,
       ariaLabel: "Instagram de Salva Exclusive Caps",
       icon: (
         <svg
@@ -88,7 +88,7 @@ export default function HomePage() {
     },
     {
       name: "Facebook",
-      href: CONTACT.facebook?.url,
+      href: CONTACT.social.facebookUrl,
       ariaLabel: "Facebook de Salva Exclusive Caps",
       icon: (
         <svg
@@ -118,7 +118,7 @@ export default function HomePage() {
         </svg>
       ),
     },
-  ].filter((item) => Boolean(item.href));
+  ];
 
   return (
     <div className="bg-black">
