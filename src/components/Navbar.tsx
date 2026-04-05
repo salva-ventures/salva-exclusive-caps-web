@@ -56,6 +56,57 @@ export default function Navbar() {
 
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
 
+  const socialLinks = [
+    {
+      name: "Instagram",
+      href: CONTACT.social.instagramUrl,
+      ariaLabel: "Instagram de Salva Exclusive Caps",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5a4.25 4.25 0 0 0 4.25-4.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm5.25-2.38a1.13 1.13 0 1 1 0 2.26 1.13 1.13 0 0 1 0-2.26Z" />
+        </svg>
+      ),
+    },
+    {
+      name: "Facebook",
+      href: CONTACT.social.facebookUrl,
+      ariaLabel: "Facebook de Salva Exclusive Caps",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="M13.5 21v-8.25h2.77l.41-3.22H13.5V7.47c0-.93.26-1.56 1.6-1.56h1.71V3.03c-.3-.04-1.31-.13-2.49-.13-2.47 0-4.16 1.5-4.16 4.27v2.36H7.37v3.22h2.79V21h3.34Z" />
+        </svg>
+      ),
+    },
+    {
+      name: "WhatsApp",
+      href: waLink,
+      ariaLabel: "WhatsApp de Salva Exclusive Caps",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="M12 2A10 10 0 0 0 3.33 17l-1.1 4.02 4.12-1.08A10 10 0 1 0 12 2Zm0 18.18a8.13 8.13 0 0 1-4.14-1.13l-.3-.18-2.45.64.65-2.39-.2-.31A8.18 8.18 0 1 1 12 20.18Zm4.48-6.1c-.25-.12-1.48-.73-1.71-.81-.23-.09-.39-.12-.56.12-.16.23-.64.8-.78.96-.14.16-.28.19-.53.07-.25-.12-1.04-.38-1.98-1.21-.73-.65-1.22-1.45-1.36-1.69-.14-.23-.01-.36.1-.48.1-.1.23-.28.35-.42.11-.14.15-.23.23-.39.07-.16.03-.3-.02-.42-.07-.12-.56-1.34-.77-1.83-.2-.48-.4-.41-.56-.42h-.48c-.16 0-.42.06-.64.3-.22.23-.84.82-.84 2 0 1.18.86 2.32.98 2.48.12.16 1.68 2.57 4.08 3.6.57.25 1.01.39 1.36.5.57.18 1.09.15 1.5.09.46-.07 1.48-.6 1.69-1.18.21-.58.21-1.08.14-1.18-.07-.09-.23-.14-.48-.26Z" />
+        </svg>
+      ),
+    },
+  ];
+
   useEffect(() => {
     const onScroll = () => {
       setIsScrolled(window.scrollY > 12);
@@ -141,7 +192,24 @@ export default function Navbar() {
                 ))}
               </nav>
 
-              <div className="hidden lg:block">
+              <div className="hidden items-center gap-3 lg:flex">
+                <div className="flex items-center gap-2">
+                  {socialLinks.map((item) => (
+                    <motion.a
+                      key={item.name}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.97 }}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.ariaLabel}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-all duration-300 hover:border-red-600 hover:bg-white/[0.08] hover:text-red-500"
+                    >
+                      {item.icon}
+                    </motion.a>
+                  ))}
+                </div>
+
                 <motion.a
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -213,6 +281,26 @@ export default function Navbar() {
                         <ChevronRight size={16} className="text-white/35" />
                       </Link>
                     </motion.div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex items-center justify-center gap-3">
+                  {socialLinks.map((item, index) => (
+                    <motion.a
+                      key={item.name}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.22, delay: 0.1 + index * 0.04 }}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsOpen(false)}
+                      aria-label={item.ariaLabel}
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/85 transition-all duration-300 hover:border-red-600 hover:bg-white/[0.08] hover:text-red-500"
+                    >
+                      {item.icon}
+                    </motion.a>
                   ))}
                 </div>
 
