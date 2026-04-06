@@ -238,28 +238,29 @@ export default function Footer() {
           </motion.div>
         </div>
 
-       <motion.div
-  variants={fadeUp}
-  className="flex flex-col gap-4 pt-6 text-sm text-white/40 md:gap-5"
->
-  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-    <p>
-      © {new Date().getFullYear()} {BRAND.name}. Todos los derechos
-      reservados.
-    </p>
+        <motion.div
+          variants={fadeUp}
+          className="flex flex-col gap-4 pt-6 text-sm text-white/40 md:gap-5"
+        >
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <p>
+              © {new Date().getFullYear()} {BRAND.name}. Todos los derechos
+              reservados.
+            </p>
 
-    <p>Tampico, Tamaulipas — México</p>
-  </div>
+            <p>Tampico, Tamaulipas — México</p>
+          </div>
 
-  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/45">
-    <Link
-      href="/aviso-de-privacidad"
-      className="transition-colors duration-300 hover:text-white"
-    >
-      Aviso de Privacidad
-    </Link>
-  </div>
-</motion.div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white/45">
+            <Link
+              href="/aviso-de-privacidad"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Aviso de Privacidad
+            </Link>
+          </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
-}
+} 
