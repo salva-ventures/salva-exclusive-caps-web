@@ -258,6 +258,15 @@ export default function Footer() {
             >
               Aviso de Privacidad
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/terminos-y-condiciones"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Términos y Condiciones
+            </Link>
           </div>
         </motion.div>
       </motion.div>
