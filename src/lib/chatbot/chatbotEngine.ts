@@ -6,11 +6,11 @@ import type {
 } from "@/types/chatbot";
 
 const DEFAULT_ACTIONS: ChatAction[] = [
-  { label: "Ver catálogo", value: "Ver catálogo" },
-  { label: "Ayúdame a elegir", value: "Ayúdame a elegir" },
-  { label: "Dato curioso", value: "Dato curioso" },
-  { label: "Envíos", value: "Envíos" },
-  { label: "Mayoreo", value: "Mayoreo" },
+  { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+  { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
+  { label: "Dato curioso", value: "Dato curioso", type: "message" },
+  { label: "Envíos", value: "Envíos", type: "message" },
+  { label: "Mayoreo", value: "Mayoreo", type: "message" },
 ];
 
 const GORRIN_FACTS = [
@@ -124,21 +124,23 @@ export function getChatbotResponse(
 
   if (normalized === "hola" || normalized === "buenas" || normalized === "hello") {
     return {
+      intent: "greeting",
       content: getWelcomeMessage(pathname),
       actions: DEFAULT_ACTIONS,
       metadata: {},
     };
   }
 
-  if (includesAny(normalized, ["dato curioso", "curiosidad", "sorprendeme", "sorprendeme", "otro dato"])) {
+  if (includesAny(normalized, ["dato curioso", "curiosidad", "sorprendeme", "otro dato"])) {
     const selected = getRandomFact(memory);
 
     return {
+      intent: "fact",
       content: `${selected.fact}\n\nSi quieres, te doy otro.`,
       actions: [
-        { label: "Otro dato", value: "Otro dato" },
-        { label: "Ver catálogo", value: "Ver catálogo" },
-        { label: "Ayúdame a elegir", value: "Ayúdame a elegir" },
+        { label: "Otro dato", value: "Otro dato", type: "message" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
       ],
       metadata: {
         lastFactIndex: selected.index,
@@ -148,12 +150,13 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["ver catalogo", "catalogo", "productos", "gorras"])) {
     return {
+      intent: "catalog",
       content:
         "Si quieres ver opciones, lo mejor es entrar al catálogo. Ahí puedes revisar lo disponible y, si quieres, también te ayudo a elegir algo según el estilo que busques.",
       actions: [
-        { label: "Ayúdame a elegir", value: "Ayúdame a elegir" },
-        { label: "Envíos", value: "Envíos" },
-        { label: "Dato curioso", value: "Dato curioso" },
+        { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
+        { label: "Envíos", value: "Envíos", type: "message" },
+        { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
     };
@@ -161,12 +164,13 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["ayudame a elegir", "elige", "recomiendame", "recomienda"])) {
     return {
+      intent: "recommendation",
       content:
         "Te ayudo. Dime si buscas algo más limpio, más llamativo, más fácil de combinar o con más presencia. Con eso te oriento mejor.",
       actions: [
-        { label: "Algo limpio", value: "Busco algo limpio" },
-        { label: "Algo llamativo", value: "Busco algo llamativo" },
-        { label: "Fácil de combinar", value: "Busco algo fácil de combinar" },
+        { label: "Algo limpio", value: "Busco algo limpio", type: "message" },
+        { label: "Algo llamativo", value: "Busco algo llamativo", type: "message" },
+        { label: "Fácil de combinar", value: "Busco algo fácil de combinar", type: "message" },
       ],
       metadata: {},
     };
@@ -174,11 +178,12 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["busco algo limpio", "limpio"])) {
     return {
+      intent: "recommendation",
       content:
         "Buena elección. Normalmente lo más limpio se siente más serio y combina más fácil. Te conviene revisar opciones en tonos neutros o diseños menos cargados.",
       actions: [
-        { label: "Ver catálogo", value: "Ver catálogo" },
-        { label: "Dato curioso", value: "Dato curioso" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
     };
@@ -186,11 +191,12 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["busco algo llamativo", "llamativo"])) {
     return {
+      intent: "recommendation",
       content:
         "Si quieres algo con más presencia, conviene fijarte en contraste, silueta y fuerza visual frontal. Lo importante es que siga sintiéndose bien puesta, no solo que destaque.",
       actions: [
-        { label: "Ver catálogo", value: "Ver catálogo" },
-        { label: "Ayúdame a elegir", value: "Ayúdame a elegir" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
       ],
       metadata: {},
     };
@@ -198,11 +204,12 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["busco algo facil de combinar", "facil de combinar", "combinar"])) {
     return {
+      intent: "recommendation",
       content:
         "Para combinar fácil, casi siempre funcionan mejor los tonos neutros, acabados limpios y diseños menos saturados. Esas suelen dar más juego en el día a día.",
       actions: [
-        { label: "Ver catálogo", value: "Ver catálogo" },
-        { label: "Dato curioso", value: "Dato curioso" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
     };
@@ -210,11 +217,12 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["envios", "envio", "entregas", "disponibilidad"])) {
     return {
+      intent: "shipping",
       content:
         "Te puedo ayudar con disponibilidad y envíos. Si quieres información exacta, revisa esa sección del sitio o escríbenos directo para confirmar tiempos y cobertura.",
       actions: [
-        { label: "Ver catálogo", value: "Ver catálogo" },
-        { label: "Mayoreo", value: "Mayoreo" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Mayoreo", value: "Mayoreo", type: "message" },
       ],
       metadata: {},
     };
@@ -222,11 +230,12 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["mayoreo", "volumen", "mayorista"])) {
     return {
+      intent: "wholesale",
       content:
         "Si te interesa mayoreo, lo ideal es que nos compartas qué volumen buscas y por qué canal quieres vender o mover producto. Así te orientamos mejor.",
       actions: [
-        { label: "Contacto", value: "Contacto" },
-        { label: "Ver catálogo", value: "Ver catálogo" },
+        { label: "Contacto", value: "Contacto", type: "message" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
       ],
       metadata: {},
     };
@@ -234,12 +243,13 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["contacto", "whatsapp", "hablar", "mensaje"])) {
     return {
+      intent: "contact",
       content:
         "Si quieres hablar con el equipo, la vía más rápida suele ser contacto directo. También te puedo orientar primero por aquí si solo traes una duda puntual.",
       actions: [
-        { label: "Envíos", value: "Envíos" },
-        { label: "Mayoreo", value: "Mayoreo" },
-        { label: "Dato curioso", value: "Dato curioso" },
+        { label: "Envíos", value: "Envíos", type: "message" },
+        { label: "Mayoreo", value: "Mayoreo", type: "message" },
+        { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
     };
@@ -247,17 +257,19 @@ export function getChatbotResponse(
 
   if (includesAny(normalized, ["chiste", "risa", "algo random"])) {
     return {
+      intent: "joke",
       content:
         "Ahí te va uno leve: una buena gorra no hace magia... pero casi siempre arregla más de un outfit.\n\nY ya en serio, también te puedo contar un dato curioso.",
       actions: [
-        { label: "Dato curioso", value: "Dato curioso" },
-        { label: "Ver catálogo", value: "Ver catálogo" },
+        { label: "Dato curioso", value: "Dato curioso", type: "message" },
+        { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
       ],
       metadata: {},
     };
   }
 
   return {
+    intent: "fallback",
     content: `${getContextualHint(pathname)}\n\nSi me dices qué buscas exactamente, te respondo más directo.`,
     actions: DEFAULT_ACTIONS,
     metadata: {},
@@ -271,6 +283,7 @@ export function getUpdatedMemory(
 ): ChatbotMemory {
   return {
     ...memory,
+    lastIntent: response.intent,
     lastUserMessage: input,
     ...(typeof response.metadata?.lastFactIndex === "number"
       ? { lastFactIndex: response.metadata.lastFactIndex }
