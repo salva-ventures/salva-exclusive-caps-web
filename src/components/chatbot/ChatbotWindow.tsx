@@ -11,6 +11,8 @@ interface ChatbotWindowProps {
   onClose: () => void;
 }
 
+const CHAT_STORAGE_KEY = "salva_chatbot_messages_v1";
+
 function createMessage(
   role: ChatMessage["role"],
   content: string,
@@ -25,20 +27,72 @@ function createMessage(
   };
 }
 
+function createInitialAssistantMessage(): ChatMessage {
+  const response = getChatbotResponse("hola");
+  return createMessage("assistant", response.content, response.actions);
+}
+
+function isValidMessageArray(value: unknown): value is ChatMessage[] {
+  if (!Array.isArray(value)) return false;
+
+  return value.every((item) => {
+    if (!item || typeof item !== "object") return false;
+
+    const message = item as ChatMessage;
+
+    return (
+      typeof message.id === "string" &&
+      (message.role === "user" || message.role === "assistant") &&
+      typeof message.content === "string" &&
+      typeof message.timestamp === "string"
+    );
+  });
+}
+
 export default function ChatbotWindow({
   isOpen,
   onClose,
 }: ChatbotWindowProps) {
-  const initialAssistantMessage = useMemo(() => {
-    const response = getChatbotResponse("hola");
-    return createMessage("assistant", response.content, response.actions);
-  }, []);
+  const initialAssistantMessage = useMemo(
+    () => createInitialAssistantMessage(),
+    []
+  );
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     initialAssistantMessage,
   ]);
+  const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedValue = window.localStorage.getItem(CHAT_STORAGE_KEY);
+
+      if (!storedValue) {
+        setHasLoadedFromStorage(true);
+        return;
+      }
+
+      const parsed = JSON.parse(storedValue) as unknown;
+
+      if (isValidMessageArray(parsed) && parsed.length > 0) {
+        setMessages(parsed);
+      }
+    } catch {
+    } finally {
+      setHasLoadedFromStorage(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedFromStorage) return;
+
+    try {
+      window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+    }
+  }, [messages, hasLoadedFromStorage]);
 
   useEffect(() => {
     if (!messagesContainerRef.current) return;
@@ -47,7 +101,7 @@ export default function ChatbotWindow({
       top: messagesContainerRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [messages]);
+  }, [messages, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -70,6 +124,17 @@ export default function ChatbotWindow({
     );
 
     setMessages((prev) => [...prev, userMessage, assistantMessage]);
+  }
+
+  function handleClearChat() {
+    const freshMessage = createInitialAssistantMessage();
+
+    setMessages([freshMessage]);
+
+    try {
+      window.localStorage.removeItem(CHAT_STORAGE_KEY);
+    } catch {
+    }
   }
 
   if (!isOpen) return null;
@@ -96,14 +161,25 @@ export default function ChatbotWindow({
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Cerrar chatbot"
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-lg text-white transition hover:bg-white/[0.1]"
-            >
-              ×
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={handleClearChat}
+                aria-label="Limpiar conversación"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] px-3 text-xs font-medium text-white transition hover:bg-white/[0.1]"
+              >
+                Limpiar
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Cerrar chatbot"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-lg text-white transition hover:bg-white/[0.1]"
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
 
