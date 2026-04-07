@@ -16,16 +16,31 @@ export default function ChatMessage({
 
   return (
     <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`max-w-[85%] ${isUser ? "items-end" : "items-start"} flex flex-col gap-2`}>
+      <div
+        className={`flex max-w-[88%] flex-col gap-2 ${
+          isUser ? "items-end" : "items-start"
+        }`}
+      >
+        {!isUser ? (
+          <div className="mb-1 flex items-center gap-2 px-1">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white text-[10px] font-bold tracking-[0.18em] text-black">
+              SC
+            </span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
+              Asistente Salva
+            </span>
+          </div>
+        ) : null}
+
         <div
           className={[
-            "rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-lg",
+            "rounded-[1.35rem] px-4 py-3 text-sm leading-relaxed shadow-[0_16px_40px_rgba(0,0,0,0.22)]",
             isUser
-              ? "bg-white text-black"
-              : "border border-white/10 bg-white/8 text-white backdrop-blur-sm",
+              ? "rounded-br-md bg-white text-black"
+              : "rounded-bl-md border border-white/10 bg-white/[0.06] text-white backdrop-blur-md",
           ].join(" ")}
         >
-          <p className="whitespace-pre-wrap">{message.content}</p>
+          <p className="whitespace-pre-wrap break-words">{message.content}</p>
         </div>
 
         {!isUser && message.actions?.length ? (
