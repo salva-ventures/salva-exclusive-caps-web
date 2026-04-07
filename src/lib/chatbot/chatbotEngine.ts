@@ -25,6 +25,17 @@ const GORRIN_FACTS = [
   "Dato curioso de Gorrín: elegir bien una gorra sí se nota. No hace falta exagerar para que un look se sienta más pensado.",
 ];
 
+const GORRIN_JOKES = [
+  "Chiste de Gorrín: una buena gorra no hace magia... pero casi siempre arregla más de un outfit.",
+  "Chiste de Gorrín: hay días en que no sabes qué ponerte, pero la gorra entra al quite como si ya trajera el plan armado.",
+  "Chiste de Gorrín: no estoy diciendo que una gorra te suba el porte... pero tampoco estoy diciendo que no.",
+  "Chiste de Gorrín: uno compra una gorra por gusto y de repente ya quiere una para cada mood de la semana.",
+  "Chiste de Gorrín: a veces no hace falta peinarse mejor, hace falta elegir mejor la gorra.",
+  "Chiste de Gorrín: hay outfits que caminan solos, pero con buena gorra hasta saludan.",
+  "Chiste de Gorrín: una gorra bien puesta no resuelve la vida, pero sí evita varios 'no sé qué me falta'.",
+  "Chiste de Gorrín: combinar bien una gorra es como ponerle punto final a un outfit que ya iba bien encaminado.",
+];
+
 function normalizeText(value: string) {
   return value
     .toLowerCase()
@@ -69,7 +80,9 @@ function getWelcomeMessage(pathname: string) {
 }
 
 function getRandomFact(memory?: ChatbotMemory) {
-  const usedIndex = typeof memory?.lastFactIndex === "number" ? memory.lastFactIndex : -1;
+  const usedIndex =
+    typeof memory?.lastFactIndex === "number" ? memory.lastFactIndex : -1;
+
   const availableFacts = GORRIN_FACTS.map((fact, index) => ({ fact, index })).filter(
     ({ index }) => index !== usedIndex
   );
@@ -77,6 +90,21 @@ function getRandomFact(memory?: ChatbotMemory) {
   const selected =
     availableFacts[Math.floor(Math.random() * availableFacts.length)] ??
     { fact: GORRIN_FACTS[0], index: 0 };
+
+  return selected;
+}
+
+function getRandomJoke(memory?: ChatbotMemory) {
+  const usedIndex =
+    typeof memory?.lastJokeIndex === "number" ? memory.lastJokeIndex : -1;
+
+  const availableJokes = GORRIN_JOKES.map((joke, index) => ({ joke, index })).filter(
+    ({ index }) => index !== usedIndex
+  );
+
+  const selected =
+    availableJokes[Math.floor(Math.random() * availableJokes.length)] ??
+    { joke: GORRIN_JOKES[0], index: 0 };
 
   return selected;
 }
@@ -266,16 +294,19 @@ export function getChatbotResponse(
   }
 
   if (includesAny(normalized, ["chiste", "risa", "algo random"])) {
+    const selected = getRandomJoke(memory);
+
     return {
       intent: "joke",
-      content:
-        "Ahí te va uno leve: una buena gorra no hace magia... pero casi siempre arregla más de un outfit.\n\nY ya en serio, también te puedo contar un dato curioso.",
+      content: `${selected.joke}\n\nSi quieres, te cuento otro o te doy un dato curioso.`,
       actions: [
         { label: "Otro chiste", value: "Chiste", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
       ],
-      metadata: {},
+      metadata: {
+        lastJokeIndex: selected.index,
+      },
     };
   }
 
@@ -298,6 +329,9 @@ export function getUpdatedMemory(
     lastUserMessage: input,
     ...(typeof response.metadata?.lastFactIndex === "number"
       ? { lastFactIndex: response.metadata.lastFactIndex }
+      : {}),
+    ...(typeof response.metadata?.lastJokeIndex === "number"
+      ? { lastJokeIndex: response.metadata.lastJokeIndex }
       : {}),
   };
 }
