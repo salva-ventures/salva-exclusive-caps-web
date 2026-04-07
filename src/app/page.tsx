@@ -2,11 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {
-  CheckCircle2,
-  ArrowUpRight,
-  Sparkles,
-} from "lucide-react";
+import { CheckCircle2, ArrowUpRight, Sparkles } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import ProductCard from "@/components/ProductCard";
@@ -136,7 +132,7 @@ export default function HomePage() {
           variants={staggerContainer}
           initial="hidden"
           animate="show"
-          className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-10 px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:grid-cols-[1.04fr_0.96fr] lg:gap-8 lg:px-8 lg:pb-24 lg:pt-24"
+          className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-8 px-4 pb-12 pt-20 sm:px-6 sm:pb-16 sm:pt-24 lg:grid-cols-[1.04fr_0.96fr] lg:gap-8 lg:px-8 lg:pb-24 lg:pt-24"
         >
           <motion.div style={{ y: heroTextY }} className="relative z-10 max-w-2xl">
             <div className="pointer-events-none absolute right-[-1.9rem] top-[5.25rem] w-[12.5rem] opacity-[0.26] sm:right-[-1.25rem] sm:top-[5.75rem] sm:w-[15rem] md:w-[16rem] lg:hidden">
@@ -169,7 +165,7 @@ export default function HomePage() {
 
             <motion.div
               variants={fadeUp}
-              className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.15)] backdrop-blur-sm"
+              className="mb-5 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.15)] backdrop-blur-sm"
             >
               <div className="relative h-6 w-6">
                 <Image
@@ -187,7 +183,7 @@ export default function HomePage() {
 
             <motion.div
               variants={fadeUp}
-              className="relative mb-5 inline-flex items-center gap-2 overflow-hidden rounded-full border border-red-600/25 bg-red-600/10 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-red-500"
+              className="relative mb-4 inline-flex items-center gap-2 overflow-hidden rounded-full border border-red-600/25 bg-red-600/10 px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-red-500"
             >
               <div className="absolute inset-y-0 left-[-140%] w-[70%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-[shine_4.6s_ease-in-out_infinite]" />
               <Sparkles className="h-3.5 w-3.5" />
@@ -196,7 +192,7 @@ export default function HomePage() {
 
             <motion.h1
               variants={fadeUp}
-              className="text-5xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
+              className="text-4xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
             >
               Gorras exclusivas
               <span className="block bg-[linear-gradient(180deg,#ef4444_0%,#b91c1c_100%)] bg-clip-text text-transparent">
@@ -206,21 +202,21 @@ export default function HomePage() {
 
             <motion.p
               variants={fadeUp}
-              className="mt-6 max-w-xl text-lg font-medium leading-relaxed text-white/88 sm:text-xl"
+              className="mt-5 max-w-xl text-base font-medium leading-relaxed text-white/88 sm:text-xl"
             >
               {BRAND.tagline}
             </motion.p>
 
             <motion.p
               variants={fadeUp}
-              className="mt-4 max-w-xl text-sm leading-7 text-white/58 sm:text-base"
+              className="mt-3 max-w-xl text-sm leading-7 text-white/58 sm:text-base"
             >
               {BRAND.subtitle}
             </motion.p>
 
             <motion.div
               variants={fadeUp}
-              className="mt-8 flex flex-col gap-4 sm:flex-row"
+              className="mt-7 flex flex-col gap-4 sm:flex-row"
             >
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
                 <Link
@@ -268,7 +264,7 @@ export default function HomePage() {
 
             <motion.div
               variants={staggerContainer}
-              className="mt-10 grid gap-4 border-t border-white/10 pt-6 sm:grid-cols-3"
+              className="mt-8 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-3"
             >
               {[
                 { label: "Entrega", value: "Inmediata" },
@@ -350,7 +346,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative border-b border-white/10 bg-[#070707] py-24 sm:py-28">
+      <section className="relative border-b border-white/10 bg-[#070707] py-16 sm:py-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,35,35,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_30%)]" />
         <div className="absolute inset-0 opacity-[0.035] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:20px_20px]" />
 
@@ -359,22 +355,22 @@ export default function HomePage() {
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
           variants={staggerContainer}
-          className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8"
+          className="relative mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8"
         >
           <motion.div variants={fadeUp} className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.45em] text-red-500">
               Entregas
             </p>
-            <h2 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
               Disponibilidad y envíos
             </h2>
-            <p className="mt-6 text-base leading-8 text-white/72 sm:text-lg">
+            <p className="mt-5 text-base leading-8 text-white/72 sm:text-lg">
               Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. Envíos
               nacionales e internacionales con cotización por separado. Toda
               disponibilidad se confirma directamente por WhatsApp.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap gap-3">
               {[
                 "Entrega inmediata",
                 "Confirmación por WhatsApp",
@@ -389,7 +385,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-10">
+            <div className="mt-8">
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
                 <Link
                   href="/disponibilidad"
@@ -401,10 +397,7 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          <motion.div
-            variants={staggerContainer}
-            className="grid gap-4"
-          >
+          <motion.div variants={staggerContainer} className="grid gap-4">
             {[
               {
                 title: "Entrega inmediata",
@@ -444,14 +437,14 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:22px_22px]" />
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.15 }}
           variants={staggerContainer}
-          className="relative mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between"
+          className="relative mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between"
         >
           <motion.div variants={fadeUp} className="max-w-2xl">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
@@ -486,7 +479,7 @@ export default function HomePage() {
           whileInView="show"
           viewport={{ once: true, amount: 0.05 }}
           variants={staggerContainer}
-          className="relative grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {featured.slice(0, 8).map((product) => (
             <motion.div
@@ -505,7 +498,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative py-24">
+      <section className="relative py-16 lg:py-24">
         <div className="absolute inset-0 opacity-[0.025] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:24px_24px]" />
         <motion.div
           initial="hidden"
@@ -514,7 +507,7 @@ export default function HomePage() {
           variants={staggerContainer}
           className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
-          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
+          <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
             <motion.div variants={fadeUp} className="order-2 md:order-1">
               <motion.div
                 whileHover={{ y: -5 }}
@@ -559,7 +552,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative border-y border-white/10 bg-[#0a0a0a] py-24">
+      <section className="relative border-y border-white/10 bg-[#0a0a0a] py-16 lg:py-24">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -567,7 +560,7 @@ export default function HomePage() {
           variants={staggerContainer}
           className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8"
         >
-          <motion.div variants={fadeUp} className="mb-12 text-center">
+          <motion.div variants={fadeUp} className="mb-10 text-center">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
               Preguntas
             </p>
@@ -623,7 +616,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative border-y border-white/10 bg-[#090909] py-24">
+      <section className="relative border-y border-white/10 bg-[#090909] py-16 lg:py-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(220,38,38,0.08),transparent_22%)]" />
         <motion.div
           initial="hidden"
@@ -695,7 +688,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative py-24">
+      <section className="relative py-16 lg:py-24">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -706,7 +699,7 @@ export default function HomePage() {
           <motion.div
             whileHover={{ y: -5 }}
             transition={{ type: "spring", stiffness: 220, damping: 24 }}
-            className="relative overflow-hidden rounded-[2rem] border border-red-600/20 bg-gradient-to-br from-[#111] via-[#0b0b0b] to-[#161616] px-6 py-14 text-center shadow-[0_24px_70px_rgba(0,0,0,0.36)] md:px-10 md:py-16"
+            className="relative overflow-hidden rounded-[2rem] border border-red-600/20 bg-gradient-to-br from-[#111] via-[#0b0b0b] to-[#161616] px-6 py-12 text-center shadow-[0_24px_70px_rgba(0,0,0,0.36)] md:px-10 md:py-16"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.16),transparent_28%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.03),transparent,rgba(255,255,255,0.012))]" />
@@ -716,7 +709,7 @@ export default function HomePage() {
               <p className="mb-4 text-xs uppercase tracking-[0.4em] text-red-500">
                 Cierre comercial
               </p>
-              <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+              <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
                 ¿Listo para elegir tu próxima gorra?
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/60">
@@ -724,7 +717,7 @@ export default function HomePage() {
                 confirmar disponibilidad, entrega o envío.
               </p>
 
-              <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+              <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
                 <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
                   <Link
                     href="/catalogo"
