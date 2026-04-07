@@ -2,6 +2,7 @@
 
 import type { ChatMessage as ChatMessageType } from "@/types/chatbot";
 import QuickActions from "./QuickActions";
+import SalvaGorrinAvatar from "./SalvaGorrinAvatar";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -23,9 +24,7 @@ export default function ChatMessage({
       >
         {!isUser ? (
           <div className="mb-1 flex items-center gap-2 px-1">
-            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white text-[10px] font-bold tracking-[0.18em] text-black">
-              SG
-            </span>
+            <SalvaGorrinAvatar size="sm" />
             <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
               SALVA GORRÍN
             </span>
