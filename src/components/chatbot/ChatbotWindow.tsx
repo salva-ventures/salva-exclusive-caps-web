@@ -9,6 +9,7 @@ import {
 } from "@/lib/chatbot/chatbotEngine";
 import ChatInput from "./ChatInput";
 import ChatMessageItem from "./ChatMessage";
+import SalvaGorrinAvatar from "./SalvaGorrinAvatar";
 
 interface ChatbotWindowProps {
   isOpen: boolean;
@@ -58,9 +59,7 @@ function TypingBubble() {
     <div className="flex w-full justify-start">
       <div className="flex max-w-[88%] flex-col items-start gap-2">
         <div className="mb-1 flex items-center gap-2 px-1">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white text-[10px] font-bold tracking-[0.18em] text-black">
-            SG
-          </span>
+          <SalvaGorrinAvatar size="sm" />
           <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
             SALVA GORRÍN
           </span>
@@ -260,9 +259,12 @@ export default function ChatbotWindow({
 
         <div className="relative border-b border-white/10 px-3 py-3 sm:px-4 sm:py-4">
           <div className="flex items-start gap-2 sm:gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white text-[11px] font-bold tracking-[0.2em] text-black shadow-[0_10px_30px_rgba(255,255,255,0.12)] sm:h-11 sm:w-11 sm:text-xs sm:tracking-[0.24em]">
-              SG
-            </span>
+            <SalvaGorrinAvatar
+              size="lg"
+              priority
+              className="border-white/15 bg-white/[0.08] shadow-[0_12px_30px_rgba(0,0,0,0.38)]"
+              imageClassName="scale-[1.06]"
+            />
 
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white sm:text-[15px]">
