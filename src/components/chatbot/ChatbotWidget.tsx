@@ -11,10 +11,8 @@ const CHATBOT_TEASER_DISMISSED_KEY = "salva_chatbot_teaser_dismissed_v1";
 
 export default function ChatbotWidget() {
   const pathname = usePathname();
-
-  if (pathname === "/juego" || pathname.startsWith("/juego/")) {
-    return null;
-  }
+  const isGameRoute =
+    pathname === "/juego" || pathname.startsWith("/juego/");
 
   const teaserText = useMemo(() => getChatbotTeaser(pathname), [pathname]);
 
@@ -54,6 +52,7 @@ export default function ChatbotWidget() {
   useEffect(() => {
     if (!hasLoadedFromStorage) return;
     if (isOpen) return;
+    if (isGameRoute) return;
 
     try {
       const teaserDismissed = window.localStorage.getItem(
@@ -77,7 +76,19 @@ export default function ChatbotWidget() {
         teaserTimeoutRef.current = null;
       }
     };
-  }, [hasLoadedFromStorage, isOpen, pathname]);
+  }, [hasLoadedFromStorage, isOpen, isGameRoute, pathname]);
+
+  useEffect(() => {
+    if (isGameRoute) {
+      setShowTeaser(false);
+      setIsOpen(false);
+
+      if (teaserTimeoutRef.current) {
+        clearTimeout(teaserTimeoutRef.current);
+        teaserTimeoutRef.current = null;
+      }
+    }
+  }, [isGameRoute]);
 
   function openChat() {
     if (teaserTimeoutRef.current) {
@@ -130,6 +141,10 @@ export default function ChatbotWidget() {
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
     } catch {
     }
+  }
+
+  if (isGameRoute) {
+    return null;
   }
 
   return (
