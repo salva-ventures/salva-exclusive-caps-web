@@ -42,6 +42,7 @@ function getRouteContext(pathname?: string) {
         { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
         { label: "Recomiéndame una", type: "message" as const, value: "¿Qué gorra me recomiendas?" },
         { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
+        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
       ],
     };
   }
@@ -56,6 +57,7 @@ function getRouteContext(pathname?: string) {
         { label: "Quiero mayoreo", type: "message" as const, value: "Quiero información de mayoreo" },
         { label: "Cotizar por WhatsApp", type: "link" as const, href: WHATSAPP_URL },
         { label: "Contacto", type: "link" as const, href: "/contacto" },
+        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
       ],
     };
   }
@@ -69,6 +71,7 @@ function getRouteContext(pathname?: string) {
       suggestedActions: [
         { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
         { label: "Redes sociales", type: "message" as const, value: "¿Qué redes sociales tienen?" },
+        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
       ],
     };
   }
@@ -83,13 +86,14 @@ function getRouteContext(pathname?: string) {
         { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
         { label: "Métodos de pago", type: "message" as const, value: "¿Qué métodos de pago tienen?" },
         { label: "¿Hacen envíos?", type: "message" as const, value: "¿Hacen envíos?" },
+        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
       ],
     };
   }
 
   return {
     greeting:
-      "Soy Asistente Salva. Te ayudo con compras, catálogo, mayoreo, contacto y también tengo chistes y datos curiosos sobre gorras.",
+      "Soy Salva Gorrín. Te ayudo con compras, catálogo, mayoreo, contacto, chistes y datos curiosos de gorras.",
     teaser:
       "¿Buscas catálogo, mayoreo o una recomendación rápida?",
     suggestedActions: [
@@ -97,6 +101,7 @@ function getRouteContext(pathname?: string) {
       { label: "Mayoreo", type: "link" as const, href: "/mayoreo" },
       { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
       { label: "Dime un chiste", type: "message" as const, value: "Cuéntame un chiste de gorras" },
+      { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
     ],
   };
 }
