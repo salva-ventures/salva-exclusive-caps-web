@@ -57,7 +57,7 @@ function isValidMemory(value: unknown): value is ChatbotMemory {
 
 function TypingBubble() {
   return (
-    <div className="flex w-full justify-start">
+    <div className="flex w-full justify-start animate-[messageIn_280ms_cubic-bezier(0.22,1,0.36,1)]">
       <div className="flex max-w-[88%] flex-col items-start gap-2">
         <div className="mb-1 flex items-center gap-2 px-1">
           <SalvaGorrinAvatar size="sm" />
@@ -67,10 +67,13 @@ function TypingBubble() {
         </div>
 
         <div className="rounded-[1.35rem] rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-white shadow-[0_16px_40px_rgba(0,0,0,0.22)] backdrop-blur-md">
-          <div className="flex items-center gap-1.5">
-            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.2s]" />
-            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.1s]" />
-            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70" />
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-white/65">Pensando algo fino</span>
+            <div className="flex items-center gap-1.5">
+              <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.2s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.1s]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-white/70" />
+            </div>
           </div>
         </div>
       </div>
@@ -87,6 +90,7 @@ export default function ChatbotWindow({
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const memoryRef = useRef<ChatbotMemory>({});
+  const [focusKey, setFocusKey] = useState(0);
 
   const initialAssistantMessage = useMemo(() => {
     const response = getChatbotResponse("hola", { pathname, memory: {} });
@@ -158,6 +162,7 @@ export default function ChatbotWindow({
       }
 
       setIsRendered(true);
+      setFocusKey((prev) => prev + 1);
 
       const frame = requestAnimationFrame(() => {
         setIsVisible(true);
@@ -175,7 +180,7 @@ export default function ChatbotWindow({
   }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isRendered) return;
 
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
@@ -183,7 +188,7 @@ export default function ChatbotWindow({
 
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isRendered, onClose]);
 
   useEffect(() => {
     return () => {
@@ -224,7 +229,7 @@ export default function ChatbotWindow({
 
   function resolveTypingDelay(input: string) {
     const base = 500;
-    const extra = Math.min(input.trim().length * 10, 600);
+    const extra = Math.min(input.trim().length * 10, 700);
     return base + extra;
   }
 
@@ -274,6 +279,7 @@ export default function ChatbotWindow({
     memoryRef.current = getUpdatedMemory("hola", response, {});
     setIsTyping(false);
     setMessages([freshMessage]);
+    setFocusKey((prev) => prev + 1);
 
     try {
       window.localStorage.removeItem(CHAT_STORAGE_KEY);
@@ -313,7 +319,7 @@ export default function ChatbotWindow({
                 Salva Gorrín
               </p>
               <p className="mt-1 text-[11px] leading-relaxed text-white/60 sm:text-xs">
-                Catálogo, compras, mayoreo y datos curiosos de gorras
+                Catálogo, compras, mayoreo, contacto y curiosidades de gorras.
               </p>
             </div>
 
@@ -355,7 +361,11 @@ export default function ChatbotWindow({
           {isTyping ? <TypingBubble /> : null}
         </div>
 
-        <ChatInput onSend={handleSend} disabled={isTyping} />
+        <ChatInput
+          onSend={handleSend}
+          disabled={isTyping}
+          autoFocusKey={focusKey}
+        />
       </div>
     </div>
   );
