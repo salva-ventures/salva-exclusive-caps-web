@@ -18,6 +18,7 @@ interface ChatbotWindowProps {
 
 const CHAT_STORAGE_KEY = "salva_chatbot_messages_v4";
 const CHAT_MEMORY_KEY = "salva_chatbot_memory_v1";
+const CLOSE_ANIMATION_MS = 260;
 
 function createMessage(
   role: ChatMessage["role"],
@@ -84,6 +85,7 @@ export default function ChatbotWindow({
   const pathname = usePathname();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const memoryRef = useRef<ChatbotMemory>({});
 
   const initialAssistantMessage = useMemo(() => {
@@ -97,6 +99,8 @@ export default function ChatbotWindow({
   ]);
   const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [isRendered, setIsRendered] = useState(isOpen);
+  const [isVisible, setIsVisible] = useState(isOpen);
 
   useEffect(() => {
     try {
@@ -147,6 +151,30 @@ export default function ChatbotWindow({
   }, [messages, isOpen, isTyping]);
 
   useEffect(() => {
+    if (isOpen) {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+        closeTimeoutRef.current = null;
+      }
+
+      setIsRendered(true);
+
+      const frame = requestAnimationFrame(() => {
+        setIsVisible(true);
+      });
+
+      return () => cancelAnimationFrame(frame);
+    }
+
+    setIsVisible(false);
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setIsRendered(false);
+      closeTimeoutRef.current = null;
+    }, CLOSE_ANIMATION_MS);
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen) return;
 
     function handleEscape(event: KeyboardEvent) {
@@ -161,6 +189,10 @@ export default function ChatbotWindow({
     return () => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+      }
+
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
       }
     };
   }, []);
@@ -250,12 +282,22 @@ export default function ChatbotWindow({
     }
   }
 
-  if (!isOpen) return null;
+  if (!isRendered) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-20 top-[max(4.5rem,env(safe-area-inset-top))] z-[70] sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[min(400px,calc(100vw-1.5rem))]">
+    <div
+      className={[
+        "fixed inset-x-3 bottom-20 top-[max(4.5rem,env(safe-area-inset-top))] z-[70]",
+        "transition duration-[260ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[min(400px,calc(100vw-1.5rem))]",
+        isVisible
+          ? "translate-y-0 scale-100 opacity-100"
+          : "pointer-events-none translate-y-4 scale-[0.975] opacity-0 sm:translate-y-5",
+      ].join(" ")}
+    >
       <div className="relative flex h-full max-h-[calc(100dvh-6rem)] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[rgba(8,8,8,0.92)] shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:h-auto sm:max-h-[min(720px,calc(100dvh-8rem))]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_35%)]" />
+        <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] blur-2xl" />
 
         <div className="relative border-b border-white/10 px-3 py-3 sm:px-4 sm:py-4">
           <div className="flex items-start gap-2 sm:gap-3">
@@ -271,7 +313,8 @@ export default function ChatbotWindow({
                 Salva Gorrín
               </p>
               <p className="mt-1 text-[11px] leading-relaxed text-white/60 sm:text-xs">
-                Catálogo, compras, mayoreo, contacto, chistes y datos curiosos de gorras.
+                Catálogo, compras, mayoreo, contacto, chistes y datos curiosos
+                de gorras.
               </p>
             </div>
 
