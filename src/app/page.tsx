@@ -15,7 +15,6 @@ import {
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import ProductCard from "@/components/ProductCard";
-import HeroImageRotator from "@/components/HeroImageRotator";
 import { getFeaturedProducts } from "@/data/products";
 import { BRAND, CONTACT, DELIVERY_INFO } from "@/config/brand";
 
@@ -306,19 +305,25 @@ export default function HomePage() {
               <div className="absolute inset-x-12 top-8 h-24 rounded-full bg-white/10 blur-3xl" />
               <div className="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-white/[0.03]" />
 
-              <div className="relative aspect-[4/5] w-full overflow-hidden">
-                <div className="absolute inset-0 scale-[1.02] transition-transform duration-500 group-hover:scale-[1.035]">
-                  <HeroImageRotator />
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-black">
+                <div className="absolute inset-0 scale-[1.01] transition-transform duration-500 group-hover:scale-[1.03]">
+                  <Image
+                    src="/og-image.png"
+                    alt="Salva Exclusive Caps"
+                    fill
+                    priority
+                    className="object-contain bg-black"
+                  />
                 </div>
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-4 p-5 sm:p-6">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.28em] text-white/45">
-                    Selección destacada
+                    Identidad de marca
                   </p>
                   <p className="mt-2 text-lg font-semibold text-white sm:text-xl">
-                    Diseño, presencia y carácter
+                    Salva Exclusive Caps
                   </p>
                 </div>
 
@@ -425,7 +430,11 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeUp} whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
+          <motion.div
+            variants={fadeUp}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.985 }}
+          >
             <Link
               href="/catalogo"
               className="inline-flex items-center gap-2 self-start rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-white/18 hover:bg-white/[0.08] hover:text-red-500"
@@ -716,7 +725,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-            {/* Mayoreo CTA */}
+      {/* Mayoreo CTA */}
       <section className="relative border-y border-white/10 bg-[#090909] py-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(220,38,38,0.08),transparent_22%)]" />
         <motion.div
