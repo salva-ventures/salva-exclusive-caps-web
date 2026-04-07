@@ -1,5 +1,8 @@
-import { capFacts } from "@/data/capFacts";
 import { capJokes } from "@/data/capJokes";
+import {
+  SALVA_GORRIN_CURIOSIDADES,
+  type SalvaGorrinCuriosidad,
+} from "@/data/salvaGorrinCuriosidades";
 import { chatbotKnowledge, WHATSAPP_URL } from "@/data/chatbotKnowledge";
 import type {
   ChatAction,
@@ -29,80 +32,107 @@ function sanitizeActions(actions?: ChatAction[]): ChatAction[] | undefined {
   });
 }
 
+function formatCuriosidad(curiosidad: SalvaGorrinCuriosidad): string {
+  return `Dato curioso de Gorrín — ${curiosidad.titulo}\n${curiosidad.texto}`;
+}
+
+function getQuickActionsByRoute(pathname?: string): ChatAction[] {
+  const route = pathname ?? "/";
+
+  if (route.startsWith("/catalogo")) {
+    return [
+      { label: "Ayúdame a elegir", type: "message", value: "Ayúdame a elegir una gorra" },
+      { label: "Cómo comprar", type: "message", value: "¿Cómo compro?" },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
+      { label: "WhatsApp", type: "link", href: WHATSAPP_URL },
+    ];
+  }
+
+  if (route.startsWith("/mayoreo")) {
+    return [
+      { label: "Mayoreo", type: "message", value: "Quiero información de mayoreo" },
+      { label: "Cotizar", type: "link", href: WHATSAPP_URL },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
+      { label: "Contacto", type: "link", href: "/contacto" },
+    ];
+  }
+
+  if (route.startsWith("/contacto")) {
+    return [
+      { label: "WhatsApp", type: "link", href: WHATSAPP_URL },
+      { label: "Redes", type: "message", value: "¿Qué redes sociales tienen?" },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
+      { label: "Ver catálogo", type: "link", href: "/catalogo" },
+    ];
+  }
+
+  if (route.startsWith("/faq")) {
+    return [
+      { label: "Cómo comprar", type: "message", value: "¿Cómo compro?" },
+      { label: "Envíos", type: "message", value: "¿Hacen envíos?" },
+      { label: "Pagos", type: "message", value: "¿Qué métodos de pago tienen?" },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
+    ];
+  }
+
+  return [
+    { label: "Ver catálogo", type: "link", href: "/catalogo" },
+    { label: "Ayúdame a elegir", type: "message", value: "Ayúdame a elegir una gorra" },
+    { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
+    { label: "Mayoreo", type: "link", href: "/mayoreo" },
+    { label: "WhatsApp", type: "link", href: WHATSAPP_URL },
+  ];
+}
+
 function getRouteContext(pathname?: string) {
   const route = pathname ?? "/";
 
   if (route.startsWith("/catalogo")) {
     return {
       greeting:
-        "Estás en el catálogo. Si quieres, te ayudo a comprar, elegir una gorra o resolver dudas rápidas.",
+        "Qué gusto tenerte por aquí. Soy Salva Gorrín. Andas en catálogo, así que te puedo ayudar a elegir una buena, explicarte cómo comprar o contarte un dato curioso de gorras.",
       teaser:
-        "¿Ya viste una gorra que te gustó? Te ayudo a comprar o elegir mejor.",
-      suggestedActions: [
-        { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
-        { label: "Recomiéndame una", type: "message" as const, value: "¿Qué gorra me recomiendas?" },
-        { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
-      ],
+        "¿Ya viste alguna que te gustó? Te ayudo a elegir, comprar o resolver dudas rápidas.",
+      suggestedActions: getQuickActionsByRoute(route),
     };
   }
 
   if (route.startsWith("/mayoreo")) {
     return {
       greeting:
-        "Estás en mayoreo. Te ayudo con cotización, contacto y dudas sobre atención por volumen.",
+        "Soy Salva Gorrín. Aquí te ayudo con mayoreo, cotización, contacto y también con una que otra curiosidad del mundo de las gorras.",
       teaser:
-        "¿Buscas mayoreo? Te oriento rápido sobre contacto y siguiente paso.",
-      suggestedActions: [
-        { label: "Quiero mayoreo", type: "message" as const, value: "Quiero información de mayoreo" },
-        { label: "Cotizar por WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-        { label: "Contacto", type: "link" as const, href: "/contacto" },
-        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
-      ],
+        "Si buscas mayoreo, te oriento rápido sobre el siguiente paso.",
+      suggestedActions: getQuickActionsByRoute(route),
     };
   }
 
   if (route.startsWith("/contacto")) {
     return {
       greeting:
-        "Estás en contacto. Si quieres atención más directa, te llevo a WhatsApp en un clic.",
+        "Soy Salva Gorrín. Si quieres atención más directa, te llevo a WhatsApp, te muestro redes o te resuelvo dudas rápidas por aquí.",
       teaser:
-        "¿Quieres atención directa? Te llevo rápido a WhatsApp o al medio correcto.",
-      suggestedActions: [
-        { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-        { label: "Redes sociales", type: "message" as const, value: "¿Qué redes sociales tienen?" },
-        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
-      ],
+        "¿Quieres contacto directo? Te llevo rápido a WhatsApp o al medio correcto.",
+      suggestedActions: getQuickActionsByRoute(route),
     };
   }
 
   if (route.startsWith("/faq")) {
     return {
       greeting:
-        "Estás en preguntas frecuentes. También puedes preguntarme directo sobre compra, pagos, envíos o mayoreo.",
+        "Soy Salva Gorrín. Estás en preguntas frecuentes, pero no te quedes solo con eso: también te puedo ayudar directo con compra, pagos, envíos o mayoreo.",
       teaser:
-        "¿Tienes una duda rápida? Te ayudo con compra, pagos o envíos.",
-      suggestedActions: [
-        { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
-        { label: "Métodos de pago", type: "message" as const, value: "¿Qué métodos de pago tienen?" },
-        { label: "¿Hacen envíos?", type: "message" as const, value: "¿Hacen envíos?" },
-        { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
-      ],
+        "¿Tienes una duda rápida? Aquí la resolvemos.",
+      suggestedActions: getQuickActionsByRoute(route),
     };
   }
 
   return {
     greeting:
-      "Soy Salva Gorrín. Te ayudo con compras, catálogo, mayoreo, contacto, chistes y datos curiosos de gorras.",
+      "Qué gusto tenerte por aquí. Soy Salva Gorrín, la voz de Salva Exclusive Caps. Te ayudo con catálogo, compras, mayoreo, contacto y uno que otro dato curioso del mundo de las gorras.",
     teaser:
-      "¿Buscas catálogo, mayoreo o una recomendación rápida?",
-    suggestedActions: [
-      { label: "Ver catálogo", type: "link" as const, href: "/catalogo" },
-      { label: "Mayoreo", type: "link" as const, href: "/mayoreo" },
-      { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-      { label: "Dime un chiste", type: "message" as const, value: "Cuéntame un chiste de gorras" },
-      { label: "Dato curioso", type: "message" as const, value: "Dame un dato curioso de gorras" },
-    ],
+      "¿Buscas catálogo, ayuda para elegir o algo random de gorras?",
+    suggestedActions: getQuickActionsByRoute(route),
   };
 }
 
@@ -131,7 +161,18 @@ function resolveFollowUpIntent(
 
   if (!text) return null;
 
-  if (["otro", "otra", "otro mas", "otra mas", "mas", "más"].includes(text)) {
+  if (
+    [
+      "otro",
+      "otra",
+      "otro mas",
+      "otra mas",
+      "mas",
+      "más",
+      "otro dato",
+      "otra curiosidad",
+    ].includes(text)
+  ) {
     if (previousIntent === "joke") return "joke";
     if (previousIntent === "fact") return "fact";
   }
@@ -144,7 +185,9 @@ function resolveFollowUpIntent(
     return "shipping";
   }
 
-  if (["y pago", "y pagos", "pagos?", "y metodos de pago", "y métodos de pago"].includes(text)) {
+  if (
+    ["y pago", "y pagos", "pagos?", "y metodos de pago", "y métodos de pago"].includes(text)
+  ) {
     return "payment";
   }
 
@@ -219,7 +262,7 @@ function buildFallbackResponse(pathname?: string): ChatbotResponse {
   return {
     intent: "fallback",
     content:
-      "Puedo ayudarte con compras, catálogo, envíos, métodos de pago, mayoreo, contacto, colaboraciones, datos curiosos o chistes de gorras.",
+      "Te puedo ayudar con catálogo, compra, pagos, envíos, mayoreo, contacto, colaboraciones, recomendaciones, chistes y datos curiosos de gorras.",
     actions: sanitizeActions(routeContext.suggestedActions),
   };
 }
@@ -232,7 +275,7 @@ function buildJokeResponse(pathname?: string): ChatbotResponse {
     content: getRandomItem(capJokes),
     actions: sanitizeActions([
       { label: "Otro chiste", type: "message", value: "Otro chiste" },
-      { label: "Dato curioso", type: "message", value: "Dame un dato curioso" },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de Gorrín" },
       route.startsWith("/mayoreo")
         ? { label: "Ver mayoreo", type: "link", href: "/mayoreo" }
         : { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -242,13 +285,14 @@ function buildJokeResponse(pathname?: string): ChatbotResponse {
 
 function buildFactResponse(pathname?: string): ChatbotResponse {
   const route = pathname ?? "/";
+  const curiosidad = getRandomItem(SALVA_GORRIN_CURIOSIDADES);
 
   return {
     intent: "fact",
-    content: getRandomItem(capFacts),
+    content: formatCuriosidad(curiosidad),
     actions: sanitizeActions([
       { label: "Otro dato", type: "message", value: "Otro dato" },
-      { label: "Dime un chiste", type: "message", value: "Cuéntame un chiste" },
+      { label: "Ayúdame a elegir", type: "message", value: "Ayúdame a elegir una gorra" },
       route.startsWith("/contacto")
         ? { label: "WhatsApp", type: "link", href: WHATSAPP_URL }
         : { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -267,7 +311,7 @@ function buildRecommendationResponse(
     return {
       intent: "recommendation",
       content:
-        "Si te refieres a ese modelo, lo mejor es revisar si visualmente es el que más te convence y pasar a WhatsApp para confirmar disponibilidad y siguiente paso de compra.",
+        "Si te refieres a ese modelo, lo más inteligente es revisar si es el que más te convence visualmente y pasar a WhatsApp para confirmar disponibilidad y cerrar bien el siguiente paso.",
       actions: [
         { label: "Comprar por WhatsApp", type: "link", href: WHATSAPP_URL },
         { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -279,7 +323,7 @@ function buildRecommendationResponse(
     return {
       intent: "recommendation",
       content:
-        "Si estás en catálogo, te conviene empezar por una gorra versátil, fácil de combinar y con presencia limpia. Si ya viste una que te gustó, el siguiente paso ideal es WhatsApp.",
+        "Si andas en catálogo, te conviene empezar por una gorra versátil, fácil de combinar y con presencia limpia. Si ya viste una que te gustó, el siguiente paso ideal es WhatsApp.",
       actions: [
         { label: "Comprar por WhatsApp", type: "link", href: WHATSAPP_URL },
         { label: "Cómo comprar", type: "message", value: "¿Cómo compro?" },
@@ -291,7 +335,7 @@ function buildRecommendationResponse(
     return {
       intent: "recommendation",
       content:
-        "Si buscas mayoreo, lo más eficiente es escribir directo para revisar volumen, idea, tiempos y atención según tu caso.",
+        "Si tu tirada es mayoreo, lo más eficiente es escribir directo para revisar volumen, idea, tiempos y atención según tu caso.",
       actions: [
         { label: "Cotizar por WhatsApp", type: "link", href: WHATSAPP_URL },
         { label: "Ver mayoreo", type: "link", href: "/mayoreo" },
