@@ -1,11 +1,13 @@
 import { capFacts } from "@/data/capFacts";
 import { capJokes } from "@/data/capJokes";
 import { chatbotKnowledge, WHATSAPP_URL } from "@/data/chatbotKnowledge";
-import type { ChatAction, ChatbotResponse } from "@/types/chatbot";
+import type { ChatAction, ChatIntent, ChatbotResponse } from "@/types/chatbot";
 import { matchIntent } from "./matchIntent";
+import { normalizeText } from "./normalizeText";
 
 interface ChatbotEngineOptions {
   pathname?: string;
+  previousIntent?: ChatIntent;
 }
 
 function getRandomItem<T>(items: T[]): T {
@@ -126,8 +128,8 @@ function buildJokeResponse(pathname?: string): ChatbotResponse {
     intent: "joke",
     content: getRandomItem(capJokes),
     actions: sanitizeActions([
-      { label: "Otro chiste", type: "message", value: "Otro chiste de gorras" },
-      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de gorras" },
+      { label: "Otro chiste", type: "message", value: "Otro chiste" },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso" },
       route.startsWith("/mayoreo")
         ? { label: "Ver mayoreo", type: "link", href: "/mayoreo" }
         : { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -142,8 +144,8 @@ function buildFactResponse(pathname?: string): ChatbotResponse {
     intent: "fact",
     content: getRandomItem(capFacts),
     actions: sanitizeActions([
-      { label: "Otro dato", type: "message", value: "Dame otro dato curioso de gorras" },
-      { label: "Dime un chiste", type: "message", value: "Cuéntame un chiste de gorras" },
+      { label: "Otro dato", type: "message", value: "Otro dato" },
+      { label: "Dime un chiste", type: "message", value: "Cuéntame un chiste" },
       route.startsWith("/contacto")
         ? { label: "WhatsApp", type: "link", href: WHATSAPP_URL }
         : { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -244,12 +246,75 @@ function buildBusinessResponse(
   };
 }
 
+function resolveFollowUpIntent(
+  input: string,
+  previousIntent?: ChatIntent
+): ChatIntent | null {
+  const text = normalizeText(input);
+
+  if (!text || !previousIntent) return null;
+
+  if (["otro", "otra", "otro mas", "otra mas", "mas", "más"].includes(text)) {
+    if (previousIntent === "joke") return "joke";
+    if (previousIntent === "fact") return "fact";
+  }
+
+  if (
+    ["y mayoreo", "y el mayoreo", "y mayoreo?", "mayoreo?"].includes(text)
+  ) {
+    return "wholesale";
+  }
+
+  if (
+    ["y envios", "y envíos", "y el envio", "y el envío", "envios?", "envíos?"].includes(text)
+  ) {
+    return "shipping";
+  }
+
+  if (
+    ["y pago", "y pagos", "y metodos de pago", "y métodos de pago", "pagos?"].includes(text)
+  ) {
+    return "payment";
+  }
+
+  if (
+    ["y contacto", "y como los contacto", "y whatsapp", "contacto?"].includes(text)
+  ) {
+    return "contact";
+  }
+
+  if (
+    ["y catalogo", "y catálogo", "catalogo?", "catálogo?"].includes(text)
+  ) {
+    return "catalog";
+  }
+
+  if (
+    ["y faq", "y preguntas frecuentes", "faq?"].includes(text)
+  ) {
+    return "faq";
+  }
+
+  if (
+    ["como le hago", "cómo le hago", "que sigue", "qué sigue", "y luego", "siguiente paso"].includes(text)
+  ) {
+    if (previousIntent === "buy") return "buy";
+    if (previousIntent === "wholesale") return "wholesale";
+    if (previousIntent === "contact") return "contact";
+  }
+
+  return null;
+}
+
 export function getChatbotResponse(
   input: string,
   options?: ChatbotEngineOptions
 ): ChatbotResponse {
   const pathname = options?.pathname;
-  const intent = matchIntent(input);
+  const previousIntent = options?.previousIntent;
+
+  const followUpIntent = resolveFollowUpIntent(input, previousIntent);
+  const intent = followUpIntent ?? matchIntent(input);
 
   switch (intent) {
     case "greeting":
