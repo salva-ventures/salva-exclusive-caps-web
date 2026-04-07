@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Lane = 0 | 1 | 2;
@@ -13,12 +14,16 @@ type FallingItem = {
 };
 
 const LANES: Lane[] = [0, 1, 2];
-const PLAYER_Y = 500;
-const ITEM_SIZE = 56;
-const PLAYER_WIDTH = 84;
-const PLAYER_HEIGHT = 84;
+
 const GAME_WIDTH = 360;
 const GAME_HEIGHT = 640;
+
+const PLAYER_WIDTH = 96;
+const PLAYER_HEIGHT = 96;
+const PLAYER_Y = 512;
+
+const ITEM_SIZE = 58;
+
 const LANE_X = [60, 180, 300];
 
 function laneToX(lane: Lane) {
@@ -30,29 +35,79 @@ export default function CapCatchGame() {
   const [items, setItems] = useState<FallingItem[]>([]);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
-  const [isRunning, setIsRunning] = useState(true);
   const [bestScore, setBestScore] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
 
   const itemIdRef = useRef(0);
   const speedRef = useRef(2.8);
-  const spawnRateRef = useRef(1100);
+  const spawnRateRef = useRef(1000);
   const lastSpawnRef = useRef(0);
   const lastFrameRef = useRef(0);
   const difficultyTimerRef = useRef(0);
 
+  const catchAudioRef = useRef<HTMLAudioElement | null>(null);
+  const hitAudioRef = useRef<HTMLAudioElement | null>(null);
+  const startAudioRef = useRef<HTMLAudioElement | null>(null);
+  const gameOverAudioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
+    catchAudioRef.current = new Audio("/game/catch.mp3");
+    hitAudioRef.current = new Audio("/game/hit.mp3");
+    startAudioRef.current = new Audio("/game/start.mp3");
+    gameOverAudioRef.current = new Audio("/game/gameover.mp3");
+
     const savedBest = window.localStorage.getItem("salva-cap-catch-best-score");
     if (savedBest) {
       setBestScore(Number(savedBest));
     }
   }, []);
 
+  function playAudio(audio: HTMLAudioElement | null) {
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }
+
+  function resetState() {
+    setPlayerLane(1);
+    setItems([]);
+    setScore(0);
+    setLives(3);
+    setIsRunning(true);
+    setHasStarted(true);
+
+    itemIdRef.current = 0;
+    speedRef.current = 2.8;
+    spawnRateRef.current = 1000;
+    lastSpawnRef.current = 0;
+    lastFrameRef.current = 0;
+    difficultyTimerRef.current = 0;
+  }
+
+  function startGame() {
+    resetState();
+    playAudio(startAudioRef.current);
+  }
+
+  function gameOver() {
+    setIsRunning(false);
+    playAudio(gameOverAudioRef.current);
+  }
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (!isRunning && event.key.toLowerCase() === "enter") {
-        resetGame();
+      if (!hasStarted && event.key === "Enter") {
+        startGame();
         return;
       }
+
+      if (!isRunning && hasStarted && event.key === "Enter") {
+        startGame();
+        return;
+      }
+
+      if (!isRunning) return;
 
       if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
         setPlayerLane((prev) => (prev > 0 ? ((prev - 1) as Lane) : prev));
@@ -61,11 +116,15 @@ export default function CapCatchGame() {
       if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
         setPlayerLane((prev) => (prev < 2 ? ((prev + 1) as Lane) : prev));
       }
+
+      if (event.key === "1") setPlayerLane(0);
+      if (event.key === "2") setPlayerLane(1);
+      if (event.key === "3") setPlayerLane(2);
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isRunning]);
+  }, [hasStarted, isRunning]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -82,7 +141,7 @@ export default function CapCatchGame() {
       if (difficultyTimerRef.current >= 4000) {
         difficultyTimerRef.current = 0;
         speedRef.current = Math.min(speedRef.current + 0.35, 10);
-        spawnRateRef.current = Math.max(spawnRateRef.current - 60, 320);
+        spawnRateRef.current = Math.max(spawnRateRef.current - 55, 300);
       }
 
       if (timestamp - lastSpawnRef.current >= spawnRateRef.current) {
@@ -111,17 +170,20 @@ export default function CapCatchGame() {
           const sameLane = item.lane === playerLane;
           const collided =
             sameLane &&
-            nextY + ITEM_SIZE / 2 >= PLAYER_Y &&
-            nextY <= PLAYER_Y + PLAYER_HEIGHT / 2;
+            nextY + ITEM_SIZE * 0.7 >= PLAYER_Y &&
+            nextY <= PLAYER_Y + PLAYER_HEIGHT * 0.55;
 
           if (collided) {
             if (item.type === "cap") {
               setScore((prevScore) => prevScore + 1);
+              playAudio(catchAudioRef.current);
             } else {
+              playAudio(hitAudioRef.current);
               setLives((prevLives) => {
                 const nextLives = prevLives - 1;
                 if (nextLives <= 0) {
-                  setIsRunning(false);
+                  gameOver();
+                  return 0;
                 }
                 return nextLives;
               });
@@ -146,7 +208,7 @@ export default function CapCatchGame() {
   }, [isRunning, playerLane]);
 
   useEffect(() => {
-    if (!isRunning) {
+    if (!isRunning && hasStarted) {
       setBestScore((prevBest) => {
         const nextBest = Math.max(prevBest, score);
         window.localStorage.setItem(
@@ -156,57 +218,62 @@ export default function CapCatchGame() {
         return nextBest;
       });
     }
-  }, [isRunning, score]);
+  }, [hasStarted, isRunning, score]);
 
   const playerX = useMemo(() => laneToX(playerLane), [playerLane]);
 
-  function resetGame() {
-    setPlayerLane(1);
-    setItems([]);
-    setScore(0);
-    setLives(3);
-    setIsRunning(true);
-    itemIdRef.current = 0;
-    speedRef.current = 2.8;
-    spawnRateRef.current = 1100;
-    lastSpawnRef.current = 0;
-    lastFrameRef.current = 0;
-    difficultyTimerRef.current = 0;
-  }
-
   function moveLeft() {
+    if (!isRunning) return;
     setPlayerLane((prev) => (prev > 0 ? ((prev - 1) as Lane) : prev));
   }
 
   function moveRight() {
+    if (!isRunning) return;
     setPlayerLane((prev) => (prev < 2 ? ((prev + 1) as Lane) : prev));
   }
 
   function moveToLane(lane: Lane) {
+    if (!isRunning) return;
     setPlayerLane(lane);
   }
 
   return (
     <div className="flex w-full flex-col items-center gap-4">
-      <div className="flex w-full max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80">
-        <span>Puntaje: <strong className="text-white">{score}</strong></span>
-        <span>Vidas: <strong className="text-white">{lives}</strong></span>
-        <span>Récord: <strong className="text-white">{bestScore}</strong></span>
+      <div className="flex w-full max-w-md items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 backdrop-blur">
+        <span>
+          Puntaje: <strong className="text-white">{score}</strong>
+        </span>
+        <span>
+          Vidas: <strong className="text-white">{lives}</strong>
+        </span>
+        <span>
+          Récord: <strong className="text-white">{bestScore}</strong>
+        </span>
       </div>
 
       <div
-        className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-b from-sky-900 via-neutral-900 to-neutral-950 shadow-2xl"
+        className="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl"
         style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
       >
+        <Image
+          src="/game/background.png"
+          alt="Fondo del minijuego"
+          fill
+          priority
+          className="object-cover"
+        />
+
+        <div className="absolute inset-0 bg-black/10" />
+
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute left-1/3 top-0 h-full w-px bg-white/20" />
-          <div className="absolute left-2/3 top-0 h-full w-px bg-white/20" />
+          <div className="absolute left-1/3 top-0 h-full w-px bg-white/25" />
+          <div className="absolute left-2/3 top-0 h-full w-px bg-white/25" />
         </div>
 
         {items.map((item) => (
           <div
             key={item.id}
-            className="absolute flex items-center justify-center text-3xl"
+            className="absolute"
             style={{
               left: laneToX(item.lane) - ITEM_SIZE / 2,
               top: item.y,
@@ -214,12 +281,19 @@ export default function CapCatchGame() {
               height: ITEM_SIZE,
             }}
           >
-            {item.type === "cap" ? "🧢" : "👒"}
+            <Image
+              src={item.type === "cap" ? "/game/cap.png" : "/game/hat.png"}
+              alt={item.type === "cap" ? "Gorra" : "Sombrero"}
+              width={ITEM_SIZE}
+              height={ITEM_SIZE}
+              className="pointer-events-none select-none object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+              draggable={false}
+            />
           </div>
         ))}
 
         <div
-          className="absolute flex items-center justify-center rounded-full border border-white/20 bg-emerald-400 text-4xl shadow-lg"
+          className="absolute"
           style={{
             left: playerX - PLAYER_WIDTH / 2,
             top: PLAYER_Y,
@@ -227,21 +301,53 @@ export default function CapCatchGame() {
             height: PLAYER_HEIGHT,
           }}
         >
-          🐥
+          <Image
+            src="/game/salva-gorrin.png"
+            alt="Salva Gorrín"
+            width={PLAYER_WIDTH}
+            height={PLAYER_HEIGHT}
+            priority
+            className="pointer-events-none select-none object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.45)]"
+            draggable={false}
+          />
         </div>
 
-        {!isRunning && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/75 px-6 text-center">
+        {!hasStarted && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/55 px-6 text-center backdrop-blur-sm">
+            <p className="text-xs uppercase tracking-[0.35em] text-white/60">
+              Mini videojuego
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">
+              Cap Catch
+            </h2>
+            <p className="mt-4 max-w-xs text-sm leading-6 text-white/80">
+              Atrapa las gorras, evita los sombreros y sobrevive con tus 3 vidas.
+              Cada vez caerán más rápido y con mayor frecuencia.
+            </p>
+            <button
+              onClick={startGame}
+              className="mt-6 rounded-full bg-white px-6 py-3 font-medium text-black transition hover:scale-105"
+            >
+              Empezar
+            </button>
+            <p className="mt-3 text-xs text-white/50">
+              En PC usa flechas o A/D
+            </p>
+          </div>
+        )}
+
+        {!isRunning && hasStarted && lives <= 0 && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/65 px-6 text-center backdrop-blur-sm">
             <h2 className="text-3xl font-semibold text-white">Game Over</h2>
             <p className="mt-3 text-white/80">Puntaje final: {score}</p>
             <button
-              onClick={resetGame}
+              onClick={startGame}
               className="mt-6 rounded-full bg-white px-6 py-3 font-medium text-black transition hover:scale-105"
             >
               Jugar otra vez
             </button>
             <p className="mt-3 text-xs text-white/50">
-              También puedes presionar Enter
+              Presiona Enter para reiniciar
             </p>
           </div>
         )}
