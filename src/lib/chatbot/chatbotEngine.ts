@@ -27,20 +27,13 @@ function getRouteContext(pathname?: string) {
 
   if (route.startsWith("/catalogo")) {
     return {
-      route,
       greeting:
-        "Estás en el catálogo. Si ya viste algo que te gustó, te ayudo a pasar a compra o a resolver dudas rápidas.",
-      fallback:
-        "Veo que estás en el catálogo. Puedo ayudarte a elegir, comprar o enviarte directo a WhatsApp.",
+        "Estás en el catálogo. Si quieres, te ayudo a comprar, elegir una gorra o resolver dudas rápidas.",
       teaser:
         "¿Ya viste una gorra que te gustó? Te ayudo a comprar o elegir mejor.",
-      actions: [
+      suggestedActions: [
         { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
-        {
-          label: "Recomiéndame una",
-          type: "message" as const,
-          value: "¿Qué gorra me recomiendas?",
-        },
+        { label: "Recomiéndame una", type: "message" as const, value: "¿Qué gorra me recomiendas?" },
         { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
       ],
     };
@@ -48,19 +41,12 @@ function getRouteContext(pathname?: string) {
 
   if (route.startsWith("/mayoreo")) {
     return {
-      route,
       greeting:
-        "Estás en mayoreo. Si buscas volumen para negocio, evento o equipo, te ayudo a ir al siguiente paso.",
-      fallback:
-        "Veo que estás en mayoreo. Puedo ayudarte con cotización, contacto directo o dudas básicas de atención por volumen.",
+        "Estás en mayoreo. Te ayudo con cotización, contacto y dudas sobre atención por volumen.",
       teaser:
         "¿Buscas mayoreo? Te oriento rápido sobre contacto y siguiente paso.",
-      actions: [
-        {
-          label: "Quiero mayoreo",
-          type: "message" as const,
-          value: "Quiero información de mayoreo",
-        },
+      suggestedActions: [
+        { label: "Quiero mayoreo", type: "message" as const, value: "Quiero información de mayoreo" },
         { label: "Cotizar por WhatsApp", type: "link" as const, href: WHATSAPP_URL },
         { label: "Contacto", type: "link" as const, href: "/contacto" },
       ],
@@ -69,111 +55,41 @@ function getRouteContext(pathname?: string) {
 
   if (route.startsWith("/contacto")) {
     return {
-      route,
       greeting:
         "Estás en contacto. Si quieres atención más directa, te llevo a WhatsApp en un clic.",
-      fallback:
-        "Veo que estás en contacto. Puedo decirte por dónde escribirnos o mandarte directo a WhatsApp.",
       teaser:
         "¿Quieres atención directa? Te llevo rápido a WhatsApp o al medio correcto.",
-      actions: [
+      suggestedActions: [
         { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-        {
-          label: "Redes sociales",
-          type: "message" as const,
-          value: "¿Qué redes sociales tienen?",
-        },
-      ],
-    };
-  }
-
-  if (route.startsWith("/disponibilidad") || route.startsWith("/envios-y-entregas")) {
-    return {
-      route,
-      greeting:
-        "Estás en disponibilidad y envíos. Si ya tienes un modelo en mente, te ayudo con compra o contacto.",
-      fallback:
-        "Veo que estás en disponibilidad y envíos. Puedo ayudarte con entregas, compra o atención directa.",
-      teaser:
-        "¿Tienes dudas de envíos o entregas? Te ayudo rápido.",
-      actions: [
-        {
-          label: "¿Hacen envíos?",
-          type: "message" as const,
-          value: "¿Hacen envíos?",
-        },
-        {
-          label: "Cómo comprar",
-          type: "message" as const,
-          value: "¿Cómo compro?",
-        },
-        { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
+        { label: "Redes sociales", type: "message" as const, value: "¿Qué redes sociales tienen?" },
       ],
     };
   }
 
   if (route.startsWith("/faq")) {
     return {
-      route,
       greeting:
-        "Estás en preguntas frecuentes. Si quieres, te ayudo con compra, pagos, envíos o contacto sin que tengas que buscar tanto.",
-      fallback:
-        "Veo que estás en FAQ. Puedo orientarte con compras, pagos, envíos, mayoreo o contacto.",
+        "Estás en preguntas frecuentes. También puedes preguntarme directo sobre compra, pagos, envíos o mayoreo.",
       teaser:
         "¿Tienes una duda rápida? Te ayudo con compra, pagos o envíos.",
-      actions: [
-        {
-          label: "Cómo comprar",
-          type: "message" as const,
-          value: "¿Cómo compro?",
-        },
-        {
-          label: "Métodos de pago",
-          type: "message" as const,
-          value: "¿Qué métodos de pago tienen?",
-        },
-        {
-          label: "¿Hacen envíos?",
-          type: "message" as const,
-          value: "¿Hacen envíos?",
-        },
-      ],
-    };
-  }
-
-  if (route.startsWith("/nosotros")) {
-    return {
-      route,
-      greeting:
-        "Estás en nosotros. Si quieres, te cuento rápido de la marca o te llevo al catálogo.",
-      fallback:
-        "Veo que estás en nosotros. Puedo contarte de la marca, mostrarte catálogo o ayudarte a contactarnos.",
-      teaser:
-        "¿Quieres conocer la marca o mejor ver el catálogo?",
-      actions: [
-        { label: "Ver catálogo", type: "link" as const, href: "/catalogo" },
-        { label: "Conocer la marca", type: "link" as const, href: "/nosotros" },
+      suggestedActions: [
+        { label: "Cómo comprar", type: "message" as const, value: "¿Cómo compro?" },
+        { label: "Métodos de pago", type: "message" as const, value: "¿Qué métodos de pago tienen?" },
+        { label: "¿Hacen envíos?", type: "message" as const, value: "¿Hacen envíos?" },
       ],
     };
   }
 
   return {
-    route,
     greeting:
       "Soy Asistente Salva. Te ayudo con compras, catálogo, mayoreo, contacto y también tengo chistes y datos curiosos sobre gorras.",
-    fallback:
-      "Puedo ayudarte con catálogo, compras, envíos, métodos de pago, mayoreo, contacto, colaboraciones, datos curiosos o chistes de gorras.",
     teaser:
       "¿Buscas catálogo, mayoreo o una recomendación rápida?",
-    actions: [
+    suggestedActions: [
       { label: "Ver catálogo", type: "link" as const, href: "/catalogo" },
       { label: "Mayoreo", type: "link" as const, href: "/mayoreo" },
       { label: "WhatsApp", type: "link" as const, href: WHATSAPP_URL },
-      {
-        label: "Dime un chiste",
-        type: "message" as const,
-        value: "Cuéntame un chiste de gorras",
-      },
+      { label: "Dime un chiste", type: "message" as const, value: "Cuéntame un chiste de gorras" },
     ],
   };
 }
@@ -188,7 +104,7 @@ function buildGreetingResponse(pathname?: string): ChatbotResponse {
   return {
     intent: "greeting",
     content: routeContext.greeting,
-    actions: sanitizeActions(routeContext.actions),
+    actions: sanitizeActions(routeContext.suggestedActions),
   };
 }
 
@@ -197,8 +113,9 @@ function buildFallbackResponse(pathname?: string): ChatbotResponse {
 
   return {
     intent: "fallback",
-    content: routeContext.fallback,
-    actions: sanitizeActions(routeContext.actions),
+    content:
+      "Puedo ayudarte con compras, catálogo, envíos, métodos de pago, mayoreo, contacto, colaboraciones, datos curiosos o chistes de gorras.",
+    actions: sanitizeActions(routeContext.suggestedActions),
   };
 }
 
@@ -210,11 +127,7 @@ function buildJokeResponse(pathname?: string): ChatbotResponse {
     content: getRandomItem(capJokes),
     actions: sanitizeActions([
       { label: "Otro chiste", type: "message", value: "Otro chiste de gorras" },
-      {
-        label: "Dato curioso",
-        type: "message",
-        value: "Dame un dato curioso de gorras",
-      },
+      { label: "Dato curioso", type: "message", value: "Dame un dato curioso de gorras" },
       route.startsWith("/mayoreo")
         ? { label: "Ver mayoreo", type: "link", href: "/mayoreo" }
         : { label: "Ver catálogo", type: "link", href: "/catalogo" },
@@ -245,7 +158,7 @@ function buildRecommendationResponse(pathname?: string): ChatbotResponse {
     return {
       intent: "recommendation",
       content:
-        "Si estás en catálogo, te conviene empezar por una gorra versátil, fácil de combinar y con presencia limpia. Si ya viste una que te llamó la atención, el siguiente paso ideal es WhatsApp.",
+        "Si estás en catálogo, te conviene empezar por una gorra versátil, fácil de combinar y con presencia limpia. Si ya viste una que te gustó, el siguiente paso ideal es WhatsApp.",
       actions: [
         { label: "Comprar por WhatsApp", type: "link", href: WHATSAPP_URL },
         { label: "Cómo comprar", type: "message", value: "¿Cómo compro?" },
@@ -261,17 +174,6 @@ function buildRecommendationResponse(pathname?: string): ChatbotResponse {
       actions: [
         { label: "Cotizar por WhatsApp", type: "link", href: WHATSAPP_URL },
         { label: "Ver mayoreo", type: "link", href: "/mayoreo" },
-      ],
-    };
-  }
-
-  if (route.startsWith("/contacto")) {
-    return {
-      intent: "recommendation",
-      content:
-        "Si ya estás en contacto, lo mejor es pasar directo a WhatsApp para atención más rápida y personalizada.",
-      actions: [
-        { label: "WhatsApp", type: "link", href: WHATSAPP_URL },
       ],
     };
   }
@@ -333,23 +235,6 @@ function buildBusinessResponse(
       content:
         "Ya estás en contacto. Si quieres atención más directa y rápida, te conviene escribirnos por WhatsApp.",
       actions: [{ label: "WhatsApp", type: "link", href: WHATSAPP_URL }],
-    };
-  }
-
-  if (intent === "faq" && route.startsWith("/faq")) {
-    return {
-      intent,
-      content:
-        "Ya estás en preguntas frecuentes. Si no quieres buscar entre secciones, también puedes preguntarme directo sobre compra, pagos, envíos o mayoreo.",
-      actions: [
-        { label: "¿Cómo compro?", type: "message", value: "¿Cómo compro?" },
-        {
-          label: "¿Qué métodos de pago tienen?",
-          type: "message",
-          value: "¿Qué métodos de pago tienen?",
-        },
-        { label: "¿Hacen envíos?", type: "message", value: "¿Hacen envíos?" },
-      ],
     };
   }
 
