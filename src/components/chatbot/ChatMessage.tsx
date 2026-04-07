@@ -34,6 +34,7 @@ export default function ChatMessage({
         <div
           className={[
             "rounded-[1.35rem] px-4 py-3 text-sm leading-relaxed shadow-[0_16px_40px_rgba(0,0,0,0.22)]",
+            "transition duration-300 ease-out",
             isUser
               ? "rounded-br-md bg-white text-black"
               : "rounded-bl-md border border-white/10 bg-white/[0.06] text-white backdrop-blur-md",
