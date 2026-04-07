@@ -101,8 +101,7 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "true");
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
-    } catch {
-    }
+    } catch {}
   }
 
   function closeChat() {
@@ -115,8 +114,7 @@ export default function ChatbotWidget() {
 
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "false");
-    } catch {
-    }
+    } catch {}
   }
 
   function toggleChat() {
@@ -138,8 +136,7 @@ export default function ChatbotWidget() {
 
     try {
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
-    } catch {
-    }
+    } catch {}
   }
 
   if (isGameRoute) {
