@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import ChatbotWindow from "./ChatbotWindow";
+import { getChatbotTeaser } from "@/lib/chatbot/chatbotEngine";
 
 const CHATBOT_OPEN_STORAGE_KEY = "salva_chatbot_open_v3";
 const CHATBOT_TEASER_DISMISSED_KEY = "salva_chatbot_teaser_dismissed_v1";
 
 export default function ChatbotWidget() {
+  const pathname = usePathname();
+  const teaserText = useMemo(() => getChatbotTeaser(pathname), [pathname]);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
@@ -26,6 +31,7 @@ export default function ChatbotWidget() {
         setIsOpen(false);
       }
     } catch {
+      // noop
     } finally {
       setHasLoadedFromStorage(true);
     }
@@ -37,6 +43,7 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, String(isOpen));
     } catch {
+      // noop
     }
   }, [isOpen, hasLoadedFromStorage]);
 
@@ -58,6 +65,7 @@ export default function ChatbotWidget() {
         setShowTeaser(true);
       }, 3200);
     } catch {
+      // noop
     }
 
     return () => {
@@ -66,7 +74,7 @@ export default function ChatbotWidget() {
         teaserTimeoutRef.current = null;
       }
     };
-  }, [hasLoadedFromStorage, isOpen]);
+  }, [hasLoadedFromStorage, isOpen, pathname]);
 
   function openChat() {
     if (teaserTimeoutRef.current) {
@@ -81,6 +89,7 @@ export default function ChatbotWidget() {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "true");
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
     } catch {
+      // noop
     }
   }
 
@@ -104,6 +113,7 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "false");
     } catch {
+      // noop
     }
   }
 
@@ -118,6 +128,7 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
     } catch {
+      // noop
     }
   }
 
@@ -143,7 +154,7 @@ export default function ChatbotWidget() {
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold">Asistente Salva</p>
                   <p className="mt-1 text-xs leading-relaxed text-white/65">
-                    ¿Buscas catálogo, mayoreo o solo un buen chiste de gorras?
+                    {teaserText}
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-2">
