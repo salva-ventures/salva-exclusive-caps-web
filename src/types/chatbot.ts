@@ -35,10 +35,20 @@ export interface ChatbotResponse {
   intent: ChatIntent;
   content: string;
   actions?: ChatAction[];
+  metadata?: {
+    lastFactIndex?: number;
+  };
 }
 
 export interface ChatbotMemory {
   lastIntent?: ChatIntent;
   lastTopic?: "catalog" | "wholesale" | "contact" | "shipping" | "payment" | "faq";
   lastReference?: string;
+  lastUserMessage?: string;
+  lastFactIndex?: number;
+}
+
+export interface ChatbotContext {
+  pathname: string;
+  memory: ChatbotMemory;
 }
