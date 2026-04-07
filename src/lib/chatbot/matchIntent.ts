@@ -1,48 +1,64 @@
 import type { ChatIntent } from "@/types/chatbot";
 import { normalizeText } from "./normalizeText";
 
-const INTENT_KEYWORDS: Array<{
+type IntentRule = {
   intent: ChatIntent;
   keywords: string[];
-}> = [
+  weight?: number;
+};
+
+const INTENT_RULES: IntentRule[] = [
   {
     intent: "greeting",
     keywords: [
       "hola",
       "buenas",
+      "buen dia",
+      "buen día",
       "que onda",
       "saludos",
       "hello",
       "hi",
       "hey",
     ],
+    weight: 3,
   },
   {
     intent: "buy",
     keywords: [
       "comprar",
       "compra",
+      "quiero comprar",
+      "quiero una gorra",
+      "quiero pedir",
       "pedido",
       "pedir",
       "ordenar",
-      "quiero una gorra",
       "como compro",
       "como comprar",
+      "me interesa comprar",
+      "quiero esa",
     ],
+    weight: 4,
   },
   {
     intent: "shipping",
     keywords: [
       "envio",
       "envios",
+      "hacen envios",
       "entrega",
       "entregas",
       "paqueteria",
       "cuanto tarda",
+      "cuanto tardan",
       "disponibilidad",
       "mandan a",
-      "hacen envios",
+      "envian a",
+      "llega a",
+      "tiempo de envio",
     ],
+    weight: 4,
   },
   {
     intent: "payment",
@@ -51,11 +67,15 @@ const INTENT_KEYWORDS: Array<{
       "pagos",
       "metodo de pago",
       "metodos de pago",
+      "como pago",
       "transferencia",
       "deposito",
       "tarjeta",
-      "como pago",
+      "formas de pago",
+      "aceptan transferencia",
+      "aceptan tarjeta",
     ],
+    weight: 4,
   },
   {
     intent: "wholesale",
@@ -65,9 +85,13 @@ const INTENT_KEYWORDS: Array<{
       "por volumen",
       "volumen",
       "lote",
-      "muchas gorras",
       "comprar varias",
+      "muchas gorras",
+      "pedido grande",
+      "cotizacion mayoreo",
+      "cotizar mayoreo",
     ],
+    weight: 4,
   },
   {
     intent: "contact",
@@ -81,7 +105,10 @@ const INTENT_KEYWORDS: Array<{
       "instagram",
       "facebook",
       "hablar con ustedes",
+      "como los contacto",
+      "donde les escribo",
     ],
+    weight: 4,
   },
   {
     intent: "catalog",
@@ -93,7 +120,10 @@ const INTENT_KEYWORDS: Array<{
       "productos",
       "coleccion",
       "colección",
+      "quiero ver gorras",
+      "ver modelos",
     ],
+    weight: 4,
   },
   {
     intent: "faq",
@@ -104,7 +134,10 @@ const INTENT_KEYWORDS: Array<{
       "ayuda",
       "informacion",
       "información",
+      "tengo una duda",
+      "tengo dudas",
     ],
+    weight: 3,
   },
   {
     intent: "about",
@@ -116,7 +149,9 @@ const INTENT_KEYWORDS: Array<{
       "nosotros",
       "marca",
       "empresa",
+      "de que trata",
     ],
+    weight: 3,
   },
   {
     intent: "collab",
@@ -132,17 +167,22 @@ const INTENT_KEYWORDS: Array<{
       "fotografo",
       "fotógrafo",
     ],
+    weight: 3,
   },
   {
     intent: "joke",
     keywords: [
       "chiste",
+      "cuentame un chiste",
+      "cuéntame un chiste",
       "broma",
       "jajaja",
       "algo chistoso",
       "hazme reir",
       "hazme reír",
+      "otro chiste",
     ],
+    weight: 5,
   },
   {
     intent: "fact",
@@ -154,7 +194,9 @@ const INTENT_KEYWORDS: Array<{
       "sabías",
       "curiosidad",
       "fact",
+      "otro dato",
     ],
+    weight: 5,
   },
   {
     intent: "recommendation",
@@ -166,22 +208,63 @@ const INTENT_KEYWORDS: Array<{
       "sugerencia",
       "recomendacion",
       "recomendación",
+      "cual me recomiendas",
+      "cuál me recomiendas",
     ],
+    weight: 4,
   },
 ];
+
+function scoreIntent(text: string, rule: IntentRule): number {
+  const normalizedKeywords = rule.keywords.map((keyword) => normalizeText(keyword));
+  const weight = rule.weight ?? 1;
+
+  let score = 0;
+
+  for (const keyword of normalizedKeywords) {
+    if (text === keyword) {
+      score += weight + 4;
+      continue;
+    }
+
+    if (text.includes(keyword)) {
+      score += weight + 2;
+      continue;
+    }
+
+    const keywordParts = keyword.split(" ").filter(Boolean);
+    const partialMatches = keywordParts.filter(
+      (part) => part.length >= 4 && text.includes(part)
+    ).length;
+
+    if (partialMatches > 0) {
+      score += partialMatches;
+    }
+  }
+
+  return score;
+}
 
 export function matchIntent(input: string): ChatIntent {
   const text = normalizeText(input);
 
-  for (const item of INTENT_KEYWORDS) {
-    const matched = item.keywords.some((keyword) =>
-      text.includes(normalizeText(keyword))
-    );
+  if (!text) return "fallback";
 
-    if (matched) {
-      return item.intent;
+  let bestIntent: ChatIntent = "fallback";
+  let bestScore = 0;
+
+  for (const rule of INTENT_RULES) {
+    const score = scoreIntent(text, rule);
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestIntent = rule.intent;
     }
   }
 
-  return "fallback";
+  if (bestScore <= 0) {
+    return "fallback";
+  }
+
+  return bestIntent;
 }
