@@ -134,7 +134,10 @@ export default function HomePage() {
           animate="show"
           className="relative mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-8 px-4 pb-12 pt-20 sm:px-6 sm:pb-16 sm:pt-24 lg:grid-cols-[1.04fr_0.96fr] lg:gap-8 lg:px-8 lg:pb-24 lg:pt-24"
         >
-          <motion.div style={{ y: heroTextY }} className="relative z-10 max-w-2xl">
+          <motion.div
+            style={{ y: heroTextY }}
+            className="relative z-10 max-w-2xl"
+          >
             <div className="pointer-events-none absolute right-[-1.9rem] top-[5.25rem] w-[12.5rem] opacity-[0.26] sm:right-[-1.25rem] sm:top-[5.75rem] sm:w-[15rem] md:w-[16rem] lg:hidden">
               <div className="relative aspect-square w-full">
                 <div className="absolute inset-0 scale-[1.03] opacity-42 blur-[8px]">
@@ -191,14 +194,14 @@ export default function HomePage() {
             </motion.div>
 
             <motion.h1
-  variants={fadeUp}
-  className="text-4xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
->
-  Gorras exclusivas
-  <span className="block bg-[linear-gradient(180deg,#ef4444_0%,#b91c1c_100%)] bg-clip-text text-transparent">
-    al alcance de todos.
-  </span>
-</motion.h1>
+              variants={fadeUp}
+              className="text-4xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
+            >
+              Gorras exclusivas
+              <span className="block bg-[linear-gradient(180deg,#ef4444_0%,#b91c1c_100%)] bg-clip-text text-transparent">
+                al alcance de todos.
+              </span>
+            </motion.h1>
 
             <motion.p
               variants={fadeUp}
@@ -216,7 +219,7 @@ export default function HomePage() {
 
             <motion.div
               variants={fadeUp}
-              className="mt-7 flex flex-col gap-4 sm:flex-row"
+              className="mt-7 flex flex-col gap-4 sm:flex-row sm:flex-wrap"
             >
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
                 <Link
@@ -236,6 +239,17 @@ export default function HomePage() {
                 >
                   Consultar por WhatsApp
                 </a>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
+                <Link
+                  href="/juego"
+                  className="game-cta relative inline-flex items-center justify-center overflow-hidden rounded-full border border-red-600/30 bg-red-600/10 px-7 py-3.5 text-sm font-semibold text-red-500 backdrop-blur-sm transition-all duration-300 hover:border-red-500 hover:bg-red-600/18 hover:text-white hover:shadow-[0_12px_34px_rgba(220,38,38,0.24)]"
+                >
+                  <span className="game-cta-glow absolute inset-0 pointer-events-none rounded-full" />
+                  <span className="game-cta-shine absolute inset-0 pointer-events-none overflow-hidden rounded-full" />
+                  <span className="relative z-10">Jugar minijuego</span>
+                </Link>
               </motion.div>
             </motion.div>
 
@@ -776,6 +790,58 @@ export default function HomePage() {
           85% {
             left: 145%;
           }
+        }
+
+        @keyframes pulseGlow {
+          0%,
+          100% {
+            opacity: 0.22;
+            transform: scale(0.96);
+          }
+          50% {
+            opacity: 0.45;
+            transform: scale(1.06);
+          }
+        }
+
+        .game-cta-glow::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 9999px;
+          background: radial-gradient(
+            circle,
+            rgba(220, 38, 38, 0.45) 0%,
+            rgba(220, 38, 38, 0.18) 40%,
+            transparent 72%
+          );
+          filter: blur(12px);
+          opacity: 0.35;
+          animation: pulseGlow 3.2s ease-in-out infinite;
+          transition: all 0.3s ease;
+        }
+
+        .game-cta:hover .game-cta-glow::before {
+          opacity: 0.65;
+          transform: scale(1.12);
+          filter: blur(16px);
+        }
+
+        .game-cta-shine::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 60%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.25),
+            transparent
+          );
+          animation: shine 4.8s ease-in-out infinite;
+          opacity: 0.7;
         }
       `}</style>
     </div>
