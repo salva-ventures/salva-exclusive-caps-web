@@ -223,8 +223,8 @@ export default function ChatbotWindow({
   }, [pathname, hasLoadedFromStorage]);
 
   function resolveTypingDelay(input: string) {
-    const base = 550;
-    const extra = Math.min(input.trim().length * 12, 650);
+    const base = 500;
+    const extra = Math.min(input.trim().length * 10, 600);
     return base + extra;
   }
 
@@ -313,8 +313,7 @@ export default function ChatbotWindow({
                 Salva Gorrín
               </p>
               <p className="mt-1 text-[11px] leading-relaxed text-white/60 sm:text-xs">
-                Catálogo, compras, mayoreo, contacto, chistes y datos curiosos
-                de gorras.
+                Catálogo, compras, mayoreo y datos curiosos de gorras
               </p>
             </div>
 
