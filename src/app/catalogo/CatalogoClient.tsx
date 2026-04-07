@@ -144,7 +144,7 @@ export default function CatalogoClient() {
         initial="hidden"
         animate="show"
         variants={staggerContainer}
-        className="relative overflow-hidden border-b border-white/10 px-4 py-16 md:py-20"
+        className="relative overflow-hidden border-b border-white/10 px-4 py-12 md:py-20"
       >
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#060606,#020202)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(255,255,255,0.05),transparent_18%),radial-gradient(circle_at_80%_15%,rgba(220,38,38,0.16),transparent_22%),radial-gradient(circle_at_55%_100%,rgba(255,255,255,0.03),transparent_24%)]" />
@@ -180,7 +180,7 @@ export default function CatalogoClient() {
 
             <motion.div
               variants={fadeUp}
-              className="mt-8 flex flex-wrap items-center gap-3"
+              className="mt-6 flex flex-wrap items-center gap-3"
             >
               <div className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-[11px] uppercase tracking-[0.22em] text-white/70">
                 {products.length} modelos
@@ -196,7 +196,7 @@ export default function CatalogoClient() {
         </div>
       </motion.section>
 
-      <section className="relative px-4 py-8 md:py-10">
+      <section className="relative px-4 py-6 md:py-10">
         <div className="absolute inset-0 opacity-[0.02] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:22px_22px]" />
         <div className="relative mx-auto max-w-7xl">
           <motion.div
@@ -207,7 +207,7 @@ export default function CatalogoClient() {
               ease: [0.22, 1, 0.36, 1],
               delay: 0.08,
             }}
-            className={`sticky top-20 z-30 mb-8 ${panelClass} ${panelOverlay} rounded-[1.7rem] bg-black/70 p-3 backdrop-blur-xl md:p-4`}
+            className={`mb-6 ${panelClass} ${panelOverlay} rounded-[1.7rem] bg-black/70 p-3 backdrop-blur-xl md:sticky md:top-20 md:z-30 md:mb-8 md:p-4`}
           >
             <div className="pointer-events-none absolute inset-0 rounded-[1.7rem] ring-1 ring-inset ring-white/[0.03]" />
 
@@ -345,7 +345,7 @@ export default function CatalogoClient() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.28 }}
-                    className={`${panelClass} ${panelOverlay} px-6 py-20 text-center`}
+                    className={`${panelClass} ${panelOverlay} px-6 py-16 text-center`}
                   >
                     <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/[0.03]" />
                     <div className="relative">
@@ -369,7 +369,7 @@ export default function CatalogoClient() {
                     </div>
                   </motion.div>
                 ) : (
-                  <motion.div key="grid" layout className="space-y-5">
+                  <motion.div key="grid" layout className="space-y-4">
                     <motion.div
                       layout
                       className={`${panelClass} ${panelOverlay} overflow-hidden px-4 py-4 sm:px-5`}
@@ -399,7 +399,7 @@ export default function CatalogoClient() {
                       variants={staggerContainer}
                       initial="hidden"
                       animate="show"
-                      className="grid grid-cols-1 gap-5 sm:grid-cols-2 2xl:grid-cols-3"
+                      className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3"
                     >
                       <AnimatePresence mode="popLayout">
                         {filtered.map((product) => (
