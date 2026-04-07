@@ -8,14 +8,6 @@ interface ChatInputProps {
   autoFocusKey?: number;
 }
 
-const QUICK_ACTIONS = [
-  "Ver catálogo",
-  "Ayúdame a elegir",
-  "Dato curioso",
-  "Envíos",
-  "Mayoreo",
-];
-
 export default function ChatInput({
   onSend,
   disabled = false,
@@ -44,30 +36,8 @@ export default function ChatInput({
     setValue("");
   }
 
-  function handleQuickAction(action: string) {
-    if (disabled) return;
-    onSend(action);
-    setValue("");
-  }
-
   return (
     <div className="relative border-t border-white/10 bg-[rgba(10,10,10,0.86)] px-3 pb-3 pt-3 backdrop-blur-2xl sm:px-4 sm:pb-4">
-      <div className="mb-3 overflow-x-auto pb-1">
-        <div className="flex min-w-max gap-2">
-          {QUICK_ACTIONS.map((action) => (
-            <button
-              key={action}
-              type="button"
-              onClick={() => handleQuickAction(action)}
-              disabled={disabled}
-              className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-medium text-white/85 transition duration-300 hover:border-white/20 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
-            >
-              {action}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="flex items-end gap-2">
         <div className="relative flex-1">
           <input
