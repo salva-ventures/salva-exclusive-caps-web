@@ -360,8 +360,8 @@ export default function CapCatchGame() {
               Cap Catch
             </h2>
             <p className="mt-4 max-w-xs text-sm leading-6 text-white/80">
-              Atrapa las gorras, evita los sombreros y sobrevive con tus 3 vidas.
-              Cada vez caerán más rápido y con mayor frecuencia.
+              Atrapa las gorras, evita los sombreros y sobrevive con tus 3
+              vidas. Cada vez caerán más rápido y con mayor frecuencia.
             </p>
             <button
               onClick={startGame}
