@@ -50,6 +50,7 @@ export default function Footer() {
     { href: "/faq", label: "FAQ" },
     { href: "/contacto", label: "Contacto" },
     { href: "/colaboraciones", label: "Colaboraciones" },
+    { href: "/mayoreo", label: "Mayoreo" },
   ];
 
   return (
@@ -313,9 +314,19 @@ export default function Footer() {
             >
               Colaboraciones
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/mayoreo"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Mayoreo
+            </Link>
           </div>
         </motion.div>
       </motion.div>
     </footer>
   );
 }
+
