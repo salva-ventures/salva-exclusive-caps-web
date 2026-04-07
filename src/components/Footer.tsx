@@ -1,11 +1,10 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
 import {
   MessageCircle,
-  ArrowUpRight,
   MapPin,
   Truck,
   ShieldCheck,
@@ -42,17 +41,6 @@ const panelOverlay =
 export default function Footer() {
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
 
-  const navLinks = [
-    { href: "/", label: "Inicio" },
-    { href: "/catalogo", label: "Catálogo" },
-    { href: "/disponibilidad", label: "Disponibilidad" },
-    { href: "/nosotros", label: "Nosotros" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/contacto", label: "Contacto" },
-    { href: "/colaboraciones", label: "Colaboraciones" },
-    { href: "/mayoreo", label: "Mayoreo" },
-  ];
-
   return (
     <footer className="relative mt-auto overflow-hidden border-t border-white/10 bg-[#050505]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_26%),linear-gradient(to_bottom,rgba(255,255,255,0.02),transparent_35%)]" />
@@ -63,9 +51,9 @@ export default function Footer() {
         whileInView="show"
         viewport={{ once: true, amount: 0.1 }}
         variants={staggerContainer}
-        className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8"
+        className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8"
       >
-        <div className="grid gap-10 border-b border-white/10 pb-12 lg:grid-cols-[1.2fr_0.8fr_0.8fr_1fr]">
+        <div className="grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-[1.2fr_0.9fr_1fr]">
           <motion.div variants={fadeUp}>
             <div className="inline-flex items-center gap-3">
               <div className="relative h-11 w-11 overflow-hidden rounded-full border border-white/10 bg-white/[0.05] shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
@@ -145,30 +133,6 @@ export default function Footer() {
               >
                 Facebook
               </motion.a>
-            </div>
-          </motion.div>
-
-          <motion.div variants={fadeUp}>
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/45">
-              Navegación
-            </p>
-
-            <div className="space-y-2">
-              {navLinks.map((item) => (
-                <motion.div
-                  key={item.href}
-                  whileHover={{ x: 4 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <Link
-                    href={item.href}
-                    className="inline-flex items-center gap-2 text-sm text-white/65 transition-colors duration-300 hover:text-white"
-                  >
-                    <ArrowUpRight className="h-3.5 w-3.5 text-red-500" />
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
             </div>
           </motion.div>
 
@@ -329,4 +293,3 @@ export default function Footer() {
     </footer>
   );
 }
-
