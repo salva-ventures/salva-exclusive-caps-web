@@ -189,12 +189,18 @@ const INTENT_RULES: IntentRule[] = [
     keywords: [
       "dato",
       "dato curioso",
+      "dato curioso de gorras",
+      "dato curioso de gorrin",
+      "dame un dato",
+      "dame un dato curioso",
       "curioso",
       "sabias",
       "sabías",
       "curiosidad",
       "fact",
       "otro dato",
+      "sorprendeme",
+      "sorpréndeme",
     ],
     weight: 5,
   },
@@ -210,6 +216,10 @@ const INTENT_RULES: IntentRule[] = [
       "recomendación",
       "cual me recomiendas",
       "cuál me recomiendas",
+      "ayudame a elegir",
+      "ayúdame a elegir",
+      "elige una para mi",
+      "elige una para mí",
     ],
     weight: 4,
   },
@@ -262,9 +272,5 @@ export function matchIntent(input: string): ChatIntent {
     }
   }
 
-  if (bestScore <= 0) {
-    return "fallback";
-  }
-
-  return bestIntent;
+  return bestScore > 0 ? bestIntent : "fallback";
 }
