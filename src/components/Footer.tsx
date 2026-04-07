@@ -49,6 +49,7 @@ export default function Footer() {
     { href: "/nosotros", label: "Nosotros" },
     { href: "/faq", label: "FAQ" },
     { href: "/contacto", label: "Contacto" },
+    { href: "/colaboraciones", label: "Colaboraciones" },
   ];
 
   return (
