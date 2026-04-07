@@ -24,8 +24,8 @@ export default function SalvaGorrinAvatar({
     <span
       className={[
         "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full",
-        "border border-white/10 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),rgba(255,255,255,0.04))]",
-        "shadow-[0_10px_30px_rgba(0,0,0,0.28)] backdrop-blur-md",
+        "border border-white/12 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.16),rgba(255,255,255,0.04))]",
+        "shadow-[0_14px_34px_rgba(0,0,0,0.32)] backdrop-blur-md",
         sizeClasses[size],
         className,
       ].join(" ")}
@@ -44,10 +44,7 @@ export default function SalvaGorrinAvatar({
             ? "44px"
             : "56px"
         }
-        className={[
-          "object-contain p-[2px]",
-          imageClassName,
-        ].join(" ")}
+        className={["object-contain p-[2px]", imageClassName].join(" ")}
       />
     </span>
   );
