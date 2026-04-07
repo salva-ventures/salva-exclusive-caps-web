@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -11,6 +11,11 @@ const CHATBOT_TEASER_DISMISSED_KEY = "salva_chatbot_teaser_dismissed_v1";
 
 export default function ChatbotWidget() {
   const pathname = usePathname();
+
+  if (pathname === "/juego" || pathname.startsWith("/juego/")) {
+    return null;
+  }
+
   const teaserText = useMemo(() => getChatbotTeaser(pathname), [pathname]);
 
   const [isOpen, setIsOpen] = useState(false);
