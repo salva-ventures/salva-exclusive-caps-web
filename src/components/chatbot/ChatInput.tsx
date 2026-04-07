@@ -6,25 +6,27 @@ interface ChatInputProps {
   onSend: (value: string) => void;
   disabled?: boolean;
   autoFocusKey?: number;
+  shouldAutoFocus?: boolean;
 }
 
 export default function ChatInput({
   onSend,
   disabled = false,
   autoFocusKey = 0,
+  shouldAutoFocus = false,
 }: ChatInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (!disabled) {
-      const timer = window.setTimeout(() => {
-        inputRef.current?.focus();
-      }, 180);
+    if (!shouldAutoFocus || disabled) return;
 
-      return () => window.clearTimeout(timer);
-    }
-  }, [disabled, autoFocusKey]);
+    const timer = window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 180);
+
+    return () => window.clearTimeout(timer);
+  }, [autoFocusKey, shouldAutoFocus, disabled]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

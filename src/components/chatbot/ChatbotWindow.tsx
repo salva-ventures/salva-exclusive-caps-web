@@ -91,6 +91,7 @@ export default function ChatbotWindow({
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const memoryRef = useRef<ChatbotMemory>({});
   const [focusKey, setFocusKey] = useState(0);
+  const [shouldAutoFocus, setShouldAutoFocus] = useState(false);
 
   const initialAssistantMessage = useMemo(() => {
     const response = getChatbotResponse("hola", { pathname, memory: {} });
@@ -105,6 +106,24 @@ export default function ChatbotWindow({
   const [isTyping, setIsTyping] = useState(false);
   const [isRendered, setIsRendered] = useState(isOpen);
   const [isVisible, setIsVisible] = useState(isOpen);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 640px)");
+
+    const updateAutoFocus = () => {
+      setShouldAutoFocus(mediaQuery.matches);
+    };
+
+    updateAutoFocus();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", updateAutoFocus);
+      return () => mediaQuery.removeEventListener("change", updateAutoFocus);
+    }
+
+    mediaQuery.addListener(updateAutoFocus);
+    return () => mediaQuery.removeListener(updateAutoFocus);
+  }, []);
 
   useEffect(() => {
     try {
@@ -365,6 +384,7 @@ export default function ChatbotWindow({
           onSend={handleSend}
           disabled={isTyping}
           autoFocusKey={focusKey}
+          shouldAutoFocus={shouldAutoFocus}
         />
       </div>
     </div>
