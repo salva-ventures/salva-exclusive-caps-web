@@ -1,4 +1,4 @@
-export type ChatRole = "user" | "assistant";
+﻿export type ChatRole = "user" | "assistant";
 
 export type ChatIntent =
   | "buy"
@@ -37,6 +37,7 @@ export interface ChatbotResponse {
   actions?: ChatAction[];
   metadata?: {
     lastFactIndex?: number;
+    lastJokeIndex?: number;
   };
 }
 
@@ -46,6 +47,7 @@ export interface ChatbotMemory {
   lastReference?: string;
   lastUserMessage?: string;
   lastFactIndex?: number;
+  lastJokeIndex?: number;
 }
 
 export interface ChatbotContext {
