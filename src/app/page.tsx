@@ -191,14 +191,14 @@ export default function HomePage() {
             </motion.div>
 
             <motion.h1
-              variants={fadeUp}
-              className="text-4xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
-            >
-              Gorras exclusivas
-              <span className="block bg-[linear-gradient(180deg,#ef4444_0%,#b91c1c_100%)] bg-clip-text text-transparent">
-                con presencia real.
-              </span>
-            </motion.h1>
+  variants={fadeUp}
+  className="text-4xl font-semibold leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl xl:text-8xl"
+>
+  Gorras exclusivas
+  <span className="block bg-[linear-gradient(180deg,#ef4444_0%,#b91c1c_100%)] bg-clip-text text-transparent">
+    al alcance de todos.
+  </span>
+</motion.h1>
 
             <motion.p
               variants={fadeUp}
