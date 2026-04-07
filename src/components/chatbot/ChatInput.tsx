@@ -1,84 +1,88 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type FormEvent,
-  type KeyboardEvent,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (value: string) => void;
   disabled?: boolean;
 }
+
+const QUICK_ACTIONS = [
+  "Ver catálogo",
+  "Ayúdame a elegir",
+  "Dato curioso",
+  "Envíos",
+  "Mayoreo",
+];
 
 export default function ChatInput({
   onSend,
   disabled = false,
 }: ChatInputProps) {
   const [value, setValue] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (!textareaRef.current) return;
+    if (!disabled) {
+      inputRef.current?.focus();
+    }
+  }, [disabled]);
 
-    textareaRef.current.style.height = "0px";
-    textareaRef.current.style.height = `${Math.min(
-      textareaRef.current.scrollHeight,
-      140
-    )}px`;
-  }, [value]);
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-  function submitMessage() {
-    const trimmed = value.trim();
+    const trimmedValue = value.trim();
+    if (!trimmedValue || disabled) return;
 
-    if (!trimmed || disabled) return;
-
-    onSend(trimmed);
+    onSend(trimmedValue);
     setValue("");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    submitMessage();
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      submitMessage();
-    }
+  function handleQuickAction(action: string) {
+    if (disabled) return;
+    onSend(action);
+    setValue("");
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="border-t border-white/10 bg-gradient-to-b from-white/[0.03] to-white/[0.02] p-3 sm:p-4"
-    >
-      <div className="flex items-end gap-2 rounded-[1.4rem] border border-white/10 bg-white/[0.04] p-2 shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-md">
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Escribe tu mensaje..."
-          rows={1}
-          className="min-h-[44px] max-h-[140px] flex-1 resize-none bg-transparent px-3 py-2 text-sm leading-relaxed text-white outline-none placeholder:text-white/35"
-        />
+    <div className="relative border-t border-white/10 bg-[rgba(10,10,10,0.86)] px-3 pb-3 pt-3 backdrop-blur-2xl sm:px-4 sm:pb-4">
+      <div className="mb-3 flex flex-wrap gap-2">
+        {QUICK_ACTIONS.map((action) => (
+          <button
+            key={action}
+            type="button"
+            onClick={() => handleQuickAction(action)}
+            disabled={disabled}
+            className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-medium text-white/85 transition duration-300 hover:border-white/20 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
+          >
+            {action}
+          </button>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex items-end gap-2">
+        <div className="relative flex-1">
+          <input
+            ref={inputRef}
+            type="text"
+            value={value}
+            onChange={(event) => setValue(event.target.value)}
+            placeholder="Pregúntale algo a Salva Gorrín..."
+            disabled={disabled}
+            className="h-12 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 pr-4 text-sm text-white outline-none transition duration-300 placeholder:text-white/35 focus:border-white/20 focus:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-60"
+            maxLength={400}
+          />
+        </div>
 
         <button
           type="submit"
           disabled={disabled || !value.trim()}
-          className="inline-flex h-11 min-w-[44px] items-center justify-center rounded-2xl border border-white/10 bg-white px-4 text-sm font-semibold text-black transition hover:scale-[1.02] hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-12 min-w-[52px] items-center justify-center rounded-2xl border border-white/10 bg-white text-sm font-semibold text-black transition duration-300 hover:bg-white/90 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/20 disabled:text-white/45"
+          aria-label="Enviar mensaje"
         >
           Enviar
         </button>
-      </div>
-
-      <p className="mt-2 px-1 text-[11px] text-white/35">
-        Enter para enviar. Shift + Enter para salto de línea.
-      </p>
-    </form>
+      </form>
+    </div>
   );
 }
