@@ -104,6 +104,7 @@ export default function ChatbotWindow({
         setMessages(parsed);
       }
     } catch {
+      // noop
     } finally {
       setHasLoadedFromStorage(true);
     }
@@ -115,6 +116,7 @@ export default function ChatbotWindow({
     try {
       window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
     } catch {
+      // noop
     }
   }, [messages, hasLoadedFromStorage]);
 
@@ -149,17 +151,21 @@ export default function ChatbotWindow({
   useEffect(() => {
     if (!hasLoadedFromStorage) return;
 
-    if (messages.length === 1 && messages[0]?.role === "assistant") {
+    setMessages((prev) => {
+      if (prev.length !== 1 || prev[0]?.role !== "assistant") {
+        return prev;
+      }
+
       const updated = getChatbotResponse("hola", { pathname });
 
-      setMessages((prev) => [
+      return [
         {
           ...prev[0],
           content: updated.content,
           actions: updated.actions,
         },
-      ]);
-    }
+      ];
+    });
   }, [pathname, hasLoadedFromStorage]);
 
   function resolveTypingDelay(input: string) {
@@ -213,6 +219,7 @@ export default function ChatbotWindow({
     try {
       window.localStorage.removeItem(CHAT_STORAGE_KEY);
     } catch {
+      // noop
     }
   }
 
