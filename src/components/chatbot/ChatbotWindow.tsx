@@ -62,7 +62,7 @@ function TypingBubble() {
         <div className="mb-1 flex items-center gap-2 px-1">
           <SalvaGorrinAvatar size="sm" />
           <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
-            SALVA GORRÃN
+            SALVA GORRÍN
           </span>
         </div>
 
@@ -305,7 +305,7 @@ export default function ChatbotWindow({
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_35%)]" />
         <div className="pointer-events-none absolute -top-16 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.10),transparent_70%)] blur-2xl" />
 
-        <div className="relative border-b border-white/10 px-3 py-2.5 sm:px-4 sm:py-4">
+        <div className="relative border-b border-white/10 px-3 py-2 sm:px-4 sm:py-4">
           <div className="flex items-start gap-2">
             <SalvaGorrinAvatar
               size="lg"
@@ -316,10 +316,10 @@ export default function ChatbotWindow({
 
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-semibold text-white sm:text-[15px]">
-                Salva GorrÃ­n
+                Salva Gorrín
               </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/60 sm:text-xs">
-                CatÃ¡logo, compras, mayoreo, contacto y curiosidades de gorras.
+              <p className="mt-0.5 text-[10px] leading-relaxed text-white/60 sm:mt-1 sm:text-xs">
+                Catálogo, compras, mayoreo, contacto, chistes y curiosidades de gorras.
               </p>
             </div>
 
@@ -327,7 +327,7 @@ export default function ChatbotWindow({
               <button
                 type="button"
                 onClick={handleClearChat}
-                aria-label="Limpiar conversaciÃ³n"
+                aria-label="Limpiar conversación"
                 className="inline-flex h-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] px-2.5 text-[10px] font-medium text-white transition hover:bg-white/[0.1] sm:h-10 sm:px-3 sm:text-xs"
               >
                 Limpiar
@@ -339,7 +339,7 @@ export default function ChatbotWindow({
                 aria-label="Cerrar chatbot"
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-sm text-white transition hover:bg-white/[0.1] sm:h-10 sm:w-10 sm:text-lg"
               >
-                Ã—
+                ×
               </button>
             </div>
           </div>
@@ -370,5 +370,3 @@ export default function ChatbotWindow({
     </div>
   );
 }
-
-

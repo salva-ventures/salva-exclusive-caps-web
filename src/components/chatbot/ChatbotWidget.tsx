@@ -147,9 +147,9 @@ export default function ChatbotWidget() {
                 <SalvaGorrinAvatar size="md" priority />
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">Salva GorrÃ­n</p>
+                  <p className="text-sm font-semibold">Salva Gorrín</p>
                   <p className="mt-1 text-xs leading-relaxed text-white/65">
-                    {teaserText}
+                    {teaserText} También te cuenta chistes y datos curiosos.
                   </p>
 
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -179,7 +179,7 @@ export default function ChatbotWidget() {
           <button
             type="button"
             onClick={toggleChat}
-            aria-label={isOpen ? "Cerrar Salva GorrÃ­n" : "Abrir Salva GorrÃ­n"}
+            aria-label={isOpen ? "Cerrar Salva Gorrín" : "Abrir Salva Gorrín"}
             className={[
               "group relative inline-flex items-center gap-3 overflow-visible rounded-full text-white transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
               isMounted
@@ -210,10 +210,10 @@ export default function ChatbotWidget() {
 
               <span className="relative hidden pr-1 text-left sm:block">
                 <span className="block text-sm font-semibold leading-none">
-                  Salva GorrÃ­n
+                  Salva Gorrín
                 </span>
                 <span className="mt-1 block text-xs leading-none text-white/60">
-                  Ayuda, catÃ¡logo, chistes y datos curiosos
+                  Ayuda, catálogo, chistes y datos curiosos
                 </span>
               </span>
             </span>
@@ -223,5 +223,3 @@ export default function ChatbotWidget() {
     </>
   );
 }
-
-
