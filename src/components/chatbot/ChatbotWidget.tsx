@@ -90,15 +90,6 @@ export default function ChatbotWidget() {
     }
   }
 
-  function toggleChat() {
-    if (isOpen) {
-      closeChat();
-      return;
-    }
-
-    openChat();
-  }
-
   function closeChat() {
     if (teaserTimeoutRef.current) {
       clearTimeout(teaserTimeoutRef.current);
@@ -111,6 +102,15 @@ export default function ChatbotWidget() {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "false");
     } catch {
     }
+  }
+
+  function toggleChat() {
+    if (isOpen) {
+      closeChat();
+      return;
+    }
+
+    openChat();
   }
 
   function dismissTeaser() {
@@ -137,8 +137,10 @@ export default function ChatbotWidget() {
             <div
               className={[
                 "max-w-[300px] rounded-2xl border border-white/10 bg-[rgba(12,12,12,0.88)] px-4 py-3 text-white",
-                "shadow-[0_20px_60px_rgba(0,0,0,0.38)] backdrop-blur-2xl transition duration-300",
-                isMounted ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
+                "shadow-[0_20px_60px_rgba(0,0,0,0.38)] backdrop-blur-2xl transition duration-500 ease-out",
+                isMounted
+                  ? "translate-y-0 scale-100 opacity-100"
+                  : "translate-y-2 scale-[0.985] opacity-0",
               ].join(" ")}
             >
               <div className="flex items-start gap-3">
@@ -179,28 +181,40 @@ export default function ChatbotWidget() {
             onClick={toggleChat}
             aria-label={isOpen ? "Cerrar Salva Gorrín" : "Abrir Salva Gorrín"}
             className={[
-              "group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10",
-              "bg-[linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))] px-3 py-3 text-white",
-              "shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-300",
-              "hover:scale-[1.02] hover:border-white/20 hover:bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.07))]",
-              isMounted ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
+              "group relative inline-flex items-center gap-3 overflow-visible rounded-full text-white transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              isMounted
+                ? "translate-y-0 scale-100 opacity-100"
+                : "translate-y-3 scale-95 opacity-0",
             ].join(" ")}
           >
-            <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_42%)] opacity-70" />
+            <span className="absolute inset-[-12px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.22),transparent_62%)] opacity-35 blur-2xl transition duration-500 group-hover:opacity-55" />
+            <span className="absolute inset-[-5px] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.12),transparent_58%)] opacity-70 blur-md" />
 
-            <SalvaGorrinAvatar
-              size="xl"
-              priority
-              className="relative border-white/15 bg-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.38)]"
-              imageClassName="scale-[1.06]"
-            />
+            <span
+              className={[
+                "relative flex items-center gap-3 overflow-hidden rounded-full border border-white/10",
+                "bg-[linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))] px-3 py-3",
+                "shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                "hover:scale-[1.025] hover:border-white/20 hover:bg-[linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.07))]",
+                isOpen ? "scale-[0.985]" : "",
+              ].join(" ")}
+            >
+              <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_42%)] opacity-70" />
 
-            <span className="relative hidden pr-1 text-left sm:block">
-              <span className="block text-sm font-semibold leading-none">
-                Salva Gorrín
-              </span>
-              <span className="mt-1 block text-xs leading-none text-white/60">
-                Ayuda, catálogo, chistes y datos curiosos
+              <SalvaGorrinAvatar
+                size="xl"
+                priority
+                className="relative border-white/15 bg-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.38)]"
+                imageClassName="scale-[1.08]"
+              />
+
+              <span className="relative hidden pr-1 text-left sm:block">
+                <span className="block text-sm font-semibold leading-none">
+                  Salva Gorrín
+                </span>
+                <span className="mt-1 block text-xs leading-none text-white/60">
+                  Ayuda, catálogo, chistes y datos curiosos
+                </span>
               </span>
             </span>
           </button>
