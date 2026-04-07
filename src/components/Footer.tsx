@@ -285,6 +285,15 @@ export default function Footer() {
             >
               Cambios y Devoluciones
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/metodos-de-pago"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Métodos de Pago
+            </Link>
           </div>
         </motion.div>
       </motion.div>
