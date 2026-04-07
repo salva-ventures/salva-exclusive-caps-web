@@ -50,7 +50,7 @@ export default function CapCatchGame() {
   const musicAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    musicAudioRef.current = new Audio("/game/music.mp3");
+    musicAudioRef.current = new Audio("/music.mp3");
     musicAudioRef.current.loop = true;
     musicAudioRef.current.volume = 0.45;
 
@@ -288,7 +288,7 @@ export default function CapCatchGame() {
         style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
       >
         <Image
-          src="/game/background.png"
+          src="/background.png"
           alt="Fondo del minijuego"
           fill
           priority
@@ -321,7 +321,7 @@ export default function CapCatchGame() {
             }}
           >
             <Image
-              src={item.type === "cap" ? "/game/cap.png" : "/game/hat.png"}
+              src={item.type === "cap" ? "/cap.png" : "/hat.png"}
               alt={item.type === "cap" ? "Gorra" : "Sombrero"}
               width={ITEM_SIZE}
               height={ITEM_SIZE}
@@ -341,7 +341,7 @@ export default function CapCatchGame() {
           }}
         >
           <Image
-            src="/game/salva-gorrin.png"
+            src="/salva-gorrin.png"
             alt="Salva Gorrín"
             width={PLAYER_WIDTH}
             height={PLAYER_HEIGHT}
