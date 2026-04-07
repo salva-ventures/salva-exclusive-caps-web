@@ -31,7 +31,6 @@ export default function ChatbotWidget() {
         setIsOpen(false);
       }
     } catch {
-      // noop
     } finally {
       setHasLoadedFromStorage(true);
     }
@@ -43,7 +42,6 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, String(isOpen));
     } catch {
-      // noop
     }
   }, [isOpen, hasLoadedFromStorage]);
 
@@ -65,7 +63,6 @@ export default function ChatbotWidget() {
         setShowTeaser(true);
       }, 3200);
     } catch {
-      // noop
     }
 
     return () => {
@@ -89,7 +86,6 @@ export default function ChatbotWidget() {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "true");
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
     } catch {
-      // noop
     }
   }
 
@@ -113,7 +109,6 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "false");
     } catch {
-      // noop
     }
   }
 
@@ -128,7 +123,6 @@ export default function ChatbotWidget() {
     try {
       window.localStorage.setItem(CHATBOT_TEASER_DISMISSED_KEY, "true");
     } catch {
-      // noop
     }
   }
 
@@ -148,11 +142,11 @@ export default function ChatbotWidget() {
             >
               <div className="flex items-start gap-3">
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/5 bg-white text-[11px] font-bold tracking-[0.2em] text-black">
-                  SC
+                  SG
                 </span>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">Asistente Salva</p>
+                  <p className="text-sm font-semibold">Salva Gorrín</p>
                   <p className="mt-1 text-xs leading-relaxed text-white/65">
                     {teaserText}
                   </p>
@@ -184,7 +178,7 @@ export default function ChatbotWidget() {
           <button
             type="button"
             onClick={toggleChat}
-            aria-label={isOpen ? "Cerrar Asistente Salva" : "Abrir Asistente Salva"}
+            aria-label={isOpen ? "Cerrar Salva Gorrín" : "Abrir Salva Gorrín"}
             className={[
               "group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10",
               "bg-[linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04))] px-3 py-3 text-white",
@@ -196,15 +190,15 @@ export default function ChatbotWidget() {
             <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_42%)] opacity-70" />
 
             <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/5 bg-white text-xs font-bold tracking-[0.2em] text-black">
-              SC
+              SG
             </span>
 
             <span className="relative hidden pr-1 text-left sm:block">
               <span className="block text-sm font-semibold leading-none">
-                Asistente Salva
+                Salva Gorrín
               </span>
               <span className="mt-1 block text-xs leading-none text-white/60">
-                Ayuda, catálogo y chistes
+                Ayuda, catálogo, chistes y datos curiosos
               </span>
             </span>
           </button>
