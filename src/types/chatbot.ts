@@ -1,0 +1,38 @@
+export type ChatRole = "user" | "assistant";
+
+export type ChatIntent =
+  | "buy"
+  | "shipping"
+  | "payment"
+  | "wholesale"
+  | "contact"
+  | "catalog"
+  | "faq"
+  | "about"
+  | "collab"
+  | "joke"
+  | "fact"
+  | "recommendation"
+  | "greeting"
+  | "fallback";
+
+export interface ChatAction {
+  label: string;
+  href?: string;
+  type: "link" | "message";
+  value?: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  timestamp: string;
+  actions?: ChatAction[];
+}
+
+export interface ChatbotResponse {
+  intent: ChatIntent;
+  content: string;
+  actions?: ChatAction[];
+}
