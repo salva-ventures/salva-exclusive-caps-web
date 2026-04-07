@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   ChatAction,
   ChatbotContext,
   ChatbotMemory,
@@ -8,6 +8,7 @@ import type {
 const DEFAULT_ACTIONS: ChatAction[] = [
   { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
   { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
+  { label: "Chiste", value: "Chiste", type: "message" },
   { label: "Dato curioso", value: "Dato curioso", type: "message" },
   { label: "Envíos", value: "Envíos", type: "message" },
   { label: "Mayoreo", value: "Mayoreo", type: "message" },
@@ -49,22 +50,22 @@ function getWelcomeMessage(pathname: string) {
   const section = getSectionLabel(pathname);
 
   if (section === "catálogo") {
-    return "Qué gusto tenerte por aquí. Soy Salva Gorrín. Andas en catálogo, así que te puedo ayudar a elegir una gorra, resolver dudas de compra o contarte un dato curioso.";
+    return "Qué gusto tenerte por aquí. Soy Salva Gorrín. Andas en catálogo, así que te puedo ayudar a elegir una gorra, resolver dudas de compra, contarte un chiste o soltarte un dato curioso.";
   }
 
   if (section === "mayoreo") {
-    return "Soy Salva Gorrín. Si vienes por mayoreo, te oriento con compras por volumen, catálogo y contacto. Y sí, también me sé uno que otro dato curioso de gorras.";
+    return "Soy Salva Gorrín. Si vienes por mayoreo, te oriento con compras por volumen, catálogo y contacto. Y sí, también me sé uno que otro chiste y dato curioso de gorras.";
   }
 
   if (section === "contacto") {
-    return "Soy Salva Gorrín. Si quieres escribirnos, pedir información o resolver dudas rápido, aquí ando para ayudarte.";
+    return "Soy Salva Gorrín. Si quieres escribirnos, pedir información o resolver dudas rápido, aquí ando para ayudarte. También te puedo contar un chiste o un dato curioso si quieres.";
   }
 
   if (section === "disponibilidad y envíos") {
-    return "Soy Salva Gorrín. Si traes dudas sobre entregas, disponibilidad o envíos, te ayudo. También puedo orientarte con catálogo o mayoreo.";
+    return "Soy Salva Gorrín. Si traes dudas sobre entregas, disponibilidad o envíos, te ayudo. También puedo orientarte con catálogo, mayoreo, chistes y datos curiosos.";
   }
 
-  return "Qué gusto tenerte por aquí. Soy Salva Gorrín. Te puedo ayudar con catálogo, envíos, mayoreo, compras y uno que otro dato curioso del mundo de las gorras.";
+  return "Qué gusto tenerte por aquí. Soy Salva Gorrín. Te puedo ayudar con catálogo, envíos, mayoreo, compras, chistes y uno que otro dato curioso del mundo de las gorras.";
 }
 
 function getRandomFact(memory?: ChatbotMemory) {
@@ -85,15 +86,15 @@ function getContextualHint(pathname: string) {
 
   switch (section) {
     case "catálogo":
-      return "Estás en catálogo, así que también te puedo ayudar a elegir una según el estilo que busques.";
+      return "Estás en catálogo, así que también te puedo ayudar a elegir una según el estilo que busques, contarte un chiste o darte un dato curioso.";
     case "mayoreo":
-      return "Estás en mayoreo, pero también te puedo orientar con catálogo, contacto y envíos.";
+      return "Estás en mayoreo, pero también te puedo orientar con catálogo, contacto, envíos, chistes y datos curiosos.";
     case "contacto":
-      return "Estás en contacto, aunque si quieres también te ayudo con catálogo, envíos o mayoreo.";
+      return "Estás en contacto, aunque si quieres también te ayudo con catálogo, envíos, mayoreo, chistes o datos curiosos.";
     case "disponibilidad y envíos":
-      return "Aquí estás en disponibilidad y envíos, pero también puedo ayudarte con compras o mayoreo.";
+      return "Aquí estás en disponibilidad y envíos, pero también puedo ayudarte con compras, mayoreo, chistes o datos curiosos.";
     default:
-      return "Si quieres, te ayudo a encontrar rápido lo más útil según lo que estés buscando.";
+      return "Te puedo ayudar con catálogo, compras, envíos, mayoreo, chistes y datos curiosos de gorras.";
   }
 }
 
@@ -101,18 +102,18 @@ export function getChatbotTeaser(pathname: string) {
   const section = getSectionLabel(pathname);
 
   if (section === "catálogo") {
-    return "Te ayudo a elegir una buena gorra o a resolver dudas de compra.";
+    return "Te ayudo a elegir una buena gorra, resolver dudas de compra o contarte un chiste.";
   }
 
   if (section === "mayoreo") {
-    return "Si te interesa comprar por volumen, aquí te oriento rápido.";
+    return "Si te interesa comprar por volumen, aquí te oriento rápido. También me aviento un chiste o dato curioso.";
   }
 
   if (section === "contacto") {
-    return "Si ocupas ayuda o quieres escribirnos, aquí ando.";
+    return "Si ocupas ayuda o quieres escribirnos, aquí ando. También te cuento un chiste si quieres.";
   }
 
-  return "Te ayudo con catálogo, envíos, mayoreo y uno que otro dato curioso.";
+  return "Te ayudo con catálogo, envíos, mayoreo, chistes y uno que otro dato curioso.";
 }
 
 export function getChatbotResponse(
@@ -139,6 +140,7 @@ export function getChatbotResponse(
       content: `${selected.fact}\n\nSi quieres, te doy otro.`,
       actions: [
         { label: "Otro dato", value: "Otro dato", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
         { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
       ],
@@ -155,6 +157,7 @@ export function getChatbotResponse(
         "Si quieres ver opciones, lo mejor es entrar al catálogo. Ahí puedes revisar lo disponible y, si quieres, también te ayudo a elegir algo según el estilo que busques.",
       actions: [
         { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Envíos", value: "Envíos", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
@@ -171,6 +174,7 @@ export function getChatbotResponse(
         { label: "Algo limpio", value: "Busco algo limpio", type: "message" },
         { label: "Algo llamativo", value: "Busco algo llamativo", type: "message" },
         { label: "Fácil de combinar", value: "Busco algo fácil de combinar", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
       ],
       metadata: {},
     };
@@ -183,6 +187,7 @@ export function getChatbotResponse(
         "Buena elección. Normalmente lo más limpio se siente más serio y combina más fácil. Te conviene revisar opciones en tonos neutros o diseños menos cargados.",
       actions: [
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
@@ -197,6 +202,7 @@ export function getChatbotResponse(
       actions: [
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
         { label: "Ayúdame a elegir", value: "Ayúdame a elegir", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
       ],
       metadata: {},
     };
@@ -209,6 +215,7 @@ export function getChatbotResponse(
         "Para combinar fácil, casi siempre funcionan mejor los tonos neutros, acabados limpios y diseños menos saturados. Esas suelen dar más juego en el día a día.",
       actions: [
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
@@ -222,6 +229,7 @@ export function getChatbotResponse(
         "Te puedo ayudar con disponibilidad y envíos. Si quieres información exacta, revisa esa sección del sitio o escríbenos directo para confirmar tiempos y cobertura.",
       actions: [
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Mayoreo", value: "Mayoreo", type: "message" },
       ],
       metadata: {},
@@ -236,6 +244,7 @@ export function getChatbotResponse(
       actions: [
         { label: "Contacto", value: "Contacto", type: "message" },
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
       ],
       metadata: {},
     };
@@ -249,6 +258,7 @@ export function getChatbotResponse(
       actions: [
         { label: "Envíos", value: "Envíos", type: "message" },
         { label: "Mayoreo", value: "Mayoreo", type: "message" },
+        { label: "Chiste", value: "Chiste", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
       ],
       metadata: {},
@@ -261,6 +271,7 @@ export function getChatbotResponse(
       content:
         "Ahí te va uno leve: una buena gorra no hace magia... pero casi siempre arregla más de un outfit.\n\nY ya en serio, también te puedo contar un dato curioso.",
       actions: [
+        { label: "Otro chiste", value: "Chiste", type: "message" },
         { label: "Dato curioso", value: "Dato curioso", type: "message" },
         { label: "Ver catálogo", value: "Ver catálogo", type: "message" },
       ],
