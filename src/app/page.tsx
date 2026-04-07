@@ -716,6 +716,79 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+            {/* Mayoreo CTA */}
+      <section className="relative border-y border-white/10 bg-[#090909] py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(220,38,38,0.08),transparent_22%)]" />
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={fadeUp}
+          className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8"
+        >
+          <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 220, damping: 24 }}
+            className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#101010] px-6 py-10 md:px-8 md:py-12`}
+          >
+            <div className="grid gap-8 md:grid-cols-[1.15fr_0.85fr] md:items-center">
+              <div>
+                <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
+                  Canal B2B
+                </p>
+                <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
+                  Mayoreo para tiendas y negocios
+                </h2>
+                <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
+                  Si buscas comprar gorras por volumen para revender o surtir tu
+                  negocio, conoce nuestra atención personalizada para mayoreo.
+                  Atendemos tiendas, revendedores, boutiques, emprendedores,
+                  marcas y otros negocios con seguimiento directo por WhatsApp.
+                </p>
+
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                  <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
+                    <Link
+                      href="/mayoreo"
+                      className="inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-white shadow-[0_12px_30px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-700"
+                    >
+                      Ver mayoreo
+                    </Link>
+                  </motion.div>
+
+                  <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
+                    <a
+                      href="https://wa.me/528335340498?text=Hola,%20quiero%20cotizar%20mayoreo%20con%20Salva%20Exclusive%20Caps."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-white/20 hover:bg-white/[0.1] hover:text-red-500"
+                    >
+                      Cotizar mayoreo por WhatsApp
+                    </a>
+                  </motion.div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
+                {[
+                  "Atención personalizada",
+                  "Compra por volumen",
+                  "Selección de modelos según negocio",
+                  "Envíos nacionales e internacionales",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-sm text-white/80"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
       {/* Final CTA */}
       <section className="relative py-24">
         <motion.div
