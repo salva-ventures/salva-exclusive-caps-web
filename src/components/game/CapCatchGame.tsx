@@ -38,6 +38,7 @@ export default function CapCatchGame() {
   const [bestScore, setBestScore] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const itemIdRef = useRef(0);
   const speedRef = useRef(2.8);
@@ -46,27 +47,44 @@ export default function CapCatchGame() {
   const lastFrameRef = useRef(0);
   const difficultyTimerRef = useRef(0);
 
-  const catchAudioRef = useRef<HTMLAudioElement | null>(null);
-  const hitAudioRef = useRef<HTMLAudioElement | null>(null);
-  const startAudioRef = useRef<HTMLAudioElement | null>(null);
-  const gameOverAudioRef = useRef<HTMLAudioElement | null>(null);
+  const musicAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    catchAudioRef.current = new Audio("/game/catch.mp3");
-    hitAudioRef.current = new Audio("/game/hit.mp3");
-    startAudioRef.current = new Audio("/game/start.mp3");
-    gameOverAudioRef.current = new Audio("/game/gameover.mp3");
+    musicAudioRef.current = new Audio("/game/music.mp3");
+    musicAudioRef.current.loop = true;
+    musicAudioRef.current.volume = 0.45;
 
     const savedBest = window.localStorage.getItem("salva-cap-catch-best-score");
     if (savedBest) {
       setBestScore(Number(savedBest));
     }
+
+    const savedMuted = window.localStorage.getItem("salva-cap-catch-muted");
+    if (savedMuted === "true") {
+      setIsMuted(true);
+    }
+
+    return () => {
+      musicAudioRef.current?.pause();
+    };
   }, []);
 
-  function playAudio(audio: HTMLAudioElement | null) {
-    if (!audio) return;
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
+  useEffect(() => {
+    if (musicAudioRef.current) {
+      musicAudioRef.current.muted = isMuted;
+    }
+
+    window.localStorage.setItem("salva-cap-catch-muted", String(isMuted));
+  }, [isMuted]);
+
+  function playMusic() {
+    const music = musicAudioRef.current;
+    if (!music || isMuted) return;
+    music.play().catch(() => {});
+  }
+
+  function pauseMusic() {
+    musicAudioRef.current?.pause();
   }
 
   function resetState() {
@@ -87,12 +105,23 @@ export default function CapCatchGame() {
 
   function startGame() {
     resetState();
-    playAudio(startAudioRef.current);
+    playMusic();
   }
 
-  function gameOver() {
+  function endGame() {
     setIsRunning(false);
-    playAudio(gameOverAudioRef.current);
+    pauseMusic();
+  }
+
+  function toggleMute() {
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+
+    if (nextMuted) {
+      pauseMusic();
+    } else if (hasStarted && isRunning) {
+      playMusic();
+    }
   }
 
   useEffect(() => {
@@ -104,6 +133,11 @@ export default function CapCatchGame() {
 
       if (!isRunning && hasStarted && event.key === "Enter") {
         startGame();
+        return;
+      }
+
+      if (event.key.toLowerCase() === "m") {
+        setIsMuted((prev) => !prev);
         return;
       }
 
@@ -176,13 +210,11 @@ export default function CapCatchGame() {
           if (collided) {
             if (item.type === "cap") {
               setScore((prevScore) => prevScore + 1);
-              playAudio(catchAudioRef.current);
             } else {
-              playAudio(hitAudioRef.current);
               setLives((prevLives) => {
                 const nextLives = prevLives - 1;
                 if (nextLives <= 0) {
-                  gameOver();
+                  endGame();
                   return 0;
                 }
                 return nextLives;
@@ -270,6 +302,13 @@ export default function CapCatchGame() {
           <div className="absolute left-2/3 top-0 h-full w-px bg-white/25" />
         </div>
 
+        <button
+          onClick={toggleMute}
+          className="absolute right-3 top-3 z-30 rounded-full border border-white/15 bg-black/35 px-3 py-2 text-xs text-white backdrop-blur transition hover:bg-black/50"
+        >
+          {isMuted ? "Activar música" : "Silenciar"}
+        </button>
+
         {items.map((item) => (
           <div
             key={item.id}
@@ -331,7 +370,7 @@ export default function CapCatchGame() {
               Empezar
             </button>
             <p className="mt-3 text-xs text-white/50">
-              En PC usa flechas o A/D
+              En PC usa flechas o A/D. Presiona M para silenciar.
             </p>
           </div>
         )}
