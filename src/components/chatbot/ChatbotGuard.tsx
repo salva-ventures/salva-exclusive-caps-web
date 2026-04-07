@@ -1,5 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+import ChatbotWidget from "@/components/chatbot/ChatbotWidget";
+
 export default function ChatbotGuard() {
-  return null;
+  const pathname = usePathname();
+
+  if (pathname === "/juego" || pathname.startsWith("/juego/")) {
+    return null;
+  }
+
+  return <ChatbotWidget />;
 }
