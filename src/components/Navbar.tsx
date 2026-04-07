@@ -142,7 +142,7 @@ export default function Navbar() {
         variants={fadeDown}
         initial="hidden"
         animate="show"
-        className="sticky top-0 z-50 w-full"
+        className="relative z-50 w-full lg:sticky lg:top-0"
       >
         <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
           <div
@@ -156,7 +156,7 @@ export default function Navbar() {
             <div className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:18px_18px]" />
             <div className="pointer-events-none absolute inset-0 rounded-[1.4rem] ring-1 ring-inset ring-white/[0.03]" />
 
-            <div className="relative flex h-16 items-center justify-between px-4 sm:px-5 lg:h-[72px] lg:px-6">
+            <div className="relative flex h-[72px] items-center justify-between px-4 sm:px-5 lg:h-[72px] lg:px-6">
               <Link href="/" className="group flex items-center gap-3">
                 <div className="relative h-9 w-9 overflow-hidden rounded-full border border-white/10 bg-white/[0.05] shadow-[0_8px_20px_rgba(0,0,0,0.18)]">
                   <Image
@@ -172,9 +172,7 @@ export default function Navbar() {
                   <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/45">
                     Salva Exclusive Caps
                   </p>
-                  <p className="mt-0.5 text-sm text-white/80">
-                    Gorras premium
-                  </p>
+                  <p className="mt-0.5 text-sm text-white/80">Gorras premium</p>
                 </div>
               </Link>
 
@@ -254,75 +252,77 @@ export default function Navbar() {
               initial="hidden"
               animate="show"
               exit="exit"
-              className="fixed inset-x-4 top-[88px] z-50 overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b0b0b] shadow-[0_24px_70px_rgba(0,0,0,0.48)] lg:hidden"
+              className="fixed inset-x-4 top-[88px] z-50 max-h-[calc(100dvh-104px)] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b0b0b] shadow-[0_24px_70px_rgba(0,0,0,0.48)] lg:hidden"
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(220,38,38,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_28%,transparent_72%,rgba(255,255,255,0.02))]" />
               <div className="pointer-events-none absolute inset-0 rounded-[1.75rem] ring-1 ring-inset ring-white/[0.03]" />
 
-              <div className="relative border-b border-white/10 px-5 py-5">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
-                  Navegación
-                </p>
-                <h3 className="mt-2 text-xl font-semibold text-white">
-                  Explora la marca
-                </h3>
-              </div>
+              <div className="relative flex max-h-[calc(100dvh-104px)] flex-col">
+                <div className="border-b border-white/10 px-5 py-5">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+                    Navegación
+                  </p>
+                  <h3 className="mt-2 text-xl font-semibold text-white">
+                    Explora la marca
+                  </h3>
+                </div>
 
-              <div className="relative px-3 py-3">
-                <div className="space-y-1">
-                  {navLinks.map((item, index) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -12 }}
-                      transition={{ duration: 0.2, delay: index * 0.04 }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center justify-between rounded-2xl border border-transparent px-4 py-4 text-sm font-medium text-white/82 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.05] hover:text-white"
+                <div className="flex-1 overflow-y-auto px-3 py-3 pb-5">
+                  <div className="space-y-1">
+                    {navLinks.map((item, index) => (
+                      <motion.div
+                        key={item.href}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.2, delay: index * 0.04 }}
                       >
-                        <span>{item.label}</span>
-                        <ChevronRight size={16} className="text-white/35" />
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsOpen(false)}
+                          className="flex items-center justify-between rounded-2xl border border-transparent px-4 py-4 text-sm font-medium text-white/82 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.05] hover:text-white"
+                        >
+                          <span>{item.label}</span>
+                          <ChevronRight size={16} className="text-white/35" />
+                        </Link>
+                      </motion.div>
+                    ))}
+                  </div>
 
-                <div className="mt-4 flex items-center justify-center gap-3">
-                  {socialLinks.map((item, index) => (
-                    <motion.a
-                      key={item.name}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.22, delay: 0.1 + index * 0.04 }}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setIsOpen(false)}
-                      aria-label={item.ariaLabel}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] text-white/85 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.1] hover:text-red-500"
-                    >
-                      {item.icon}
-                    </motion.a>
-                  ))}
-                </div>
+                  <div className="mt-4 flex items-center justify-center gap-3">
+                    {socialLinks.map((item, index) => (
+                      <motion.a
+                        key={item.name}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.22, delay: 0.1 + index * 0.04 }}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsOpen(false)}
+                        aria-label={item.ariaLabel}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/14 bg-white/[0.05] text-white/85 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.1] hover:text-red-500"
+                      >
+                        {item.icon}
+                      </motion.a>
+                    ))}
+                  </div>
 
-                <motion.a
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.24, delay: 0.16 }}
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsOpen(false)}
-                  className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-red-600 bg-red-600 px-5 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:bg-red-700"
-                >
-                  Hablar por WhatsApp
-                </motion.a>
+                  <motion.a
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.24, delay: 0.16 }}
+                    href={waLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-red-600 bg-red-600 px-5 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:bg-red-700"
+                  >
+                    Hablar por WhatsApp
+                  </motion.a>
+                </div>
               </div>
             </motion.div>
           </>
