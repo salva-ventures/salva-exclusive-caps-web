@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -45,7 +45,7 @@ export default function ChatInput({
             type="text"
             value={value}
             onChange={(event) => setValue(event.target.value)}
-            placeholder="Pregúntale algo a Salva Gorrín..."
+            placeholder="PregÃºntale algo a Salva GorrÃ­n..."
             disabled={disabled}
             className="h-12 w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 pr-4 text-sm text-white outline-none transition duration-300 placeholder:text-white/35 focus:border-white/20 focus:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-60"
             maxLength={400}
@@ -64,3 +64,4 @@ export default function ChatInput({
     </div>
   );
 }
+
