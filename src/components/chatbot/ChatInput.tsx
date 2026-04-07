@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface ChatInputProps {
   onSend: (value: string) => void;
   disabled?: boolean;
+  autoFocusKey?: number;
 }
 
 const QUICK_ACTIONS = [
@@ -18,15 +19,20 @@ const QUICK_ACTIONS = [
 export default function ChatInput({
   onSend,
   disabled = false,
+  autoFocusKey = 0,
 }: ChatInputProps) {
   const [value, setValue] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!disabled) {
-      inputRef.current?.focus();
+      const timer = window.setTimeout(() => {
+        inputRef.current?.focus();
+      }, 180);
+
+      return () => window.clearTimeout(timer);
     }
-  }, [disabled]);
+  }, [disabled, autoFocusKey]);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,18 +52,20 @@ export default function ChatInput({
 
   return (
     <div className="relative border-t border-white/10 bg-[rgba(10,10,10,0.86)] px-3 pb-3 pt-3 backdrop-blur-2xl sm:px-4 sm:pb-4">
-      <div className="mb-3 flex flex-wrap gap-2">
-        {QUICK_ACTIONS.map((action) => (
-          <button
-            key={action}
-            type="button"
-            onClick={() => handleQuickAction(action)}
-            disabled={disabled}
-            className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-medium text-white/85 transition duration-300 hover:border-white/20 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
-          >
-            {action}
-          </button>
-        ))}
+      <div className="mb-3 overflow-x-auto pb-1">
+        <div className="flex min-w-max gap-2">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action}
+              type="button"
+              onClick={() => handleQuickAction(action)}
+              disabled={disabled}
+              className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-[11px] font-medium text-white/85 transition duration-300 hover:border-white/20 hover:bg-white/[0.1] disabled:cursor-not-allowed disabled:opacity-50 sm:text-xs"
+            >
+              {action}
+            </button>
+          ))}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex items-end gap-2">
@@ -77,7 +85,7 @@ export default function ChatInput({
         <button
           type="submit"
           disabled={disabled || !value.trim()}
-          className="inline-flex h-12 min-w-[52px] items-center justify-center rounded-2xl border border-white/10 bg-white text-sm font-semibold text-black transition duration-300 hover:bg-white/90 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/20 disabled:text-white/45"
+          className="inline-flex h-12 min-w-[52px] items-center justify-center rounded-2xl border border-white/10 bg-white px-4 text-sm font-semibold text-black transition duration-300 hover:bg-white/90 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/20 disabled:text-white/45"
           aria-label="Enviar mensaje"
         >
           Enviar
