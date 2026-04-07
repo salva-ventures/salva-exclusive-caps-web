@@ -294,6 +294,15 @@ export default function Footer() {
             >
               Métodos de Pago
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/cookies"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Cookies
+            </Link>
           </div>
         </motion.div>
       </motion.div>
