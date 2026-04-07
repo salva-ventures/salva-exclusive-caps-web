@@ -36,3 +36,9 @@ export interface ChatbotResponse {
   content: string;
   actions?: ChatAction[];
 }
+
+export interface ChatbotMemory {
+  lastIntent?: ChatIntent;
+  lastTopic?: "catalog" | "wholesale" | "contact" | "shipping" | "payment" | "faq";
+  lastReference?: string;
+}
