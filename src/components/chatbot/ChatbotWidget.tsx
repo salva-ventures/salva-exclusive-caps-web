@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatbotWindow from "./ChatbotWindow";
 
-const CHATBOT_OPEN_STORAGE_KEY = "salva_chatbot_open_v1";
+const CHATBOT_OPEN_STORAGE_KEY = "salva_chatbot_open_v2";
+const CHATBOT_AUTO_OPEN_DONE_KEY = "salva_chatbot_auto_open_done_v1";
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
+  const autoOpenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -36,14 +38,79 @@ export default function ChatbotWidget() {
     }
   }, [isOpen, hasLoadedFromStorage]);
 
+  useEffect(() => {
+    if (!hasLoadedFromStorage) return;
+
+    try {
+      const alreadyAutoOpened = window.localStorage.getItem(
+        CHATBOT_AUTO_OPEN_DONE_KEY
+      );
+
+      const hasStoredOpenPreference =
+        window.localStorage.getItem(CHATBOT_OPEN_STORAGE_KEY) !== null;
+
+      const isDesktop = window.innerWidth >= 640;
+
+      if (alreadyAutoOpened === "true" || hasStoredOpenPreference || !isDesktop) {
+        return;
+      }
+
+      autoOpenTimeoutRef.current = setTimeout(() => {
+        setIsOpen(true);
+
+        try {
+          window.localStorage.setItem(CHATBOT_AUTO_OPEN_DONE_KEY, "true");
+          window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "true");
+        } catch {
+        }
+      }, 4200);
+    } catch {
+    }
+
+    return () => {
+      if (autoOpenTimeoutRef.current) {
+        clearTimeout(autoOpenTimeoutRef.current);
+      }
+    };
+  }, [hasLoadedFromStorage]);
+
+  function toggleChat() {
+    if (autoOpenTimeoutRef.current) {
+      clearTimeout(autoOpenTimeoutRef.current);
+      autoOpenTimeoutRef.current = null;
+    }
+
+    setIsOpen((prev) => !prev);
+
+    try {
+      window.localStorage.setItem(CHATBOT_AUTO_OPEN_DONE_KEY, "true");
+    } catch {
+    }
+  }
+
+  function closeChat() {
+    if (autoOpenTimeoutRef.current) {
+      clearTimeout(autoOpenTimeoutRef.current);
+      autoOpenTimeoutRef.current = null;
+    }
+
+    setIsOpen(false);
+
+    try {
+      window.localStorage.setItem(CHATBOT_AUTO_OPEN_DONE_KEY, "true");
+      window.localStorage.setItem(CHATBOT_OPEN_STORAGE_KEY, "false");
+    } catch {
+    }
+  }
+
   return (
     <>
-      <ChatbotWindow isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <ChatbotWindow isOpen={isOpen} onClose={closeChat} />
 
       <div className="fixed bottom-4 right-4 z-[60] sm:bottom-6 sm:right-6">
         <button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={toggleChat}
           aria-label={isOpen ? "Cerrar Asistente Salva" : "Abrir Asistente Salva"}
           className={[
             "group relative inline-flex items-center gap-3 overflow-hidden rounded-full border border-white/10",
