@@ -267,11 +267,18 @@ export default function Footer() {
             >
               Términos y Condiciones
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/envios-y-entregas"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Envíos y Entregas
+            </Link>
           </div>
         </motion.div>
       </motion.div>
     </footer>
   );
 }
-
-
