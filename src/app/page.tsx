@@ -6,8 +6,6 @@ import {
   CheckCircle2,
   MessageCircle,
   PackageCheck,
-  Quote,
-  ShieldCheck,
   Truck,
   ArrowUpRight,
   Sparkles,
@@ -17,21 +15,6 @@ import { useRef } from "react";
 import ProductCard from "@/components/ProductCard";
 import { getFeaturedProducts } from "@/data/products";
 import { BRAND, CONTACT, DELIVERY_INFO } from "@/config/brand";
-
-const testimonials = [
-  {
-    quote: "Muy buena atención y entrega rápida.",
-    author: "A. R.",
-  },
-  {
-    quote: "Se siente la diferencia en el diseño.",
-    author: "M. T.",
-  },
-  {
-    quote: "Proceso directo y sin complicaciones.",
-    author: "J. L.",
-  },
-];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -625,61 +608,6 @@ export default function HomePage() {
                 exclusividad y atención directa.
               </p>
             </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      <section className="relative border-y border-white/10 bg-[#0a0a0a] py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.04),transparent_20%)]" />
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.15 }}
-          variants={staggerContainer}
-          className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-        >
-          <motion.div
-            variants={fadeUp}
-            className="mx-auto mb-12 max-w-3xl text-center"
-          >
-            <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
-              Testimonios
-            </p>
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Comentarios que refuerzan la confianza
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-white/55 sm:text-base">
-              Mensajes cortos, claros y directos que transmiten atención,
-              respuesta y experiencia real.
-            </p>
-          </motion.div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {testimonials.map((item) => (
-              <motion.article
-                key={item.author + item.quote}
-                variants={fadeUp}
-                whileHover={{ y: -5 }}
-                transition={{ type: "spring", stiffness: 240, damping: 24 }}
-                className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#111] p-7`}
-              >
-                <div className="flex items-center gap-2 text-red-500">
-                  <Quote className="h-5 w-5" />
-                  <span className="text-xs font-medium uppercase tracking-[0.2em]">
-                    Cliente
-                  </span>
-                </div>
-
-                <p className="mt-5 text-lg leading-8 text-white">
-                  “{item.quote}”
-                </p>
-
-                <div className="mt-6 flex items-center gap-2 border-t border-white/10 pt-4 text-sm text-white/60">
-                  <ShieldCheck className="h-4 w-4 text-red-500" />
-                  {item.author}
-                </div>
-              </motion.article>
-            ))}
           </div>
         </motion.div>
       </section>
