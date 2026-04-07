@@ -14,6 +14,7 @@ const navLinks = [
   { href: "/nosotros", label: "Nosotros" },
   { href: "/faq", label: "FAQ" },
   { href: "/contacto", label: "Contacto" },
+  { href: "/mayoreo", label: "Mayoreo" },
 ];
 
 const fadeDown = {
