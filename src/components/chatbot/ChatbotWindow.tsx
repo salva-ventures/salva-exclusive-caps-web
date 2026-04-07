@@ -59,10 +59,10 @@ function TypingBubble() {
       <div className="flex max-w-[88%] flex-col items-start gap-2">
         <div className="mb-1 flex items-center gap-2 px-1">
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white text-[10px] font-bold tracking-[0.18em] text-black">
-            SC
+            SG
           </span>
           <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
-            Asistente Salva
+            SALVA GORRÍN
           </span>
         </div>
 
@@ -130,7 +130,10 @@ export default function ChatbotWindow({
 
     try {
       window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
-      window.localStorage.setItem(CHAT_MEMORY_KEY, JSON.stringify(memoryRef.current));
+      window.localStorage.setItem(
+        CHAT_MEMORY_KEY,
+        JSON.stringify(memoryRef.current)
+      );
     } catch {
     }
   }, [messages, hasLoadedFromStorage]);
@@ -251,25 +254,23 @@ export default function ChatbotWindow({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-x-3 bottom-24 z-[70] sm:inset-x-auto sm:right-6 sm:w-[420px]">
-      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[rgba(8,8,8,0.92)] shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+    <div className="fixed inset-x-3 bottom-20 top-[max(4.5rem,env(safe-area-inset-top))] z-[70] sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto sm:w-[min(400px,calc(100vw-1.5rem))]">
+      <div className="relative flex h-full max-h-[calc(100dvh-6rem)] flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[rgba(8,8,8,0.92)] shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl sm:h-auto sm:max-h-[min(720px,calc(100dvh-8rem))]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.09),transparent_35%)]" />
 
-        <div className="relative border-b border-white/10 px-4 py-4 sm:px-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 items-start gap-3">
-              <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white text-xs font-bold tracking-[0.24em] text-black shadow-[0_10px_30px_rgba(255,255,255,0.12)]">
-                SC
-              </span>
+        <div className="relative border-b border-white/10 px-3 py-3 sm:px-4 sm:py-4">
+          <div className="flex items-start gap-2 sm:gap-3">
+            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white text-[11px] font-bold tracking-[0.2em] text-black shadow-[0_10px_30px_rgba(255,255,255,0.12)] sm:h-11 sm:w-11 sm:text-xs sm:tracking-[0.24em]">
+              SG
+            </span>
 
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-white">
-                  Asistente Salva
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-white/55">
-                  Catálogo, compras, mayoreo, contacto y humor de gorras.
-                </p>
-              </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold text-white sm:text-[15px]">
+                Salva Gorrín
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-white/60 sm:text-xs">
+                Catálogo, compras, mayoreo, contacto, chistes y datos curiosos de gorras.
+              </p>
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
@@ -277,7 +278,7 @@ export default function ChatbotWindow({
                 type="button"
                 onClick={handleClearChat}
                 aria-label="Limpiar conversación"
-                className="inline-flex h-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] px-3 text-xs font-medium text-white transition hover:bg-white/[0.1]"
+                className="inline-flex h-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] px-3 text-[11px] font-medium text-white transition hover:bg-white/[0.1] sm:h-10 sm:text-xs"
               >
                 Limpiar
               </button>
@@ -286,7 +287,7 @@ export default function ChatbotWindow({
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar chatbot"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-lg text-white transition hover:bg-white/[0.1]"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-base text-white transition hover:bg-white/[0.1] sm:h-10 sm:w-10 sm:text-lg"
               >
                 ×
               </button>
@@ -296,7 +297,7 @@ export default function ChatbotWindow({
 
         <div
           ref={messagesContainerRef}
-          className="relative flex h-[min(65vh,520px)] flex-col gap-5 overflow-y-auto px-3 py-4 sm:px-4"
+          className="relative flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4 sm:px-4"
           style={{ scrollbarWidth: "thin" }}
         >
           {messages.map((message) => (
