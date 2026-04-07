@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import type { ChatMessage } from "@/types/chatbot";
+import type { ChatIntent, ChatMessage } from "@/types/chatbot";
 import { getChatbotResponse } from "@/lib/chatbot/chatbotEngine";
 import ChatInput from "./ChatInput";
 import ChatMessageItem from "./ChatMessage";
@@ -12,7 +12,8 @@ interface ChatbotWindowProps {
   onClose: () => void;
 }
 
-const CHAT_STORAGE_KEY = "salva_chatbot_messages_v2";
+const CHAT_STORAGE_KEY = "salva_chatbot_messages_v3";
+const CHAT_LAST_INTENT_KEY = "salva_chatbot_last_intent_v1";
 
 function createMessage(
   role: ChatMessage["role"],
@@ -43,6 +44,10 @@ function isValidMessageArray(value: unknown): value is ChatMessage[] {
       typeof message.timestamp === "string"
     );
   });
+}
+
+function isValidIntent(value: unknown): value is ChatIntent {
+  return typeof value === "string";
 }
 
 function TypingBubble() {
@@ -77,9 +82,11 @@ export default function ChatbotWindow({
   const pathname = usePathname();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastIntentRef = useRef<ChatIntent | undefined>(undefined);
 
   const initialAssistantMessage = useMemo(() => {
     const response = getChatbotResponse("hola", { pathname });
+    lastIntentRef.current = response.intent;
     return createMessage("assistant", response.content, response.actions);
   }, [pathname]);
 
@@ -92,19 +99,20 @@ export default function ChatbotWindow({
   useEffect(() => {
     try {
       const storedValue = window.localStorage.getItem(CHAT_STORAGE_KEY);
+      const storedIntent = window.localStorage.getItem(CHAT_LAST_INTENT_KEY);
 
-      if (!storedValue) {
-        setHasLoadedFromStorage(true);
-        return;
+      if (storedValue) {
+        const parsed = JSON.parse(storedValue) as unknown;
+
+        if (isValidMessageArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
+        }
       }
 
-      const parsed = JSON.parse(storedValue) as unknown;
-
-      if (isValidMessageArray(parsed) && parsed.length > 0) {
-        setMessages(parsed);
+      if (isValidIntent(storedIntent)) {
+        lastIntentRef.current = storedIntent;
       }
     } catch {
-      // noop
     } finally {
       setHasLoadedFromStorage(true);
     }
@@ -116,7 +124,17 @@ export default function ChatbotWindow({
     try {
       window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
     } catch {
-      // noop
+    }
+  }, [messages, hasLoadedFromStorage]);
+
+  useEffect(() => {
+    if (!hasLoadedFromStorage) return;
+
+    try {
+      if (lastIntentRef.current) {
+        window.localStorage.setItem(CHAT_LAST_INTENT_KEY, lastIntentRef.current);
+      }
+    } catch {
     }
   }, [messages, hasLoadedFromStorage]);
 
@@ -157,6 +175,7 @@ export default function ChatbotWindow({
       }
 
       const updated = getChatbotResponse("hola", { pathname });
+      lastIntentRef.current = updated.intent;
 
       return [
         {
@@ -178,7 +197,10 @@ export default function ChatbotWindow({
     if (isTyping) return;
 
     const userMessage = createMessage("user", input);
-    const response = getChatbotResponse(input, { pathname });
+    const response = getChatbotResponse(input, {
+      pathname,
+      previousIntent: lastIntentRef.current,
+    });
 
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
@@ -194,6 +216,7 @@ export default function ChatbotWindow({
         response.actions
       );
 
+      lastIntentRef.current = response.intent;
       setMessages((prev) => [...prev, assistantMessage]);
       setIsTyping(false);
       typingTimeoutRef.current = null;
@@ -213,13 +236,14 @@ export default function ChatbotWindow({
       response.actions
     );
 
+    lastIntentRef.current = response.intent;
     setIsTyping(false);
     setMessages([freshMessage]);
 
     try {
       window.localStorage.removeItem(CHAT_STORAGE_KEY);
+      window.localStorage.removeItem(CHAT_LAST_INTENT_KEY);
     } catch {
-      // noop
     }
   }
 
