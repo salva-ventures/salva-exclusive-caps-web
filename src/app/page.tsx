@@ -4,9 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   CheckCircle2,
-  MessageCircle,
-  PackageCheck,
-  Truck,
   ArrowUpRight,
   Sparkles,
 } from "lucide-react";
@@ -353,72 +350,97 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      <section className="relative border-b border-white/10 bg-[#070707]">
+      <section className="relative border-b border-white/10 bg-[#070707] py-24 sm:py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,35,35,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.04),transparent_30%)]" />
         <div className="absolute inset-0 opacity-[0.035] [background-image:radial-gradient(rgba(255,255,255,0.9)_0.6px,transparent_0.6px)] [background-size:20px_20px]" />
+
         <motion.div
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
           variants={staggerContainer}
-          className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
+          className="relative mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8"
         >
-          <motion.div
-            variants={fadeUp}
-            className="mx-auto mb-12 max-w-3xl text-center"
-          >
-            <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
-              Confianza directa
+          <motion.div variants={fadeUp} className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.45em] text-red-500">
+              Entregas
             </p>
-            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Atención real, entregas reales y proceso claro
+            <h2 className="mt-4 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              Disponibilidad y envíos
             </h2>
-            <p className="mt-4 text-sm leading-7 text-white/55 sm:text-base">
-              Queremos que el cliente sienta confianza desde el primer contacto:
-              respuesta directa, confirmación clara y seguimiento real.
+            <p className="mt-6 text-base leading-8 text-white/72 sm:text-lg">
+              Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. Envíos
+              nacionales e internacionales con cotización por separado. Toda
+              disponibilidad se confirma directamente por WhatsApp.
             </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              {[
+                "Entrega inmediata",
+                "Confirmación por WhatsApp",
+                "Cobertura nacional e internacional",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/12 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 backdrop-blur"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-10">
+              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
+                <Link
+                  href="/disponibilidad"
+                  className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-sm font-semibold uppercase tracking-[0.28em] text-white shadow-[0_12px_30px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-500"
+                >
+                  Ver detalles de envío
+                </Link>
+              </motion.div>
+            </div>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <motion.div
+            variants={staggerContainer}
+            className="grid gap-4"
+          >
             {[
               {
-                icon: PackageCheck,
                 title: "Entrega inmediata",
-                text: `Atención rápida y entregas en ${DELIVERY_INFO.immediate.join(", ")}.`,
+                description: DELIVERY_INFO.immediate.join(", "),
               },
               {
-                icon: Truck,
-                title: "Envíos nacionales e internacionales",
-                text: "Hacemos envíos a toda la República Mexicana y también al extranjero.",
+                title: "Disponibilidad",
+                description:
+                  "Sujeta a existencias y confirmación directa por WhatsApp.",
               },
               {
-                icon: MessageCircle,
-                title: "Atención real y directa",
-                text: "Disponibilidad validada directamente por WhatsApp, sin vueltas ni complicaciones.",
+                title: "Envíos",
+                description:
+                  "Cobertura nacional e internacional con costo adicional.",
               },
-            ].map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <motion.div
-                  key={item.title}
-                  variants={fadeUp}
-                  whileHover={{ y: -5 }}
-                  transition={{ type: "spring", stiffness: 240, damping: 24 }}
-                  className={`group ${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#0d0d0d] p-7`}
-                >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-red-600/20 bg-red-600/10 text-red-500 shadow-[0_8px_20px_rgba(220,38,38,0.08)]">
-                    <Icon className="h-5 w-5" />
+            ].map((item) => (
+              <motion.div
+                key={item.title}
+                variants={fadeUp}
+                whileHover={{ y: -4 }}
+                className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#111] p-6`}
+              >
+                <div className="flex items-start gap-4">
+                  <span className="mt-2 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_18px_rgba(239,35,35,0.7)]" />
+                  <div>
+                    <h3 className="text-sm font-semibold uppercase tracking-[0.28em] text-white">
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-base leading-7 text-white/68">
+                      {item.description}
+                    </p>
                   </div>
-                  <h3 className="mt-5 text-xl font-semibold text-white">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-white/55">
-                    {item.text}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
       </section>
 
@@ -480,81 +502,6 @@ export default function HomePage() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
-      </section>
-
-      <section className="relative border-y border-white/10 bg-[#080808] py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(220,38,38,0.08),transparent_20%)]" />
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-          className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-        >
-          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-            <motion.div variants={fadeUp}>
-              <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
-                Entregas
-              </p>
-              <h2 className="mb-6 text-3xl font-bold tracking-tight text-white md:text-4xl">
-                Disponibilidad y envíos
-              </h2>
-              <p className="mb-8 leading-relaxed text-white/55">
-                Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}.
-                Sujeta a existencias. Los envíos nacionales e internacionales se
-                cotizan por separado y toda disponibilidad se confirma
-                directamente por WhatsApp.
-              </p>
-              <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.985 }}>
-                <Link
-                  href="/disponibilidad"
-                  className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-white shadow-[0_12px_30px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-700"
-                >
-                  Ver detalles de envío
-                </Link>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              variants={staggerContainer}
-              className="grid grid-cols-1 gap-4"
-            >
-              {[
-                {
-                  label: "Entrega inmediata",
-                  desc: DELIVERY_INFO.immediate.join(", "),
-                },
-                {
-                  label: "Disponibilidad",
-                  desc: "Sujeta a existencias y confirmación directa por WhatsApp",
-                },
-                {
-                  label: "Envíos",
-                  desc: "Cobertura nacional e internacional con costo adicional",
-                },
-              ].map((item) => (
-                <motion.div
-                  key={item.label}
-                  variants={fadeUp}
-                  whileHover={{ y: -4 }}
-                  className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#111] p-6`}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="mt-2 h-2.5 w-2.5 rounded-full bg-red-500" />
-                    <div>
-                      <h3 className="mb-1 text-sm font-semibold uppercase tracking-[0.18em] text-white">
-                        {item.label}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-white/55">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
         </motion.div>
       </section>
 
