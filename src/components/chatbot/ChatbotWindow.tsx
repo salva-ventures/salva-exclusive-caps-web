@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import type { ChatMessage } from "@/types/chatbot";
 import { getChatbotResponse } from "@/lib/chatbot/chatbotEngine";
 import ChatInput from "./ChatInput";
@@ -11,7 +12,7 @@ interface ChatbotWindowProps {
   onClose: () => void;
 }
 
-const CHAT_STORAGE_KEY = "salva_chatbot_messages_v1";
+const CHAT_STORAGE_KEY = "salva_chatbot_messages_v2";
 
 function createMessage(
   role: ChatMessage["role"],
@@ -25,11 +26,6 @@ function createMessage(
     timestamp: new Date().toISOString(),
     actions,
   };
-}
-
-function createInitialAssistantMessage(): ChatMessage {
-  const response = getChatbotResponse("hola");
-  return createMessage("assistant", response.content, response.actions);
 }
 
 function isValidMessageArray(value: unknown): value is ChatMessage[] {
@@ -49,21 +45,49 @@ function isValidMessageArray(value: unknown): value is ChatMessage[] {
   });
 }
 
+function TypingBubble() {
+  return (
+    <div className="flex w-full justify-start">
+      <div className="flex max-w-[88%] flex-col items-start gap-2">
+        <div className="mb-1 flex items-center gap-2 px-1">
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white text-[10px] font-bold tracking-[0.18em] text-black">
+            SC
+          </span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
+            Asistente Salva
+          </span>
+        </div>
+
+        <div className="rounded-[1.35rem] rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-white shadow-[0_16px_40px_rgba(0,0,0,0.22)] backdrop-blur-md">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.2s]" />
+            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70 [animation-delay:-0.1s]" />
+            <span className="h-2 w-2 animate-bounce rounded-full bg-white/70" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ChatbotWindow({
   isOpen,
   onClose,
 }: ChatbotWindowProps) {
-  const initialAssistantMessage = useMemo(
-    () => createInitialAssistantMessage(),
-    []
-  );
+  const pathname = usePathname();
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const initialAssistantMessage = useMemo(() => {
+    const response = getChatbotResponse("hola", { pathname });
+    return createMessage("assistant", response.content, response.actions);
+  }, [pathname]);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     initialAssistantMessage,
   ]);
   const [hasLoadedFromStorage, setHasLoadedFromStorage] = useState(false);
-
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     try {
@@ -101,7 +125,7 @@ export default function ChatbotWindow({
       top: messagesContainerRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [messages, isOpen]);
+  }, [messages, isOpen, isTyping]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -114,21 +138,76 @@ export default function ChatbotWindow({
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedFromStorage) return;
+
+    if (messages.length === 1 && messages[0]?.role === "assistant") {
+      const updated = getChatbotResponse("hola", { pathname });
+
+      setMessages((prev) => [
+        {
+          ...prev[0],
+          content: updated.content,
+          actions: updated.actions,
+        },
+      ]);
+    }
+  }, [pathname, hasLoadedFromStorage]);
+
+  function resolveTypingDelay(input: string) {
+    const base = 550;
+    const extra = Math.min(input.trim().length * 12, 650);
+    return base + extra;
+  }
+
   function handleSend(input: string) {
+    if (isTyping) return;
+
     const userMessage = createMessage("user", input);
-    const response = getChatbotResponse(input);
-    const assistantMessage = createMessage(
+    const response = getChatbotResponse(input, { pathname });
+
+    setMessages((prev) => [...prev, userMessage]);
+    setIsTyping(true);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      const assistantMessage = createMessage(
+        "assistant",
+        response.content,
+        response.actions
+      );
+
+      setMessages((prev) => [...prev, assistantMessage]);
+      setIsTyping(false);
+      typingTimeoutRef.current = null;
+    }, resolveTypingDelay(input));
+  }
+
+  function handleClearChat() {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+
+    const response = getChatbotResponse("hola", { pathname });
+    const freshMessage = createMessage(
       "assistant",
       response.content,
       response.actions
     );
 
-    setMessages((prev) => [...prev, userMessage, assistantMessage]);
-  }
-
-  function handleClearChat() {
-    const freshMessage = createInitialAssistantMessage();
-
+    setIsTyping(false);
     setMessages([freshMessage]);
 
     try {
@@ -195,9 +274,11 @@ export default function ChatbotWindow({
               onActionClick={handleSend}
             />
           ))}
+
+          {isTyping ? <TypingBubble /> : null}
         </div>
 
-        <ChatInput onSend={handleSend} />
+        <ChatInput onSend={handleSend} disabled={isTyping} />
       </div>
     </div>
   );
