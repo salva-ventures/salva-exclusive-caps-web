@@ -1,13 +1,18 @@
 import { capFacts } from "@/data/capFacts";
 import { capJokes } from "@/data/capJokes";
 import { chatbotKnowledge, WHATSAPP_URL } from "@/data/chatbotKnowledge";
-import type { ChatAction, ChatIntent, ChatbotResponse } from "@/types/chatbot";
+import type {
+  ChatAction,
+  ChatIntent,
+  ChatbotMemory,
+  ChatbotResponse,
+} from "@/types/chatbot";
 import { matchIntent } from "./matchIntent";
 import { normalizeText } from "./normalizeText";
 
 interface ChatbotEngineOptions {
   pathname?: string;
-  previousIntent?: ChatIntent;
+  memory?: ChatbotMemory;
 }
 
 function getRandomItem<T>(items: T[]): T {
@@ -100,6 +105,99 @@ export function getChatbotTeaser(pathname?: string): string {
   return getRouteContext(pathname).teaser;
 }
 
+function detectReference(text: string): string | undefined {
+  if (text.includes("negra")) return "negra";
+  if (text.includes("blanca")) return "blanca";
+  if (text.includes("roja")) return "roja";
+  if (text.includes("azul")) return "azul";
+  if (text.includes("esa")) return "esa";
+  if (text.includes("esta")) return "esta";
+  if (text.includes("otra")) return "otra";
+  return undefined;
+}
+
+function resolveFollowUpIntent(
+  input: string,
+  memory?: ChatbotMemory
+): ChatIntent | null {
+  const text = normalizeText(input);
+  const previousIntent = memory?.lastIntent;
+  const lastTopic = memory?.lastTopic;
+
+  if (!text) return null;
+
+  if (["otro", "otra", "otro mas", "otra mas", "mas", "más"].includes(text)) {
+    if (previousIntent === "joke") return "joke";
+    if (previousIntent === "fact") return "fact";
+  }
+
+  if (["y mayoreo", "mayoreo?", "la de mayoreo"].includes(text)) {
+    return "wholesale";
+  }
+
+  if (["y envios", "y envíos", "envios?", "envíos?"].includes(text)) {
+    return "shipping";
+  }
+
+  if (["y pago", "y pagos", "pagos?", "y metodos de pago", "y métodos de pago"].includes(text)) {
+    return "payment";
+  }
+
+  if (["y contacto", "contacto?", "y whatsapp", "whatsapp?"].includes(text)) {
+    return "contact";
+  }
+
+  if (["y catalogo", "y catálogo", "catalogo?", "catálogo?"].includes(text)) {
+    return "catalog";
+  }
+
+  if (
+    ["como le hago", "cómo le hago", "que sigue", "qué sigue", "y luego", "siguiente paso"].includes(text)
+  ) {
+    if (previousIntent === "buy" || lastTopic === "catalog") return "buy";
+    if (previousIntent === "wholesale" || lastTopic === "wholesale") return "wholesale";
+    if (previousIntent === "contact" || lastTopic === "contact") return "contact";
+  }
+
+  if (
+    ["esa", "esa otra", "esta", "la negra", "la blanca", "la roja", "la azul"].includes(text)
+  ) {
+    if (lastTopic === "catalog") return "recommendation";
+    if (lastTopic === "wholesale") return "wholesale";
+  }
+
+  if (text.includes("como la compro") || text.includes("como se compra")) {
+    return "buy";
+  }
+
+  if (text.includes("cuanto tarda") || text.includes("cuando llega")) {
+    return "shipping";
+  }
+
+  return null;
+}
+
+function inferTopic(intent: ChatIntent): ChatbotMemory["lastTopic"] {
+  switch (intent) {
+    case "buy":
+    case "catalog":
+    case "recommendation":
+      return "catalog";
+    case "wholesale":
+      return "wholesale";
+    case "contact":
+      return "contact";
+    case "shipping":
+      return "shipping";
+    case "payment":
+      return "payment";
+    case "faq":
+      return "faq";
+    default:
+      return undefined;
+  }
+}
+
 function buildGreetingResponse(pathname?: string): ChatbotResponse {
   const routeContext = getRouteContext(pathname);
 
@@ -153,8 +251,24 @@ function buildFactResponse(pathname?: string): ChatbotResponse {
   };
 }
 
-function buildRecommendationResponse(pathname?: string): ChatbotResponse {
+function buildRecommendationResponse(
+  pathname?: string,
+  memory?: ChatbotMemory
+): ChatbotResponse {
   const route = pathname ?? "/";
+  const reference = memory?.lastReference;
+
+  if (reference && ["negra", "blanca", "roja", "azul", "esa", "esta", "otra"].includes(reference)) {
+    return {
+      intent: "recommendation",
+      content:
+        "Si te refieres a ese modelo, lo mejor es revisar si visualmente es el que más te convence y pasar a WhatsApp para confirmar disponibilidad y siguiente paso de compra.",
+      actions: [
+        { label: "Comprar por WhatsApp", type: "link", href: WHATSAPP_URL },
+        { label: "Ver catálogo", type: "link", href: "/catalogo" },
+      ],
+    };
+  }
 
   if (route.startsWith("/catalogo")) {
     return {
@@ -246,74 +360,14 @@ function buildBusinessResponse(
   };
 }
 
-function resolveFollowUpIntent(
-  input: string,
-  previousIntent?: ChatIntent
-): ChatIntent | null {
-  const text = normalizeText(input);
-
-  if (!text || !previousIntent) return null;
-
-  if (["otro", "otra", "otro mas", "otra mas", "mas", "más"].includes(text)) {
-    if (previousIntent === "joke") return "joke";
-    if (previousIntent === "fact") return "fact";
-  }
-
-  if (
-    ["y mayoreo", "y el mayoreo", "y mayoreo?", "mayoreo?"].includes(text)
-  ) {
-    return "wholesale";
-  }
-
-  if (
-    ["y envios", "y envíos", "y el envio", "y el envío", "envios?", "envíos?"].includes(text)
-  ) {
-    return "shipping";
-  }
-
-  if (
-    ["y pago", "y pagos", "y metodos de pago", "y métodos de pago", "pagos?"].includes(text)
-  ) {
-    return "payment";
-  }
-
-  if (
-    ["y contacto", "y como los contacto", "y whatsapp", "contacto?"].includes(text)
-  ) {
-    return "contact";
-  }
-
-  if (
-    ["y catalogo", "y catálogo", "catalogo?", "catálogo?"].includes(text)
-  ) {
-    return "catalog";
-  }
-
-  if (
-    ["y faq", "y preguntas frecuentes", "faq?"].includes(text)
-  ) {
-    return "faq";
-  }
-
-  if (
-    ["como le hago", "cómo le hago", "que sigue", "qué sigue", "y luego", "siguiente paso"].includes(text)
-  ) {
-    if (previousIntent === "buy") return "buy";
-    if (previousIntent === "wholesale") return "wholesale";
-    if (previousIntent === "contact") return "contact";
-  }
-
-  return null;
-}
-
 export function getChatbotResponse(
   input: string,
   options?: ChatbotEngineOptions
 ): ChatbotResponse {
   const pathname = options?.pathname;
-  const previousIntent = options?.previousIntent;
+  const memory = options?.memory;
 
-  const followUpIntent = resolveFollowUpIntent(input, previousIntent);
+  const followUpIntent = resolveFollowUpIntent(input, memory);
   const intent = followUpIntent ?? matchIntent(input);
 
   switch (intent) {
@@ -327,7 +381,7 @@ export function getChatbotResponse(
       return buildFactResponse(pathname);
 
     case "recommendation":
-      return buildRecommendationResponse(pathname);
+      return buildRecommendationResponse(pathname, memory);
 
     case "buy":
     case "shipping":
@@ -344,4 +398,19 @@ export function getChatbotResponse(
     default:
       return buildFallbackResponse(pathname);
   }
+}
+
+export function getUpdatedMemory(
+  input: string,
+  response: ChatbotResponse,
+  previousMemory?: ChatbotMemory
+): ChatbotMemory {
+  const text = normalizeText(input);
+  const reference = detectReference(text);
+
+  return {
+    lastIntent: response.intent,
+    lastTopic: inferTopic(response.intent) ?? previousMemory?.lastTopic,
+    lastReference: reference ?? previousMemory?.lastReference,
+  };
 }
