@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import ChatbotWindow from "./ChatbotWindow";
+import SalvaGorrinAvatar from "./SalvaGorrinAvatar";
 import { getChatbotTeaser } from "@/lib/chatbot/chatbotEngine";
 
 const CHATBOT_OPEN_STORAGE_KEY = "salva_chatbot_open_v3";
@@ -135,15 +136,13 @@ export default function ChatbotWidget() {
           {showTeaser && !isOpen ? (
             <div
               className={[
-                "max-w-[280px] rounded-2xl border border-white/10 bg-[rgba(12,12,12,0.88)] px-4 py-3 text-white",
+                "max-w-[300px] rounded-2xl border border-white/10 bg-[rgba(12,12,12,0.88)] px-4 py-3 text-white",
                 "shadow-[0_20px_60px_rgba(0,0,0,0.38)] backdrop-blur-2xl transition duration-300",
                 isMounted ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
               ].join(" ")}
             >
               <div className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/5 bg-white text-[11px] font-bold tracking-[0.2em] text-black">
-                  SG
-                </span>
+                <SalvaGorrinAvatar size="md" priority />
 
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold">Salva Gorrín</p>
@@ -189,9 +188,12 @@ export default function ChatbotWidget() {
           >
             <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_42%)] opacity-70" />
 
-            <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/5 bg-white text-xs font-bold tracking-[0.2em] text-black">
-              SG
-            </span>
+            <SalvaGorrinAvatar
+              size="xl"
+              priority
+              className="relative border-white/15 bg-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.38)]"
+              imageClassName="scale-[1.06]"
+            />
 
             <span className="relative hidden pr-1 text-left sm:block">
               <span className="block text-sm font-semibold leading-none">
