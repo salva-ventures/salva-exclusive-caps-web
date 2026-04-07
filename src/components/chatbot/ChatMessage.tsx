@@ -16,7 +16,11 @@ export default function ChatMessage({
   const isUser = message.role === "user";
 
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+    <div
+      className={`flex w-full animate-[messageIn_320ms_cubic-bezier(0.22,1,0.36,1)] ${
+        isUser ? "justify-end" : "justify-start"
+      }`}
+    >
       <div
         className={`flex max-w-[88%] flex-col gap-2 ${
           isUser ? "items-end" : "items-start"
