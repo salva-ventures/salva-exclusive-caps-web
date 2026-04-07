@@ -52,7 +52,7 @@ export default function RootLayout({
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <ChatbotWidget />
+        <ChatbotGuard />
         <Analytics />
         <SpeedInsights />
       </body>
