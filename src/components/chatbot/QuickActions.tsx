@@ -15,8 +15,11 @@ export default function QuickActions({
   if (!actions.length) return null;
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 px-1">
       {actions.map((action, index) => {
+        const baseClassName =
+          "inline-flex rounded-full border border-white/10 bg-white/[0.05] px-3 py-2 text-xs font-medium text-white transition hover:scale-[1.02] hover:bg-white/[0.1]";
+
         if (action.type === "link" && action.href) {
           const isExternal =
             action.href.startsWith("http://") ||
@@ -31,7 +34,7 @@ export default function QuickActions({
                 href={action.href}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white transition hover:bg-white/10"
+                className={baseClassName}
               >
                 {action.label}
               </a>
@@ -42,7 +45,7 @@ export default function QuickActions({
             <Link
               key={`${action.label}-${index}`}
               href={action.href}
-              className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white transition hover:bg-white/10"
+              className={baseClassName}
             >
               {action.label}
             </Link>
@@ -55,7 +58,7 @@ export default function QuickActions({
               key={`${action.label}-${index}`}
               type="button"
               onClick={() => onActionClick(action.value as string)}
-              className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-xs font-medium text-white transition hover:bg-white/10"
+              className={baseClassName}
             >
               {action.label}
             </button>
