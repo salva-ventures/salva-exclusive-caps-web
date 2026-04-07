@@ -276,6 +276,15 @@ export default function Footer() {
             >
               Envíos y Entregas
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/cambios-y-devoluciones"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Cambios y Devoluciones
+            </Link>
           </div>
         </motion.div>
       </motion.div>
