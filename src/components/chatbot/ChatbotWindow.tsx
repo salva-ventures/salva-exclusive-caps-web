@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import type { ChatIntent, ChatMessage } from "@/types/chatbot";
-import { getChatbotResponse } from "@/lib/chatbot/chatbotEngine";
+import type { ChatbotMemory, ChatMessage } from "@/types/chatbot";
+import {
+  getChatbotResponse,
+  getUpdatedMemory,
+} from "@/lib/chatbot/chatbotEngine";
 import ChatInput from "./ChatInput";
 import ChatMessageItem from "./ChatMessage";
 
@@ -12,8 +15,8 @@ interface ChatbotWindowProps {
   onClose: () => void;
 }
 
-const CHAT_STORAGE_KEY = "salva_chatbot_messages_v3";
-const CHAT_LAST_INTENT_KEY = "salva_chatbot_last_intent_v1";
+const CHAT_STORAGE_KEY = "salva_chatbot_messages_v4";
+const CHAT_MEMORY_KEY = "salva_chatbot_memory_v1";
 
 function createMessage(
   role: ChatMessage["role"],
@@ -46,8 +49,8 @@ function isValidMessageArray(value: unknown): value is ChatMessage[] {
   });
 }
 
-function isValidIntent(value: unknown): value is ChatIntent {
-  return typeof value === "string";
+function isValidMemory(value: unknown): value is ChatbotMemory {
+  return Boolean(value && typeof value === "object");
 }
 
 function TypingBubble() {
@@ -82,11 +85,11 @@ export default function ChatbotWindow({
   const pathname = usePathname();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastIntentRef = useRef<ChatIntent | undefined>(undefined);
+  const memoryRef = useRef<ChatbotMemory>({});
 
   const initialAssistantMessage = useMemo(() => {
-    const response = getChatbotResponse("hola", { pathname });
-    lastIntentRef.current = response.intent;
+    const response = getChatbotResponse("hola", { pathname, memory: {} });
+    memoryRef.current = getUpdatedMemory("hola", response, {});
     return createMessage("assistant", response.content, response.actions);
   }, [pathname]);
 
@@ -99,7 +102,7 @@ export default function ChatbotWindow({
   useEffect(() => {
     try {
       const storedValue = window.localStorage.getItem(CHAT_STORAGE_KEY);
-      const storedIntent = window.localStorage.getItem(CHAT_LAST_INTENT_KEY);
+      const storedMemory = window.localStorage.getItem(CHAT_MEMORY_KEY);
 
       if (storedValue) {
         const parsed = JSON.parse(storedValue) as unknown;
@@ -109,8 +112,12 @@ export default function ChatbotWindow({
         }
       }
 
-      if (isValidIntent(storedIntent)) {
-        lastIntentRef.current = storedIntent;
+      if (storedMemory) {
+        const parsedMemory = JSON.parse(storedMemory) as unknown;
+
+        if (isValidMemory(parsedMemory)) {
+          memoryRef.current = parsedMemory;
+        }
       }
     } catch {
     } finally {
@@ -123,17 +130,7 @@ export default function ChatbotWindow({
 
     try {
       window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
-    } catch {
-    }
-  }, [messages, hasLoadedFromStorage]);
-
-  useEffect(() => {
-    if (!hasLoadedFromStorage) return;
-
-    try {
-      if (lastIntentRef.current) {
-        window.localStorage.setItem(CHAT_LAST_INTENT_KEY, lastIntentRef.current);
-      }
+      window.localStorage.setItem(CHAT_MEMORY_KEY, JSON.stringify(memoryRef.current));
     } catch {
     }
   }, [messages, hasLoadedFromStorage]);
@@ -174,14 +171,18 @@ export default function ChatbotWindow({
         return prev;
       }
 
-      const updated = getChatbotResponse("hola", { pathname });
-      lastIntentRef.current = updated.intent;
+      const response = getChatbotResponse("hola", {
+        pathname,
+        memory: memoryRef.current,
+      });
+
+      memoryRef.current = getUpdatedMemory("hola", response, memoryRef.current);
 
       return [
         {
           ...prev[0],
-          content: updated.content,
-          actions: updated.actions,
+          content: response.content,
+          actions: response.actions,
         },
       ];
     });
@@ -199,7 +200,7 @@ export default function ChatbotWindow({
     const userMessage = createMessage("user", input);
     const response = getChatbotResponse(input, {
       pathname,
-      previousIntent: lastIntentRef.current,
+      memory: memoryRef.current,
     });
 
     setMessages((prev) => [...prev, userMessage]);
@@ -216,7 +217,7 @@ export default function ChatbotWindow({
         response.actions
       );
 
-      lastIntentRef.current = response.intent;
+      memoryRef.current = getUpdatedMemory(input, response, memoryRef.current);
       setMessages((prev) => [...prev, assistantMessage]);
       setIsTyping(false);
       typingTimeoutRef.current = null;
@@ -229,20 +230,20 @@ export default function ChatbotWindow({
       typingTimeoutRef.current = null;
     }
 
-    const response = getChatbotResponse("hola", { pathname });
+    const response = getChatbotResponse("hola", { pathname, memory: {} });
     const freshMessage = createMessage(
       "assistant",
       response.content,
       response.actions
     );
 
-    lastIntentRef.current = response.intent;
+    memoryRef.current = getUpdatedMemory("hola", response, {});
     setIsTyping(false);
     setMessages([freshMessage]);
 
     try {
       window.localStorage.removeItem(CHAT_STORAGE_KEY);
-      window.localStorage.removeItem(CHAT_LAST_INTENT_KEY);
+      window.localStorage.removeItem(CHAT_MEMORY_KEY);
     } catch {
     }
   }
