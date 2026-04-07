@@ -304,6 +304,15 @@ export default function Footer() {
             >
               Cookies
             </Link>
+
+            <span className="text-white/20">•</span>
+
+            <Link
+              href="/colaboraciones"
+              className="transition-colors duration-300 hover:text-white"
+            >
+              Colaboraciones
+            </Link>
           </div>
         </motion.div>
       </motion.div>
