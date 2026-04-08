@@ -359,10 +359,21 @@ export default function CapCatchGame() {
             <h2 className="mt-2 text-3xl font-semibold text-white">
               Cap Catch
             </h2>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-white/80">
-              Atrapa las gorras, evita los sombreros y sobrevive con tus 3
-              vidas. Cada vez caerán más rápido y con mayor frecuencia.
-            </p>
+           <div className="mt-4 space-y-3">
+  <p className="max-w-xs text-sm leading-6 text-white/80">
+    Atrapa las gorras, evita los sombreros y sobrevive con tus 3
+    vidas. Cada vez caerán más rápido y con mayor frecuencia.
+  </p>
+
+  <div className="max-w-xs rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3">
+    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-400">
+      Próximamente: Reto Salva Gorrín
+    </p>
+    <p className="mt-2 text-sm leading-6 text-white/80">
+      Demuestra tu nivel y compite por recompensas exclusivas.
+    </p>
+  </div>
+</div>
             <button
               onClick={startGame}
               className="mt-6 rounded-full bg-white px-6 py-3 font-medium text-black transition hover:scale-105"
