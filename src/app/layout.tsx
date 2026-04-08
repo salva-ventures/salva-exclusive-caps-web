@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description: SEO.default.description,
     images: ["/og-image.png"],
   },
+  other: {
+    "facebook-domain-verification": "kj3ufjyqrfgmif23314k9fnn6af1p1",
+  },
 };
 
 export default function RootLayout({
