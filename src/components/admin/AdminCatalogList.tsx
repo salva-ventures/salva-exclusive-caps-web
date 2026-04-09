@@ -34,6 +34,8 @@ type CatalogProduct = {
   tags: CatalogTag[];
 };
 
+type WorkMode = "explore" | "select";
+
 function formatPrice(value: number | null) {
   if (value === null) return "-";
   return `$${value.toFixed(2)}`;
@@ -64,16 +66,15 @@ function Badge({
   );
 }
 
-type WorkMode = "explore" | "select";
-
 export default function AdminCatalogList({
   scope,
   products,
+  mode,
 }: {
   scope: "retail" | "wholesale";
   products: CatalogProduct[];
+  mode: WorkMode;
 }) {
-  const [mode, setMode] = useState<WorkMode>("explore");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [drawerProductId, setDrawerProductId] = useState<string | null>(null);
 
@@ -104,45 +105,6 @@ export default function AdminCatalogList({
 
   return (
     <>
-      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
-              Modo de trabajo
-            </p>
-            <h3 className="mt-1 text-lg font-semibold text-white">
-              {mode === "explore" ? "Explorar y editar" : "Seleccionar y operar"}
-            </h3>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setMode("explore")}
-              className={`rounded-2xl px-4 py-2 text-sm transition ${
-                mode === "explore"
-                  ? "bg-white text-black"
-                  : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-              }`}
-            >
-              Explorar
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setMode("select")}
-              className={`rounded-2xl px-4 py-2 text-sm transition ${
-                mode === "select"
-                  ? "bg-white text-black"
-                  : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-              }`}
-            >
-              Seleccionar
-            </button>
-          </div>
-        </div>
-      </div>
-
       {visibleProducts.length > 0 && mode === "select" && (
         <form
           action="/api/admin/catalog/products/bulk"

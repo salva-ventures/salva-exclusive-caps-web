@@ -1,6 +1,5 @@
 import Link from "next/link";
-import AdminCatalogBoard from "@/components/admin/AdminCatalogBoard";
-import AdminCatalogList from "@/components/admin/AdminCatalogList";
+import AdminCatalogWorkspace from "@/components/admin/AdminCatalogWorkspace";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { listAdminCatalogProducts } from "@/lib/admin/catalog";
 
@@ -212,21 +211,11 @@ export default async function AdminCatalogPage({
         </div>
       </div>
 
-      <AdminCatalogBoard
-        scope={scope}
-        products={products.map((product) => ({
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          scopeSortOrder: scope === "retail" ? product.retail_sort_order : product.wholesale_sort_order,
-        }))}
-      />
-
       <div className="text-sm text-white/50">
         {products.length} producto{products.length === 1 ? "" : "s"} en {scope === "retail" ? "menudeo" : "mayoreo"}
       </div>
 
-      <AdminCatalogList scope={scope} products={products} />
+      <AdminCatalogWorkspace scope={scope} products={products} />
     </section>
   );
 }
