@@ -71,11 +71,82 @@ export default function AdminCatalogList({
   products: CatalogProduct[];
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const visibleProducts = useMemo(() => products, [products]);
 
+  function toggleSelected(id: string) {
+    setSelectedIds((current) =>
+      current.includes(id)
+        ? current.filter((item) => item !== id)
+        : [...current, id]
+    );
+  }
+
+  function toggleAll() {
+    if (selectedIds.length === visibleProducts.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(visibleProducts.map((product) => product.id));
+    }
+  }
+
   return (
     <div className="grid gap-4">
+      {visibleProducts.length > 0 && (
+        <form
+          action="/api/admin/catalog/products/bulk"
+          method="post"
+          className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5"
+        >
+          <input type="hidden" name="scope" value={scope} />
+
+          {selectedIds.map((id) => (
+            <input key={id} type="hidden" name="product_ids" value={id} />
+          ))}
+
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleAll}
+                className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/85 transition hover:bg-white/[0.06]"
+              >
+                {selectedIds.length === visibleProducts.length ? "Quitar todos" : "Seleccionar todos"}
+              </button>
+
+              <span className="text-sm text-white/55">
+                Seleccionados: {selectedIds.length}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <select
+                name="bulk_action"
+                defaultValue="set-active"
+                className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white outline-none"
+              >
+                <option value="set-active">Poner activos</option>
+                <option value="set-draft">Mandar a draft</option>
+                <option value="set-archived">Archivar</option>
+                <option value="show-retail">Mostrar en menudeo</option>
+                <option value="hide-retail">Ocultar en menudeo</option>
+                <option value="show-wholesale">Mostrar en mayoreo</option>
+                <option value="hide-wholesale">Ocultar en mayoreo</option>
+              </select>
+
+              <button
+                type="submit"
+                disabled={selectedIds.length === 0}
+                className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Ejecutar acción masiva
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
       {visibleProducts.map((product) => {
         const visible = scope === "retail" ? product.is_retail_visible : product.is_wholesale_visible;
         const sortOrder = scope === "retail" ? product.retail_sort_order : product.wholesale_sort_order;
@@ -85,25 +156,41 @@ export default function AdminCatalogList({
           (tag) => tag.catalog_scope === scope || tag.catalog_scope === "both"
         );
         const isOpen = openId === product.id;
+        const isSelected = selectedIds.includes(product.id);
 
         return (
           <article
             key={product.id}
-            className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5"
+            className={`rounded-3xl border p-4 md:p-5 ${
+              isSelected
+                ? "border-white/30 bg-white/[0.05]"
+                : "border-white/10 bg-white/[0.03]"
+            }`}
           >
             <div className="grid gap-4 md:grid-cols-[108px_1fr]">
-              <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                {product.primary_image_url ? (
-                  <img
-                    src={product.primary_image_url}
-                    alt={product.name}
-                    className="h-full w-full object-cover"
+              <div className="space-y-3">
+                <label className="flex items-center gap-2 text-sm text-white/75">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleSelected(product.id)}
                   />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-white/35">
-                    Sin imagen
-                  </div>
-                )}
+                  Seleccionar
+                </label>
+
+                <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                  {product.primary_image_url ? (
+                    <img
+                      src={product.primary_image_url}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs text-white/35">
+                      Sin imagen
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-4">

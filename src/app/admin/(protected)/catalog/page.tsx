@@ -20,7 +20,7 @@ function ErrorBanner({ message }: { message: string }) {
   );
 }
 
-function getSuccessMessage(success?: string) {
+function getSuccessMessage(success?: string, count?: string) {
   switch (success) {
     case "product-updated":
       return "Producto de catalogo actualizado correctamente.";
@@ -32,6 +32,8 @@ function getSuccessMessage(success?: string) {
       return "Tag agregada correctamente.";
     case "tag-deleted":
       return "Tag eliminada correctamente.";
+    case "bulk-updated":
+      return `Accion masiva aplicada a ${count ?? "0"} producto(s).`;
     default:
       return null;
   }
@@ -67,6 +69,12 @@ function getErrorMessage(error?: string) {
       return "Tag no encontrada.";
     case "delete-tag":
       return "No se pudo eliminar la tag.";
+    case "bulk-no-selection":
+      return "Debes seleccionar al menos un producto.";
+    case "bulk-invalid-action":
+      return "La accion masiva no es valida.";
+    case "bulk-update-failed":
+      return "No se pudo ejecutar la accion masiva.";
     default:
       return null;
   }
@@ -82,6 +90,7 @@ export default async function AdminCatalogPage({
     visibility?: "all" | "visible" | "hidden";
     success?: string;
     error?: string;
+    count?: string;
   }>;
 }) {
   await requireAdminUser();
@@ -99,7 +108,7 @@ export default async function AdminCatalogPage({
     visibility,
   });
 
-  const successMessage = getSuccessMessage(params.success);
+  const successMessage = getSuccessMessage(params.success, params.count);
   const errorMessage = getErrorMessage(params.error);
 
   return (
