@@ -9,6 +9,8 @@ function getSuccessMessage(success?: string, count?: string) {
   switch (success) {
     case "product-created":
       return "Producto creado correctamente.";
+    case "product-duplicated":
+      return "Producto duplicado correctamente.";
     case "product-updated":
       return "Producto de catalogo actualizado correctamente.";
     case "product-moved":
@@ -68,6 +70,16 @@ function getErrorMessage(error?: string) {
       return "El slug del nuevo producto no es valido.";
     case "create-product-failed":
       return "No se pudo crear el nuevo producto.";
+    case "duplicate-invalid-source":
+      return "El producto origen para duplicar es invalido.";
+    case "duplicate-source-not-found":
+      return "No se encontro el producto origen.";
+    case "duplicate-invalid-slug":
+      return "El slug del duplicado no es valido.";
+    case "duplicate-insert-failed":
+      return "No se pudo crear el duplicado.";
+    case "duplicate-tags-failed":
+      return "Se duplico el producto, pero fallaron las tags.";
     default:
       return null;
   }

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import AdminCatalogDrawer from "@/components/admin/AdminCatalogDrawer";
+import AdminDuplicateProductDrawer from "@/components/admin/AdminDuplicateProductDrawer";
 
 type CatalogTag = {
   id: string;
@@ -297,6 +298,15 @@ export default function AdminCatalogList({
                         Editar
                       </button>
                     )}
+
+                    <AdminDuplicateProductDrawer
+                      scope={scope}
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                      }}
+                    />
 
                     <a
                       href={`/admin/products/${product.id}/media`}
