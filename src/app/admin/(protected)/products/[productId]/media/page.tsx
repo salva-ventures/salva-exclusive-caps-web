@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import MediaQuickActions from "@/components/admin/MediaQuickActions";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { getAdminProductMedia } from "@/lib/admin/product-media";
 
@@ -16,6 +17,31 @@ function ErrorBanner({ message }: { message: string }) {
     <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
       {message}
     </div>
+  );
+}
+
+function Badge({
+  children,
+  tone = "default",
+}: {
+  children: React.ReactNode;
+  tone?: "default" | "green" | "blue" | "yellow" | "red";
+}) {
+  const toneClasses =
+    tone === "green"
+      ? "bg-green-500/15 text-green-300"
+      : tone === "blue"
+      ? "bg-blue-500/15 text-blue-300"
+      : tone === "yellow"
+      ? "bg-yellow-500/15 text-yellow-200"
+      : tone === "red"
+      ? "bg-red-500/15 text-red-200"
+      : "bg-white/10 text-white/70";
+
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs ${toneClasses}`}>
+      {children}
+    </span>
   );
 }
 
@@ -111,12 +137,54 @@ function getErrorMessage(error?: string) {
   }
 }
 
+function filterMedia(
+  media: Array<{
+    id: string;
+    product_id: string;
+    public_url: string;
+    storage_path: string;
+    bucket: string;
+    media_type: string;
+    alt_text: string | null;
+    sort_order: number;
+    is_primary: boolean;
+    status: string;
+    mime_type: string | null;
+    file_size_bytes: number | null;
+    width: number | null;
+    height: number | null;
+    duration_seconds: number | null;
+    original_filename: string | null;
+  }>,
+  view: string
+) {
+  const items = media ?? [];
+
+  switch (view) {
+    case "images":
+      return items.filter((item) => item.media_type === "image");
+    case "videos":
+      return items.filter((item) => item.media_type === "video");
+    case "active":
+      return items.filter((item) => item.status === "active");
+    case "archived":
+      return items.filter((item) => item.status === "archived");
+    default:
+      return items;
+  }
+}
+
 export default async function AdminProductMediaPage({
   params,
   searchParams,
 }: {
   params: Promise<{ productId: string }>;
-  searchParams: Promise<{ success?: string; error?: string; count?: string }>;
+  searchParams: Promise<{
+    success?: string;
+    error?: string;
+    count?: string;
+    view?: string;
+  }>;
 }) {
   await requireAdminUser();
   const { productId } = await params;
@@ -130,6 +198,7 @@ export default async function AdminProductMediaPage({
 
   const successMessage = getSuccessMessage(query.success, query.count);
   const errorMessage = getErrorMessage(query.error);
+  const view = query.view ?? "all";
 
   const imageCount = product.media.filter(
     (media) => media.media_type === "image" && media.status === "active"
@@ -138,6 +207,8 @@ export default async function AdminProductMediaPage({
   const videoCount = product.media.filter(
     (media) => media.media_type === "video" && media.status === "active"
   ).length;
+
+  const filteredMedia = filterMedia(product.media, view);
 
   return (
     <section className="space-y-6">
@@ -221,13 +292,74 @@ export default async function AdminProductMediaPage({
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="mb-5 flex flex-wrap gap-2">
+          <a
+            href={`/admin/products/${product.id}/media`}
+            className={`rounded-xl px-4 py-2 text-sm transition ${
+              view === "all"
+                ? "bg-white text-black"
+                : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+            }`}
+          >
+            Todos
+          </a>
+
+          <a
+            href={`/admin/products/${product.id}/media?view=images`}
+            className={`rounded-xl px-4 py-2 text-sm transition ${
+              view === "images"
+                ? "bg-white text-black"
+                : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+            }`}
+          >
+            Imagenes
+          </a>
+
+          <a
+            href={`/admin/products/${product.id}/media?view=videos`}
+            className={`rounded-xl px-4 py-2 text-sm transition ${
+              view === "videos"
+                ? "bg-white text-black"
+                : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+            }`}
+          >
+            Videos
+          </a>
+
+          <a
+            href={`/admin/products/${product.id}/media?view=active`}
+            className={`rounded-xl px-4 py-2 text-sm transition ${
+              view === "active"
+                ? "bg-white text-black"
+                : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+            }`}
+          >
+            Activos
+          </a>
+
+          <a
+            href={`/admin/products/${product.id}/media?view=archived`}
+            className={`rounded-xl px-4 py-2 text-sm transition ${
+              view === "archived"
+                ? "bg-white text-black"
+                : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+            }`}
+          >
+            Archivados
+          </a>
+        </div>
+
+        <div className="mb-4 text-sm text-white/50">
+          {filteredMedia.length} medio{filteredMedia.length === 1 ? "" : "s"} en esta vista
+        </div>
+
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-          {product.media.length === 0 ? (
+          {filteredMedia.length === 0 ? (
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-white/55">
-              Este producto todavia no tiene medios.
+              No hay medios en esta vista.
             </div>
           ) : (
-            product.media.map((media) => (
+            filteredMedia.map((media) => (
               <article
                 key={media.id}
                 className="overflow-hidden rounded-3xl border border-white/10 bg-black/30"
@@ -251,19 +383,33 @@ export default async function AdminProductMediaPage({
                 </div>
 
                 <div className="space-y-3 p-4 text-sm text-white/70">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge tone={media.media_type === "image" ? "blue" : "yellow"}>
+                      {media.media_type === "image" ? "Imagen" : "Video"}
+                    </Badge>
+
+                    <Badge tone={media.status === "active" ? "green" : "red"}>
+                      {media.status === "active" ? "Activo" : "Archivado"}
+                    </Badge>
+
+                    {media.is_primary && <Badge tone="yellow">Principal</Badge>}
+                  </div>
+
                   <div>
                     <p className="font-medium text-white">
                       {media.original_filename ?? "Sin nombre"}
                     </p>
-                    <p>Tipo: {media.media_type}</p>
                     <p>Orden: {media.sort_order}</p>
-                    <p>Estado: {media.status}</p>
-                    <p>Principal: {media.is_primary ? "Si" : "No"}</p>
                     <p>Bucket: {media.bucket}</p>
                     <p className="break-all">Path: {media.storage_path}</p>
                     <p className="break-all">URL: {media.public_url}</p>
                     <p>Alt actual: {media.alt_text ?? "-"}</p>
                   </div>
+
+                  <MediaQuickActions
+                    publicUrl={media.public_url}
+                    storagePath={media.storage_path}
+                  />
 
                   <div className="flex flex-wrap gap-2">
                     {media.status === "active" && (
@@ -299,10 +445,6 @@ export default async function AdminProductMediaPage({
                           Marcar principal
                         </button>
                       </form>
-                    )}
-
-                    {media.status === "active" && (
-                      <form action={`/api/admin/media/${media.id}/restore`} method="post" className="hidden" />
                     )}
 
                     {media.status === "archived" && (
