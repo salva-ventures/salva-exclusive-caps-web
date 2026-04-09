@@ -16,6 +16,8 @@ export async function POST(request: Request) {
   const formData = await request.formData();
 
   const id = String(formData.get("id") ?? "");
+  const confirmToggle = String(formData.get("confirm_toggle") ?? "");
+  const confirmEmail = String(formData.get("confirm_email") ?? "").trim().toLowerCase();
 
   if (!isUuid(id)) {
     redirect(back("error=invalid-admin-id"));
@@ -36,6 +38,16 @@ export async function POST(request: Request) {
   }
 
   const nextActive = !target.is_active;
+
+  if (!nextActive) {
+    if (confirmToggle !== "yes") {
+      redirect(back("error=missing-deactivate-confirmation"));
+    }
+
+    if (confirmEmail !== target.email.toLowerCase()) {
+      redirect(back("error=wrong-deactivate-email"));
+    }
+  }
 
   const { error } = await supabaseAdmin
     .from("admin_users")

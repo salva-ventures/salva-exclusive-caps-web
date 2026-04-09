@@ -48,6 +48,10 @@ function getErrorMessage(error?: string) {
       return "No se pudo cambiar el estado del admin.";
     case "cannot-deactivate-self":
       return "No puedes desactivarte a ti mismo.";
+    case "missing-deactivate-confirmation":
+      return "Debes marcar la confirmacion para desactivar el admin.";
+    case "wrong-deactivate-email":
+      return "El correo de confirmacion no coincide exactamente.";
     default:
       return null;
   }
@@ -162,24 +166,56 @@ export default async function AdminUsersPage({
             <form
               action="/api/admin/admin-users/toggle-active"
               method="post"
-              className="mt-4"
+              className="mt-4 space-y-3"
             >
               <input type="hidden" name="id" value={admin.id} />
-              <button
-                type="submit"
-                disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase() && admin.is_active}
-                className={`rounded-2xl px-5 py-3 text-sm transition ${
-                  admin.is_active
-                    ? "border border-red-500/20 bg-red-500/10 text-red-200 hover:bg-red-500/15"
-                    : "border border-green-500/20 bg-green-500/10 text-green-200 hover:bg-green-500/15"
-                } ${
-                  admin.email.toLowerCase() === currentAdmin.email.toLowerCase() && admin.is_active
-                    ? "cursor-not-allowed opacity-50"
-                    : ""
-                }`}
-              >
-                {admin.is_active ? "Desactivar admin" : "Activar admin"}
-              </button>
+
+              {!admin.is_active ? (
+                <button
+                  type="submit"
+                  className="rounded-2xl border border-green-500/20 bg-green-500/10 px-5 py-3 text-sm text-green-200 transition hover:bg-green-500/15"
+                >
+                  Activar admin
+                </button>
+              ) : (
+                <>
+                  <label className="flex items-center gap-2 text-sm text-white/70">
+                    <input
+                      type="checkbox"
+                      name="confirm_toggle"
+                      value="yes"
+                      disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase()}
+                    />
+                    Confirmo que quiero desactivar este admin
+                  </label>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm text-white/70">
+                      Escribe exactamente este correo para confirmar:
+                    </label>
+                    <p className="text-sm font-medium text-white">{admin.email}</p>
+                    <input
+                      name="confirm_email"
+                      type="text"
+                      placeholder={admin.email}
+                      disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase()}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase()}
+                    className={`rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-200 transition hover:bg-red-500/15 ${
+                      admin.email.toLowerCase() === currentAdmin.email.toLowerCase()
+                        ? "cursor-not-allowed opacity-50"
+                        : ""
+                    }`}
+                  >
+                    Desactivar admin
+                  </button>
+                </>
+              )}
             </form>
           </article>
         ))}
