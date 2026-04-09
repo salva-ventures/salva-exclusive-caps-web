@@ -17,17 +17,17 @@ type ProductRow = {
   slug: string
 }
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-const MEDIA_IMPORT_PATH = process.env.MEDIA_IMPORT_PATH
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const mediaImportPath = process.env.MEDIA_IMPORT_PATH
 
-if (!SUPABASE_URL) throw new Error("Falta SUPABASE_URL")
-if (!SUPABASE_SERVICE_ROLE_KEY) throw new Error("Falta SUPABASE_SERVICE_ROLE_KEY")
-if (!MEDIA_IMPORT_PATH) throw new Error("Falta MEDIA_IMPORT_PATH")
+if (!supabaseUrl) throw new Error("Falta SUPABASE_URL")
+if (!supabaseServiceRoleKey) throw new Error("Falta SUPABASE_SERVICE_ROLE_KEY")
+if (!mediaImportPath) throw new Error("Falta MEDIA_IMPORT_PATH")
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
 
-const CSV_PATH = path.join(MEDIA_IMPORT_PATH, "folder-product-map.csv")
+const CSV_PATH = path.join(mediaImportPath, "folder-product-map.csv")
 const BUCKET = "product-images"
 const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"])
 
@@ -131,7 +131,7 @@ async function uploadFolder(row: CsvRow, productMap: Map<string, ProductRow>) {
     throw new Error(`No existe product_slug en products: ${productSlug}`)
   }
 
-  const folderPath = path.join(MEDIA_IMPORT_PATH, folderName)
+  const folderPath = path.join(mediaImportPath, folderName)
   const files = getFilesFromFolder(folderPath)
 
   if (!files.length) {
