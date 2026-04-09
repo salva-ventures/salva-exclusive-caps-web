@@ -31,6 +31,20 @@ export default async function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/catalog"
+              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
+            >
+              Catalogo
+            </Link>
+
+            <Link
+              href="/admin/catalog/filters"
+              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
+            >
+              Filtros
+            </Link>
+
+            <Link
               href="/admin/products"
               className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
             >
