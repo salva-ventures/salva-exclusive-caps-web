@@ -32,6 +32,37 @@ export default async function AdminProductMediaPage({
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <h3 className="mb-4 text-lg font-semibold text-white">Subir imagenes</h3>
+
+        <form
+          action={`/api/admin/products/${product.id}/media/upload`}
+          method="post"
+          encType="multipart/form-data"
+          className="space-y-4"
+        >
+          <input
+            name="files"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            multiple
+            className="block w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white"
+            required
+          />
+
+          <button
+            type="submit"
+            className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+          >
+            Subir imagenes
+          </button>
+        </form>
+
+        <p className="mt-3 text-sm text-white/45">
+          Maximo 10 imagenes activas por producto. Formatos: JPG, PNG, WEBP, AVIF.
+        </p>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {product.media.length === 0 ? (
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-white/55">
