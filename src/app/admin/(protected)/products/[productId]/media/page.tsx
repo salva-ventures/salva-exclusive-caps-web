@@ -29,6 +29,12 @@ function getSuccessMessage(success?: string, count?: string) {
       return "Se actualizo el medio principal.";
     case "archived":
       return "El medio fue archivado.";
+    case "restored":
+      return "El medio fue restaurado.";
+    case "deleted":
+      return "El medio fue eliminado permanentemente.";
+    case "replaced":
+      return "El archivo fue reemplazado correctamente.";
     case "alt-text":
       return "Alt text guardado correctamente.";
     case "moved":
@@ -78,6 +84,28 @@ function getErrorMessage(error?: string) {
       return "No puedes mover un medio inactivo.";
     case "move-failed":
       return "No se pudo actualizar el orden.";
+    case "restore-not-archived":
+      return "Ese medio no esta archivado.";
+    case "restore-image-limit":
+      return "No se puede restaurar: limite de 10 imagenes activas alcanzado.";
+    case "restore-video-limit":
+      return "No se puede restaurar: limite de 3 videos activos alcanzado.";
+    case "restore-failed":
+      return "No se pudo restaurar el medio.";
+    case "replace-no-file":
+      return "Debes seleccionar un archivo para reemplazar.";
+    case "replace-invalid-type":
+      return "El archivo no coincide con el tipo del medio.";
+    case "replace-upload":
+      return "Fallo la subida del reemplazo a Storage.";
+    case "replace-update":
+      return "Fallo la actualizacion del medio reemplazado.";
+    case "delete-not-confirmed":
+      return "Debes confirmar la eliminacion permanente.";
+    case "delete-storage":
+      return "No se pudo borrar el archivo en Storage.";
+    case "delete-db":
+      return "No se pudo borrar el registro en la base de datos.";
     default:
       return null;
   }
@@ -162,10 +190,6 @@ export default async function AdminProductMediaPage({
               Subir imagenes
             </button>
           </form>
-
-          <p className="mt-3 text-sm text-white/45">
-            Maximo 10 imagenes activas por producto. Formatos: JPG, PNG, WEBP, AVIF.
-          </p>
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
@@ -193,10 +217,6 @@ export default async function AdminProductMediaPage({
               Subir videos
             </button>
           </form>
-
-          <p className="mt-3 text-sm text-white/45">
-            Maximo 3 videos activos por producto. Formatos: MP4, WEBM, MOV.
-          </p>
         </div>
       </div>
 
@@ -246,25 +266,29 @@ export default async function AdminProductMediaPage({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <form action={`/api/admin/media/${media.id}/move`} method="post">
-                      <input type="hidden" name="direction" value="up" />
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                      >
-                        Subir
-                      </button>
-                    </form>
+                    {media.status === "active" && (
+                      <>
+                        <form action={`/api/admin/media/${media.id}/move`} method="post">
+                          <input type="hidden" name="direction" value="up" />
+                          <button
+                            type="submit"
+                            className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                          >
+                            Subir
+                          </button>
+                        </form>
 
-                    <form action={`/api/admin/media/${media.id}/move`} method="post">
-                      <input type="hidden" name="direction" value="down" />
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                      >
-                        Bajar
-                      </button>
-                    </form>
+                        <form action={`/api/admin/media/${media.id}/move`} method="post">
+                          <input type="hidden" name="direction" value="down" />
+                          <button
+                            type="submit"
+                            className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                          >
+                            Bajar
+                          </button>
+                        </form>
+                      </>
+                    )}
 
                     {!media.is_primary && media.status === "active" && (
                       <form action={`/api/admin/media/${media.id}/set-primary`} method="post">
@@ -278,16 +302,16 @@ export default async function AdminProductMediaPage({
                     )}
 
                     {media.status === "active" && (
-                      <form action={`/api/admin/media/${media.id}/archive`} method="post" className="space-y-2">
-                        <label className="flex items-center gap-2 text-xs text-white/55">
-                          <input type="checkbox" name="confirm_archive" value="yes" />
-                          Confirmar archivado
-                        </label>
+                      <form action={`/api/admin/media/${media.id}/restore`} method="post" className="hidden" />
+                    )}
+
+                    {media.status === "archived" && (
+                      <form action={`/api/admin/media/${media.id}/restore`} method="post">
                         <button
                           type="submit"
-                          className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200 transition hover:bg-red-500/15"
+                          className="rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-xs text-green-200 transition hover:bg-green-500/15"
                         >
-                          Archivar
+                          Restaurar
                         </button>
                       </form>
                     )}
@@ -313,6 +337,62 @@ export default async function AdminProductMediaPage({
                       className="rounded-xl bg-white px-3 py-2 text-xs font-medium text-black transition hover:bg-white/90"
                     >
                       Guardar alt text
+                    </button>
+                  </form>
+
+                  <form
+                    action={`/api/admin/media/${media.id}/replace`}
+                    method="post"
+                    encType="multipart/form-data"
+                    className="space-y-2"
+                  >
+                    <label className="block text-xs uppercase tracking-[0.18em] text-white/45">
+                      Reemplazar archivo
+                    </label>
+                    <input
+                      name="file"
+                      type="file"
+                      accept={
+                        media.media_type === "image"
+                          ? "image/jpeg,image/png,image/webp,image/avif"
+                          : "video/mp4,video/webm,video/quicktime"
+                      }
+                      className="block w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                    >
+                      Reemplazar
+                    </button>
+                  </form>
+
+                  {media.status === "active" && (
+                    <form action={`/api/admin/media/${media.id}/archive`} method="post" className="space-y-2">
+                      <label className="flex items-center gap-2 text-xs text-white/55">
+                        <input type="checkbox" name="confirm_archive" value="yes" />
+                        Confirmar archivado
+                      </label>
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200 transition hover:bg-red-500/15"
+                      >
+                        Archivar
+                      </button>
+                    </form>
+                  )}
+
+                  <form action={`/api/admin/media/${media.id}/delete`} method="post" className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs text-white/55">
+                      <input type="checkbox" name="confirm_delete" value="yes" />
+                      Confirmar eliminacion permanente
+                    </label>
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-red-500/20 bg-red-500/20 px-3 py-2 text-xs text-red-100 transition hover:bg-red-500/25"
+                    >
+                      Eliminar permanente
                     </button>
                   </form>
                 </div>
