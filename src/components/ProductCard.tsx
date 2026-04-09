@@ -6,12 +6,27 @@ import { motion } from "motion/react";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { Product } from "@/data/products";
 
+type ProductCardProduct = Product & {
+  image?: string;
+  gallery?: Array<{
+    public_url: string;
+    sort_order: number;
+    is_primary: boolean;
+  }>;
+};
+
 interface ProductCardProps {
-  product: Product;
+  product: ProductCardProduct;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
   const badgeText = product.featured ? "Destacado" : "Disponible";
+
+  const primaryImage =
+    product.image || product.images?.[0] || "/branding/hero-star.png";
+
+  const gallery = product.gallery ?? [];
+  const galleryPreview = gallery.slice(0, 4);
 
   return (
     <motion.div
@@ -39,7 +54,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               className="relative h-full w-full"
             >
               <Image
-                src={product.images[0]}
+                src={primaryImage}
                 alt={product.name}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -85,6 +100,21 @@ export default function ProductCard({ product }: ProductCardProps) {
             >
               <ArrowUpRight size={16} />
             </motion.div>
+
+            {galleryPreview.length > 1 && (
+              <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2">
+                {galleryPreview.map((img, index) => (
+                  <span
+                    key={`${img.public_url}-${index}`}
+                    className={`h-2 w-2 rounded-full border ${
+                      img.is_primary
+                        ? "border-red-400 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.55)]"
+                        : "border-white/30 bg-white/40"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="relative flex flex-1 flex-col p-5">
@@ -126,7 +156,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
 
               <span className="text-xs text-white/38 transition-colors duration-300 group-hover:text-white/70">
-                Exclusiva
+                {gallery.length > 1 ? `${gallery.length} vistas` : "Exclusiva"}
               </span>
             </div>
           </div>
