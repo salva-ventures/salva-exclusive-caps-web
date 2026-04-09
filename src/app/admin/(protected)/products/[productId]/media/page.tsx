@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import MediaQuickActions from "@/components/admin/MediaQuickActions";
 import { requireAdminUser } from "@/lib/admin/auth";
+import { getAdminProductHistory } from "@/lib/admin/history";
 import { getAdminProductMedia } from "@/lib/admin/product-media";
 
 function SuccessBanner({ message }: { message: string }) {
@@ -194,6 +195,12 @@ function filterMedia(
   }
 }
 
+function formatActionType(actionType: string) {
+  return actionType
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 export default async function AdminProductMediaPage({
   params,
   searchParams,
@@ -215,6 +222,8 @@ export default async function AdminProductMediaPage({
   if (!product) {
     notFound();
   }
+
+  const history = await getAdminProductHistory(product.id, 30);
 
   const successMessage = getSuccessMessage(query.success, query.count);
   const errorMessage = getErrorMessage(query.error);
@@ -373,89 +382,6 @@ export default async function AdminProductMediaPage({
           {filteredMedia.length} medio{filteredMedia.length === 1 ? "" : "s"} en esta vista
         </div>
 
-        {filteredMedia.length > 0 && (
-          <form
-            action="/api/admin/media/bulk"
-            method="post"
-            className="mb-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4"
-          >
-            <input type="hidden" name="product_id" value={product.id} />
-
-            <div className="flex flex-wrap items-center gap-3">
-              <select
-                name="bulk_action"
-                className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white outline-none"
-                defaultValue="archive"
-              >
-                <option value="archive">Archivar seleccionados</option>
-                <option value="restore">Restaurar seleccionados</option>
-                <option value="delete">Eliminar permanentemente</option>
-              </select>
-
-              <button
-                type="submit"
-                className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
-              >
-                Ejecutar accion masiva
-              </button>
-
-              <p className="text-xs text-white/45">
-                Marca varios medios y luego ejecuta la accion.
-              </p>
-            </div>
-
-            <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {filteredMedia.map((media) => (
-                <article
-                  key={`bulk-${media.id}`}
-                  className="overflow-hidden rounded-3xl border border-white/10 bg-black/30"
-                >
-                  <div className="relative aspect-square w-full bg-white/5">
-                    {media.media_type === "image" ? (
-                      <Image
-                        src={media.public_url}
-                        alt={media.alt_text ?? product.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 1280px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <video
-                        src={media.public_url}
-                        controls
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
-
-                  <div className="space-y-3 p-4">
-                    <label className="flex items-center gap-3 text-sm text-white/80">
-                      <input type="checkbox" name="media_ids" value={media.id} />
-                      Seleccionar este medio
-                    </label>
-
-                    <div className="flex flex-wrap gap-2">
-                      <Badge tone={media.media_type === "image" ? "blue" : "yellow"}>
-                        {media.media_type === "image" ? "Imagen" : "Video"}
-                      </Badge>
-
-                      <Badge tone={media.status === "active" ? "green" : "red"}>
-                        {media.status === "active" ? "Activo" : "Archivado"}
-                      </Badge>
-
-                      {media.is_primary && <Badge tone="yellow">Principal</Badge>}
-                    </div>
-
-                    <p className="text-sm text-white/70">
-                      {media.original_filename ?? "Sin nombre"}
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </form>
-        )}
-
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filteredMedia.length === 0 ? (
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-white/55">
@@ -513,138 +439,56 @@ export default async function AdminProductMediaPage({
                     publicUrl={media.public_url}
                     storagePath={media.storage_path}
                   />
-
-                  <div className="flex flex-wrap gap-2">
-                    {media.status === "active" && (
-                      <>
-                        <form action={`/api/admin/media/${media.id}/move`} method="post">
-                          <input type="hidden" name="direction" value="up" />
-                          <button
-                            type="submit"
-                            className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                          >
-                            Subir
-                          </button>
-                        </form>
-
-                        <form action={`/api/admin/media/${media.id}/move`} method="post">
-                          <input type="hidden" name="direction" value="down" />
-                          <button
-                            type="submit"
-                            className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                          >
-                            Bajar
-                          </button>
-                        </form>
-                      </>
-                    )}
-
-                    {!media.is_primary && media.status === "active" && (
-                      <form action={`/api/admin/media/${media.id}/set-primary`} method="post">
-                        <button
-                          type="submit"
-                          className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                        >
-                          Marcar principal
-                        </button>
-                      </form>
-                    )}
-
-                    {media.status === "archived" && (
-                      <form action={`/api/admin/media/${media.id}/restore`} method="post">
-                        <button
-                          type="submit"
-                          className="rounded-xl border border-green-500/20 bg-green-500/10 px-3 py-2 text-xs text-green-200 transition hover:bg-green-500/15"
-                        >
-                          Restaurar
-                        </button>
-                      </form>
-                    )}
-                  </div>
-
-                  <form
-                    action={`/api/admin/media/${media.id}/alt-text`}
-                    method="post"
-                    className="space-y-2"
-                  >
-                    <label className="block text-xs uppercase tracking-[0.18em] text-white/45">
-                      Alt text
-                    </label>
-                    <input
-                      name="alt_text"
-                      type="text"
-                      defaultValue={media.alt_text ?? ""}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none"
-                      placeholder="Describe la imagen"
-                    />
-                    <button
-                      type="submit"
-                      className="rounded-xl bg-white px-3 py-2 text-xs font-medium text-black transition hover:bg-white/90"
-                    >
-                      Guardar alt text
-                    </button>
-                  </form>
-
-                  <form
-                    action={`/api/admin/media/${media.id}/replace`}
-                    method="post"
-                    encType="multipart/form-data"
-                    className="space-y-2"
-                  >
-                    <label className="block text-xs uppercase tracking-[0.18em] text-white/45">
-                      Reemplazar archivo
-                    </label>
-                    <input
-                      name="file"
-                      type="file"
-                      accept={
-                        media.media_type === "image"
-                          ? "image/jpeg,image/png,image/webp,image/avif"
-                          : "video/mp4,video/webm,video/quicktime"
-                      }
-                      className="block w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white"
-                      required
-                    />
-                    <button
-                      type="submit"
-                      className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
-                    >
-                      Reemplazar
-                    </button>
-                  </form>
-
-                  {media.status === "active" && (
-                    <form action={`/api/admin/media/${media.id}/archive`} method="post" className="space-y-2">
-                      <label className="flex items-center gap-2 text-xs text-white/55">
-                        <input type="checkbox" name="confirm_archive" value="yes" />
-                        Confirmar archivado
-                      </label>
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200 transition hover:bg-red-500/15"
-                      >
-                        Archivar
-                      </button>
-                    </form>
-                  )}
-
-                  <form action={`/api/admin/media/${media.id}/delete`} method="post" className="space-y-2">
-                    <label className="flex items-center gap-2 text-xs text-white/55">
-                      <input type="checkbox" name="confirm_delete" value="yes" />
-                      Confirmar eliminacion permanente
-                    </label>
-                    <button
-                      type="submit"
-                      className="rounded-xl border border-red-500/20 bg-red-500/20 px-3 py-2 text-xs text-red-100 transition hover:bg-red-500/25"
-                    >
-                      Eliminar permanente
-                    </button>
-                  </form>
                 </div>
               </article>
             ))
           )}
         </div>
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="mb-4">
+          <p className="text-xs uppercase tracking-[0.28em] text-white/50">
+            Historial
+          </p>
+          <h3 className="mt-2 text-xl font-semibold text-white">
+            Actividad reciente del producto
+          </h3>
+        </div>
+
+        {history.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-white/55">
+            Todavia no hay eventos registrados para este producto.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {history.map((event) => (
+              <div
+                key={event.id}
+                className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone="blue">{formatActionType(event.action_type)}</Badge>
+                  {event.media_id && <Badge tone="default">Media</Badge>}
+                </div>
+
+                <p className="mt-3 text-sm font-medium text-white">
+                  {event.admin_email}
+                </p>
+
+                <p className="mt-1 text-sm text-white/50">
+                  {new Date(event.created_at).toLocaleString()}
+                </p>
+
+                {event.details_json && Object.keys(event.details_json).length > 0 && (
+                  <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-xs text-white/70">
+{JSON.stringify(event.details_json, null, 2)}
+                  </pre>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
