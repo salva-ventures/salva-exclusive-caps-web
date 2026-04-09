@@ -4,10 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { CheckCircle2, ArrowUpRight, Sparkles } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { getFeaturedProducts } from "@/data/products";
 import { BRAND, CONTACT, DELIVERY_INFO } from "@/config/brand";
+import {
+  getGalleryImages,
+  getPrimaryImageUrl,
+  getProductImagesBySlugs,
+  type ProductImagesMap,
+} from "@/lib/catalog/getProductImages";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -53,7 +59,38 @@ const sectionGlow =
 
 export default function HomePage() {
   const featured = getFeaturedProducts();
+  const [imageMap, setImageMap] = useState<ProductImagesMap>({});
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadImages() {
+      try {
+        const map = await getProductImagesBySlugs(
+          featured.map((product) => product.slug)
+        );
+
+        if (!cancelled) {
+          setImageMap(map);
+        }
+      } catch (error) {
+        console.error("Error cargando imágenes desde Supabase:", error);
+      }
+    }
+
+    loadImages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [featured]);
+
+  const featuredWithSupabaseImages = featured.map((product) => ({
+    ...product,
+    image: getPrimaryImageUrl(imageMap, product.slug, product.image),
+    gallery: getGalleryImages(imageMap, product.slug),
+  }));
 
   const heroRef = useRef<HTMLElement | null>(null);
 
@@ -495,7 +532,7 @@ export default function HomePage() {
           variants={staggerContainer}
           className="relative grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {featured.slice(0, 8).map((product) => (
+          {featuredWithSupabaseImages.slice(0, 8).map((product) => (
             <motion.div
               key={product.id}
               variants={fadeUp}
