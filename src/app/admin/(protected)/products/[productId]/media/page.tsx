@@ -108,6 +108,26 @@ export default async function AdminProductMediaPage({
                   </div>
 
                   <div className="flex flex-wrap gap-2">
+                    <form action={`/api/admin/media/${media.id}/move`} method="post">
+                      <input type="hidden" name="direction" value="up" />
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                      >
+                        Subir
+                      </button>
+                    </form>
+
+                    <form action={`/api/admin/media/${media.id}/move`} method="post">
+                      <input type="hidden" name="direction" value="down" />
+                      <button
+                        type="submit"
+                        className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                      >
+                        Bajar
+                      </button>
+                    </form>
+
                     {!media.is_primary && media.status === "active" && (
                       <form action={`/api/admin/media/${media.id}/set-primary`} method="post">
                         <button

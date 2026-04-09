@@ -31,7 +31,15 @@ type RawProductRow = {
   }> | null;
 };
 
-export async function listAdminProducts(): Promise<AdminProductListItem[]> {
+export type AdminProductsFilters = {
+  q?: string;
+  media?: "all" | "with-media" | "without-media";
+  status?: "all" | "active" | "inactive";
+};
+
+export async function listAdminProducts(
+  filters: AdminProductsFilters = {}
+): Promise<AdminProductListItem[]> {
   const { data, error } = await supabaseAdmin
     .from("products")
     .select(`
@@ -58,7 +66,7 @@ export async function listAdminProducts(): Promise<AdminProductListItem[]> {
 
   const rows = (data ?? []) as RawProductRow[];
 
-  return rows.map((row) => {
+  const mapped = rows.map((row) => {
     const activeMedia = Array.isArray(row.product_media)
       ? row.product_media
           .filter((media) => media.status === "active")
@@ -87,5 +95,31 @@ export async function listAdminProducts(): Promise<AdminProductListItem[]> {
       media_count: activeMedia.length,
       primary_image_url: primaryImage?.public_url ?? null,
     };
+  });
+
+  const q = (filters.q ?? "").trim().toLowerCase();
+  const media = filters.media ?? "all";
+  const status = filters.status ?? "all";
+
+  return mapped.filter((item) => {
+    const matchesQ =
+      !q ||
+      item.name.toLowerCase().includes(q) ||
+      item.slug.toLowerCase().includes(q) ||
+      (item.sku ?? "").toLowerCase().includes(q) ||
+      (item.brand_name ?? "").toLowerCase().includes(q) ||
+      (item.collab_name ?? "").toLowerCase().includes(q);
+
+    const matchesMedia =
+      media === "all" ||
+      (media === "with-media" && item.media_count > 0) ||
+      (media === "without-media" && item.media_count === 0);
+
+    const matchesStatus =
+      status === "all" ||
+      (status === "active" && item.is_active) ||
+      (status === "inactive" && !item.is_active);
+
+    return matchesQ && matchesMedia && matchesStatus;
   });
 }
