@@ -1,23 +1,8 @@
 import Link from "next/link";
+import AdminToast from "@/components/admin/AdminToast";
 import AdminCatalogWorkspace from "@/components/admin/AdminCatalogWorkspace";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { listAdminCatalogProducts } from "@/lib/admin/catalog";
-
-function SuccessBanner({ message }: { message: string }) {
-  return (
-    <div className="rounded-2xl border border-green-500/20 bg-green-500/10 px-4 py-3 text-sm text-green-200">
-      {message}
-    </div>
-  );
-}
-
-function ErrorBanner({ message }: { message: string }) {
-  return (
-    <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-      {message}
-    </div>
-  );
-}
 
 function getSuccessMessage(success?: string, count?: string) {
   switch (success) {
@@ -124,9 +109,6 @@ export default async function AdminCatalogPage({
         </p>
       </div>
 
-      {successMessage && <SuccessBanner message={successMessage} />}
-      {errorMessage && <ErrorBanner message={errorMessage} />}
-
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap gap-3">
@@ -216,6 +198,9 @@ export default async function AdminCatalogPage({
       </div>
 
       <AdminCatalogWorkspace scope={scope} products={products} />
+
+      <AdminToast message={successMessage} tone="success" />
+      <AdminToast message={errorMessage} tone="error" />
     </section>
   );
 }

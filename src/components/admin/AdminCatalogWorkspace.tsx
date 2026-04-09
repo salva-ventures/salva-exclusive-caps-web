@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import AdminCatalogBoard from "@/components/admin/AdminCatalogBoard";
+import AdminCatalogDrawer from "@/components/admin/AdminCatalogDrawer";
+import AdminCatalogKanban from "@/components/admin/AdminCatalogKanban";
 import AdminCatalogList from "@/components/admin/AdminCatalogList";
 
 type CatalogTag = {
@@ -36,6 +38,7 @@ type CatalogProduct = {
 };
 
 type WorkMode = "explore" | "select" | "order";
+type ViewMode = "list" | "kanban";
 
 export default function AdminCatalogWorkspace({
   scope,
@@ -45,11 +48,22 @@ export default function AdminCatalogWorkspace({
   products: CatalogProduct[];
 }) {
   const [mode, setMode] = useState<WorkMode>("explore");
+  const [view, setView] = useState<ViewMode>("list");
+  const [drawerProductId, setDrawerProductId] = useState<string | null>(null);
+
+  const drawerProduct = useMemo(
+    () => products.find((product) => product.id === drawerProductId) ?? null,
+    [products, drawerProductId]
+  );
+
+  function closeDrawer() {
+    setDrawerProductId(null);
+  }
 
   return (
     <div className="space-y-4">
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.18em] text-white/45">
               Modo de trabajo
@@ -104,6 +118,34 @@ export default function AdminCatalogWorkspace({
             >
               Ordenar
             </button>
+
+            {mode !== "order" && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setView("list")}
+                  className={`rounded-2xl px-4 py-2 text-sm transition ${
+                    view === "list"
+                      ? "bg-white text-black"
+                      : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+                  }`}
+                >
+                  Lista
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setView("kanban")}
+                  className={`rounded-2xl px-4 py-2 text-sm transition ${
+                    view === "kanban"
+                      ? "bg-white text-black"
+                      : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+                  }`}
+                >
+                  Kanban
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -121,9 +163,22 @@ export default function AdminCatalogWorkspace({
                 : product.wholesale_sort_order,
           }))}
         />
+      ) : view === "kanban" ? (
+        <AdminCatalogKanban
+          scope={scope}
+          products={products}
+          onEdit={setDrawerProductId}
+        />
       ) : (
         <AdminCatalogList scope={scope} products={products} mode={mode} />
       )}
+
+      <AdminCatalogDrawer
+        scope={scope}
+        product={drawerProduct}
+        open={drawerProduct !== null}
+        onClose={closeDrawer}
+      />
     </div>
   );
 }

@@ -282,7 +282,16 @@ export default function AdminCatalogDrawer({
                     className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white/80"
                   >
                     <span>{tag.tag}</span>
-                    <form action="/api/admin/catalog/tags/delete" method="post">
+                    <form
+                      action="/api/admin/catalog/tags/delete"
+                      method="post"
+                      onSubmit={(e) => {
+                        const ok = window.confirm(`Eliminar la tag "${tag.tag}"?`);
+                        if (!ok) {
+                          e.preventDefault();
+                        }
+                      }}
+                    >
                       <input type="hidden" name="id" value={tag.id} />
                       <input type="hidden" name="scope" value={scope} />
                       <button
