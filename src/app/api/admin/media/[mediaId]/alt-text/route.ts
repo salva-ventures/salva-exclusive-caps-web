@@ -1,9 +1,13 @@
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function backToEditor(productId: string, params: string) {
+  return `/admin/products/${productId}/media?${params}`;
 }
 
 export async function POST(
@@ -15,7 +19,17 @@ export async function POST(
   const { mediaId } = await context.params;
 
   if (!isUuid(mediaId)) {
-    return NextResponse.json({ error: "mediaId invalido." }, { status: 400 });
+    redirect("/admin/products?error=invalid-media");
+  }
+
+  const { data: mediaRow, error: mediaError } = await supabaseAdmin
+    .from("product_media")
+    .select("id, product_id")
+    .eq("id", mediaId)
+    .maybeSingle();
+
+  if (mediaError || !mediaRow) {
+    redirect("/admin/products?error=media-not-found");
   }
 
   const formData = await request.formData();
@@ -30,8 +44,8 @@ export async function POST(
     .eq("id", mediaId);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    redirect(backToEditor(mediaRow.product_id, "error=alt-text-failed"));
   }
 
-  return NextResponse.json({ ok: true });
+  redirect(backToEditor(mediaRow.product_id, "success=alt-text"));
 }

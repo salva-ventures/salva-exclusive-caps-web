@@ -2,13 +2,12 @@ import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-const BUCKET = "product-images";
-const MAX_FILES = 10;
+const BUCKET = "product-videos";
+const MAX_FILES = 3;
 const ALLOWED_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/avif",
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
 ]);
 
 function isUuid(value: string): boolean {
@@ -53,12 +52,12 @@ export async function POST(
   }
 
   if (files.length > MAX_FILES) {
-    redirect(backToEditor(productId, "error=too-many-images"));
+    redirect(backToEditor(productId, "error=too-many-videos"));
   }
 
   for (const file of files) {
     if (!ALLOWED_TYPES.has(file.type)) {
-      redirect(backToEditor(productId, "error=invalid-image-type"));
+      redirect(backToEditor(productId, "error=invalid-video-type"));
     }
   }
 
@@ -76,37 +75,36 @@ export async function POST(
     .from("product_media")
     .select("id, sort_order, is_primary, status, media_type")
     .eq("product_id", productId)
-    .eq("media_type", "image")
+    .eq("media_type", "video")
     .eq("status", "active")
     .order("sort_order", { ascending: true });
 
   if (existingMediaError) {
-    redirect(backToEditor(productId, "error=load-images"));
+    redirect(backToEditor(productId, "error=load-videos"));
   }
 
-  const currentImages = existingMedia ?? [];
-  const currentCount = currentImages.length;
+  const currentVideos = existingMedia ?? [];
+  const currentCount = currentVideos.length;
 
-  if (currentCount + files.length > 10) {
-    redirect(backToEditor(productId, "error=image-limit"));
+  if (currentCount + files.length > 3) {
+    redirect(backToEditor(productId, "error=video-limit"));
   }
 
-  const hasPrimary = currentImages.some((item) => item.is_primary === true);
   let nextSortOrder =
-    currentImages.reduce((max, item) => Math.max(max, item.sort_order ?? 0), 0) + 1;
+    currentVideos.reduce((max, item) => Math.max(max, item.sort_order ?? 0), 0) + 1;
 
   const insertedRows: Array<Record<string, unknown>> = [];
 
   for (let index = 0; index < files.length; index++) {
     const file = files[index];
-    const originalFilename = file.name || `archivo-${index + 1}`;
+    const originalFilename = file.name || `video-${index + 1}`;
     const ext = originalFilename.includes(".")
       ? `.${originalFilename.split(".").pop()!.toLowerCase()}`
       : "";
     const baseName = originalFilename.replace(/\.[^/.]+$/, "");
-    const safeBase = slugifyFileBase(baseName) || "imagen";
+    const safeBase = slugifyFileBase(baseName) || "video";
     const sortOrder = nextSortOrder++;
-    const storagePath = `products/${product.slug}/images/${pad(sortOrder)}-${safeBase}${ext}`;
+    const storagePath = `products/${product.slug}/videos/${pad(sortOrder)}-${safeBase}${ext}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
@@ -120,7 +118,7 @@ export async function POST(
       });
 
     if (uploadError) {
-      redirect(backToEditor(productId, "error=image-upload"));
+      redirect(backToEditor(productId, "error=video-upload"));
     }
 
     const { data: publicData } = supabaseAdmin.storage
@@ -132,11 +130,11 @@ export async function POST(
       bucket: BUCKET,
       storage_path: storagePath,
       public_url: publicData.publicUrl,
-      media_type: "image",
+      media_type: "video",
       original_filename: originalFilename,
       alt_text: null,
       sort_order: sortOrder,
-      is_primary: !hasPrimary && index === 0,
+      is_primary: false,
       status: "active",
       mime_type: file.type || null,
       file_size_bytes: file.size || null,
@@ -148,8 +146,8 @@ export async function POST(
     .insert(insertedRows);
 
   if (insertError) {
-    redirect(backToEditor(productId, "error=image-insert"));
+    redirect(backToEditor(productId, "error=video-insert"));
   }
 
-  redirect(backToEditor(productId, `success=images-uploaded&count=${insertedRows.length}`));
+  redirect(backToEditor(productId, `success=videos-uploaded&count=${insertedRows.length}`));
 }

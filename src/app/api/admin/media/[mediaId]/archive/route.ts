@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
@@ -6,8 +6,12 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
+function backToEditor(productId: string, params: string) {
+  return `/admin/products/${productId}/media?${params}`;
+}
+
 export async function POST(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ mediaId: string }> }
 ) {
   await requireAdminUser();
@@ -15,7 +19,24 @@ export async function POST(
   const { mediaId } = await context.params;
 
   if (!isUuid(mediaId)) {
-    return NextResponse.json({ error: "mediaId invalido." }, { status: 400 });
+    redirect("/admin/products?error=invalid-media");
+  }
+
+  const formData = await request.formData();
+  const confirmed = String(formData.get("confirm_archive") ?? "");
+
+  if (confirmed !== "yes") {
+    const { data: mediaPreview } = await supabaseAdmin
+      .from("product_media")
+      .select("product_id")
+      .eq("id", mediaId)
+      .maybeSingle();
+
+    if (mediaPreview?.product_id) {
+      redirect(backToEditor(mediaPreview.product_id, "error=archive-not-confirmed"));
+    }
+
+    redirect("/admin/products?error=archive-not-confirmed");
   }
 
   const { data: mediaRow, error: mediaError } = await supabaseAdmin
@@ -24,12 +45,8 @@ export async function POST(
     .eq("id", mediaId)
     .maybeSingle();
 
-  if (mediaError) {
-    return NextResponse.json({ error: mediaError.message }, { status: 500 });
-  }
-
-  if (!mediaRow) {
-    return NextResponse.json({ error: "Medio no encontrado." }, { status: 404 });
+  if (mediaError || !mediaRow) {
+    redirect("/admin/products?error=media-not-found");
   }
 
   const { error: archiveError } = await supabaseAdmin
@@ -42,7 +59,7 @@ export async function POST(
     .eq("id", mediaId);
 
   if (archiveError) {
-    return NextResponse.json({ error: archiveError.message }, { status: 500 });
+    redirect(backToEditor(mediaRow.product_id, "error=archive-failed"));
   }
 
   if (mediaRow.is_primary) {
@@ -55,7 +72,7 @@ export async function POST(
       .limit(1);
 
     if (candidateError) {
-      return NextResponse.json({ error: candidateError.message }, { status: 500 });
+      redirect(backToEditor(mediaRow.product_id, "error=archive-failed"));
     }
 
     const nextPrimary = candidateRows?.[0];
@@ -67,10 +84,10 @@ export async function POST(
         .eq("id", nextPrimary.id);
 
       if (nextPrimaryError) {
-        return NextResponse.json({ error: nextPrimaryError.message }, { status: 500 });
+        redirect(backToEditor(mediaRow.product_id, "error=archive-failed"));
       }
     }
   }
 
-  return NextResponse.json({ ok: true });
+  redirect(backToEditor(mediaRow.product_id, "success=archived"));
 }

@@ -1,9 +1,13 @@
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function backToEditor(productId: string, params: string) {
+  return `/admin/products/${productId}/media?${params}`;
 }
 
 export async function POST(
@@ -15,14 +19,14 @@ export async function POST(
   const { mediaId } = await context.params;
 
   if (!isUuid(mediaId)) {
-    return NextResponse.json({ error: "mediaId invalido." }, { status: 400 });
+    redirect("/admin/products?error=invalid-media");
   }
 
   const formData = await request.formData();
   const direction = String(formData.get("direction") ?? "");
 
   if (direction !== "up" && direction !== "down") {
-    return NextResponse.json({ error: "Direccion invalida." }, { status: 400 });
+    redirect("/admin/products?error=invalid-direction");
   }
 
   const { data: current, error: currentError } = await supabaseAdmin
@@ -31,16 +35,12 @@ export async function POST(
     .eq("id", mediaId)
     .maybeSingle();
 
-  if (currentError) {
-    return NextResponse.json({ error: currentError.message }, { status: 500 });
-  }
-
-  if (!current) {
-    return NextResponse.json({ error: "Medio no encontrado." }, { status: 404 });
+  if (currentError || !current) {
+    redirect("/admin/products?error=media-not-found");
   }
 
   if (current.status !== "active") {
-    return NextResponse.json({ error: "Solo medios activos pueden reordenarse." }, { status: 400 });
+    redirect(backToEditor(current.product_id, "error=move-inactive"));
   }
 
   let neighborQuery = supabaseAdmin
@@ -58,13 +58,13 @@ export async function POST(
   const { data: neighborRows, error: neighborError } = await neighborQuery;
 
   if (neighborError) {
-    return NextResponse.json({ error: neighborError.message }, { status: 500 });
+    redirect(backToEditor(current.product_id, "error=move-failed"));
   }
 
   const neighbor = neighborRows?.[0];
 
   if (!neighbor) {
-    return NextResponse.json({ ok: true, moved: false });
+    redirect(backToEditor(current.product_id, "success=no-move"));
   }
 
   const currentOrder = current.sort_order;
@@ -76,7 +76,7 @@ export async function POST(
     .eq("id", current.id);
 
   if (updateCurrentError) {
-    return NextResponse.json({ error: updateCurrentError.message }, { status: 500 });
+    redirect(backToEditor(current.product_id, "error=move-failed"));
   }
 
   const { error: updateNeighborError } = await supabaseAdmin
@@ -85,8 +85,8 @@ export async function POST(
     .eq("id", neighbor.id);
 
   if (updateNeighborError) {
-    return NextResponse.json({ error: updateNeighborError.message }, { status: 500 });
+    redirect(backToEditor(current.product_id, "error=move-failed"));
   }
 
-  return NextResponse.json({ ok: true, moved: true });
+  redirect(backToEditor(current.product_id, "success=moved"));
 }
