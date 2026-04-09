@@ -38,6 +38,13 @@ export default async function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/history"
+              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
+            >
+              Historial
+            </Link>
+
+            <Link
               href="/admin/admins"
               className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
             >
