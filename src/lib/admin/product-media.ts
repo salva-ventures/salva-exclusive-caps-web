@@ -41,9 +41,17 @@ type RawProductRow = {
   product_media: AdminProductMediaItem[] | null;
 };
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
 export async function getAdminProductMedia(
   productId: string
 ): Promise<AdminProductMediaPageData | null> {
+  if (!isUuid(productId)) {
+    return null;
+  }
+
   const { data, error } = await supabaseAdmin
     .from("products")
     .select(`
