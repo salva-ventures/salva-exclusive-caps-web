@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import AdminCatalogBoard from "@/components/admin/AdminCatalogBoard";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { listAdminCatalogProducts } from "@/lib/admin/catalog";
 
@@ -27,6 +28,10 @@ function getSuccessMessage(success?: string) {
       return "Orden de catalogo actualizado.";
     case "no-move":
       return "Ese producto ya esta en el extremo y no se movio.";
+    case "tag-created":
+      return "Tag agregada correctamente.";
+    case "tag-deleted":
+      return "Tag eliminada correctamente.";
     default:
       return null;
   }
@@ -50,6 +55,18 @@ function getErrorMessage(error?: string) {
       return "Direccion de orden invalida.";
     case "move-failed":
       return "No se pudo actualizar el orden del catalogo.";
+    case "invalid-tag-scope":
+      return "Scope de tag invalido.";
+    case "missing-tag":
+      return "Debes capturar una tag.";
+    case "create-tag":
+      return "No se pudo crear la tag.";
+    case "invalid-tag-id":
+      return "ID de tag invalido.";
+    case "tag-not-found":
+      return "Tag no encontrada.";
+    case "delete-tag":
+      return "No se pudo eliminar la tag.";
     default:
       return null;
   }
@@ -100,7 +117,7 @@ export default async function AdminCatalogPage({
           Admin Catalog Manager
         </h2>
         <p className="mt-2 text-white/65">
-          Gestiona menudeo y mayoreo desde un solo panel.
+          Gestiona menudeo y mayoreo con una vista mas practica y movil.
         </p>
       </div>
 
@@ -182,6 +199,16 @@ export default async function AdminCatalogPage({
         </div>
       </form>
 
+      <AdminCatalogBoard
+        scope={scope}
+        products={products.map((product) => ({
+          id: product.id,
+          name: product.name,
+          slug: product.slug,
+          scopeSortOrder: scope === "retail" ? product.retail_sort_order : product.wholesale_sort_order,
+        }))}
+      />
+
       <div className="text-sm text-white/50">
         {products.length} producto{products.length === 1 ? "" : "s"} en {scope === "retail" ? "menudeo" : "mayoreo"}
       </div>
@@ -195,6 +222,9 @@ export default async function AdminCatalogPage({
           products.map((product) => {
             const visible = scope === "retail" ? product.is_retail_visible : product.is_wholesale_visible;
             const sortOrder = scope === "retail" ? product.retail_sort_order : product.wholesale_sort_order;
+            const visibleTags = product.tags.filter(
+              (tag) => tag.catalog_scope === scope || tag.catalog_scope === "both"
+            );
 
             return (
               <article
@@ -268,6 +298,62 @@ export default async function AdminCatalogPage({
                         {product.brand_name ?? "Sin marca"} {product.collab_name ? `| ${product.collab_name}` : ""}
                       </p>
                     </div>
+
+                    {visibleTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {visibleTags.map((tag) => (
+                          <div
+                            key={tag.id}
+                            className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white/80"
+                          >
+                            <span>{tag.tag}</span>
+                            <form action="/api/admin/catalog/tags/delete" method="post">
+                              <input type="hidden" name="id" value={tag.id} />
+                              <input type="hidden" name="scope" value={scope} />
+                              <button
+                                type="submit"
+                                className="text-white/55 hover:text-white"
+                              >
+                                ×
+                              </button>
+                            </form>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <form
+                      action="/api/admin/catalog/tags/create"
+                      method="post"
+                      className="grid gap-3 lg:grid-cols-[1fr_160px_auto]"
+                    >
+                      <input type="hidden" name="product_id" value={product.id} />
+                      <input type="hidden" name="scope" value={scope} />
+
+                      <input
+                        name="tag"
+                        type="text"
+                        placeholder="Agregar etiqueta visible"
+                        className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                      />
+
+                      <select
+                        name="catalog_scope"
+                        defaultValue={scope}
+                        className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                      >
+                        <option value="retail">Solo menudeo</option>
+                        <option value="wholesale">Solo mayoreo</option>
+                        <option value="both">Ambos</option>
+                      </select>
+
+                      <button
+                        type="submit"
+                        className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-white/85 transition hover:bg-white/[0.04]"
+                      >
+                        Agregar tag
+                      </button>
+                    </form>
 
                     <form
                       action="/api/admin/catalog/products/update"
