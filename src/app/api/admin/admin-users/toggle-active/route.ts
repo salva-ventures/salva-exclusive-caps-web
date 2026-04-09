@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   const id = String(formData.get("id") ?? "");
   const confirmToggle = String(formData.get("confirm_toggle") ?? "");
   const confirmEmail = String(formData.get("confirm_email") ?? "").trim().toLowerCase();
+  const confirmWord = String(formData.get("confirm_word") ?? "").trim();
 
   if (!isUuid(id)) {
     redirect(back("error=invalid-admin-id"));
@@ -46,6 +47,10 @@ export async function POST(request: Request) {
 
     if (confirmEmail !== target.email.toLowerCase()) {
       redirect(back("error=wrong-deactivate-email"));
+    }
+
+    if (confirmWord !== "DESACTIVAR") {
+      redirect(back("error=wrong-deactivate-word"));
     }
   }
 

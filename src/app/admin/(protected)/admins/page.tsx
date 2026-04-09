@@ -52,6 +52,8 @@ function getErrorMessage(error?: string) {
       return "Debes marcar la confirmacion para desactivar el admin.";
     case "wrong-deactivate-email":
       return "El correo de confirmacion no coincide exactamente.";
+    case "wrong-deactivate-word":
+      return "Debes escribir exactamente DESACTIVAR.";
     default:
       return null;
   }
@@ -198,6 +200,20 @@ export default async function AdminUsersPage({
                       name="confirm_email"
                       type="text"
                       placeholder={admin.email}
+                      disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase()}
+                      className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm text-white/70">
+                      Escribe exactamente esta palabra para confirmar:
+                    </label>
+                    <p className="text-sm font-medium text-white">DESACTIVAR</p>
+                    <input
+                      name="confirm_word"
+                      type="text"
+                      placeholder="DESACTIVAR"
                       disabled={admin.email.toLowerCase() === currentAdmin.email.toLowerCase()}
                       className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
                     />
