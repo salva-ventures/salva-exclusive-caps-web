@@ -67,6 +67,12 @@ function getSuccessMessage(success?: string, count?: string) {
       return "Orden actualizado.";
     case "no-move":
       return "Ese medio ya esta en el extremo y no se movio.";
+    case "bulk-archived":
+      return `Medios archivados: ${count ?? "0"}.`;
+    case "bulk-restored":
+      return `Medios restaurados: ${count ?? "0"}.`;
+    case "bulk-deleted":
+      return `Medios eliminados permanentemente: ${count ?? "0"}.`;
     default:
       return null;
   }
@@ -132,6 +138,20 @@ function getErrorMessage(error?: string) {
       return "No se pudo borrar el archivo en Storage.";
     case "delete-db":
       return "No se pudo borrar el registro en la base de datos.";
+    case "bulk-no-selection":
+      return "Debes seleccionar al menos un medio.";
+    case "bulk-load-failed":
+      return "No se pudo cargar la seleccion masiva.";
+    case "bulk-invalid-action":
+      return "La accion masiva es invalida.";
+    case "bulk-archive-failed":
+      return "No se pudieron archivar los medios seleccionados.";
+    case "bulk-restore-failed":
+      return "No se pudieron restaurar los medios seleccionados.";
+    case "bulk-delete-storage":
+      return "No se pudieron borrar algunos archivos en Storage.";
+    case "bulk-delete-db":
+      return "No se pudieron borrar algunos registros en la base de datos.";
     default:
       return null;
   }
@@ -352,6 +372,89 @@ export default async function AdminProductMediaPage({
         <div className="mb-4 text-sm text-white/50">
           {filteredMedia.length} medio{filteredMedia.length === 1 ? "" : "s"} en esta vista
         </div>
+
+        {filteredMedia.length > 0 && (
+          <form
+            action="/api/admin/media/bulk"
+            method="post"
+            className="mb-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4"
+          >
+            <input type="hidden" name="product_id" value={product.id} />
+
+            <div className="flex flex-wrap items-center gap-3">
+              <select
+                name="bulk_action"
+                className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white outline-none"
+                defaultValue="archive"
+              >
+                <option value="archive">Archivar seleccionados</option>
+                <option value="restore">Restaurar seleccionados</option>
+                <option value="delete">Eliminar permanentemente</option>
+              </select>
+
+              <button
+                type="submit"
+                className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
+              >
+                Ejecutar accion masiva
+              </button>
+
+              <p className="text-xs text-white/45">
+                Marca varios medios y luego ejecuta la accion.
+              </p>
+            </div>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {filteredMedia.map((media) => (
+                <article
+                  key={`bulk-${media.id}`}
+                  className="overflow-hidden rounded-3xl border border-white/10 bg-black/30"
+                >
+                  <div className="relative aspect-square w-full bg-white/5">
+                    {media.media_type === "image" ? (
+                      <Image
+                        src={media.public_url}
+                        alt={media.alt_text ?? product.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1280px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <video
+                        src={media.public_url}
+                        controls
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
+
+                  <div className="space-y-3 p-4">
+                    <label className="flex items-center gap-3 text-sm text-white/80">
+                      <input type="checkbox" name="media_ids" value={media.id} />
+                      Seleccionar este medio
+                    </label>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Badge tone={media.media_type === "image" ? "blue" : "yellow"}>
+                        {media.media_type === "image" ? "Imagen" : "Video"}
+                      </Badge>
+
+                      <Badge tone={media.status === "active" ? "green" : "red"}>
+                        {media.status === "active" ? "Activo" : "Archivado"}
+                      </Badge>
+
+                      {media.is_primary && <Badge tone="yellow">Principal</Badge>}
+                    </div>
+
+                    <p className="text-sm text-white/70">
+                      {media.original_filename ?? "Sin nombre"}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </form>
+        )}
 
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filteredMedia.length === 0 ? (
