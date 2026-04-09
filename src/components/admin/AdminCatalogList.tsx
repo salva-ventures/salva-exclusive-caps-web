@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import AdminCatalogDrawer from "@/components/admin/AdminCatalogDrawer";
 import AdminDuplicateProductDrawer from "@/components/admin/AdminDuplicateProductDrawer";
+import AdminArchiveProductDrawer from "@/components/admin/AdminArchiveProductDrawer";
 
 type CatalogTag = {
   id: string;
@@ -305,6 +306,16 @@ export default function AdminCatalogList({
                         id: product.id,
                         name: product.name,
                         slug: product.slug,
+                      }}
+                    />
+
+                    <AdminArchiveProductDrawer
+                      scope={scope}
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        slug: product.slug,
+                        catalog_status: product.catalog_status,
                       }}
                     />
 

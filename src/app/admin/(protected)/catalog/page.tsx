@@ -11,6 +11,10 @@ function getSuccessMessage(success?: string, count?: string) {
       return "Producto creado correctamente.";
     case "product-duplicated":
       return "Producto duplicado correctamente.";
+    case "product-archived":
+      return "Producto archivado correctamente.";
+    case "product-restored":
+      return "Producto restaurado como draft y oculto en ambos catalogos.";
     case "product-updated":
       return "Producto de catalogo actualizado correctamente.";
     case "product-moved":
@@ -80,6 +84,20 @@ function getErrorMessage(error?: string) {
       return "No se pudo crear el duplicado.";
     case "duplicate-tags-failed":
       return "Se duplico el producto, pero fallaron las tags.";
+    case "archive-invalid-product":
+      return "El producto a archivar/restaurar es invalido.";
+    case "archive-invalid-action":
+      return "La accion de archivo es invalida.";
+    case "archive-product-not-found":
+      return "No se encontro el producto para archivar/restaurar.";
+    case "archive-confirmation-required":
+      return "Debes escribir exactamente ARCHIVAR.";
+    case "restore-confirmation-required":
+      return "Debes escribir exactamente RESTAURAR.";
+    case "archive-failed":
+      return "No se pudo archivar el producto.";
+    case "restore-failed":
+      return "No se pudo restaurar el producto.";
     default:
       return null;
   }
