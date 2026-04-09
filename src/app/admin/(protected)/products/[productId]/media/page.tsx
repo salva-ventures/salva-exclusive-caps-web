@@ -92,18 +92,67 @@ export default async function AdminProductMediaPage({
                   )}
                 </div>
 
-                <div className="space-y-2 p-4 text-sm text-white/70">
-                  <p className="font-medium text-white">
-                    {media.original_filename ?? "Sin nombre"}
-                  </p>
-                  <p>Tipo: {media.media_type}</p>
-                  <p>Orden: {media.sort_order}</p>
-                  <p>Estado: {media.status}</p>
-                  <p>Principal: {media.is_primary ? "Si" : "No"}</p>
-                  <p>Bucket: {media.bucket}</p>
-                  <p className="break-all">Path: {media.storage_path}</p>
-                  <p className="break-all">URL: {media.public_url}</p>
-                  <p>Alt: {media.alt_text ?? "-"}</p>
+                <div className="space-y-3 p-4 text-sm text-white/70">
+                  <div>
+                    <p className="font-medium text-white">
+                      {media.original_filename ?? "Sin nombre"}
+                    </p>
+                    <p>Tipo: {media.media_type}</p>
+                    <p>Orden: {media.sort_order}</p>
+                    <p>Estado: {media.status}</p>
+                    <p>Principal: {media.is_primary ? "Si" : "No"}</p>
+                    <p>Bucket: {media.bucket}</p>
+                    <p className="break-all">Path: {media.storage_path}</p>
+                    <p className="break-all">URL: {media.public_url}</p>
+                    <p>Alt actual: {media.alt_text ?? "-"}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    {!media.is_primary && media.status === "active" && (
+                      <form action={`/api/admin/media/${media.id}/set-primary`} method="post">
+                        <button
+                          type="submit"
+                          className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                        >
+                          Marcar principal
+                        </button>
+                      </form>
+                    )}
+
+                    {media.status === "active" && (
+                      <form action={`/api/admin/media/${media.id}/archive`} method="post">
+                        <button
+                          type="submit"
+                          className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200 transition hover:bg-red-500/15"
+                        >
+                          Archivar
+                        </button>
+                      </form>
+                    )}
+                  </div>
+
+                  <form
+                    action={`/api/admin/media/${media.id}/alt-text`}
+                    method="post"
+                    className="space-y-2"
+                  >
+                    <label className="block text-xs uppercase tracking-[0.18em] text-white/45">
+                      Alt text
+                    </label>
+                    <input
+                      name="alt_text"
+                      type="text"
+                      defaultValue={media.alt_text ?? ""}
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none"
+                      placeholder="Describe la imagen"
+                    />
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-white px-3 py-2 text-xs font-medium text-black transition hover:bg-white/90"
+                    >
+                      Guardar alt text
+                    </button>
+                  </form>
                 </div>
               </article>
             ))
