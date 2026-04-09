@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireAdminUser } from "@/lib/admin/auth";
+import { logAdminMediaEvent } from "@/lib/admin/audit";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 const BUCKET = "product-videos";
@@ -36,8 +37,7 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ productId: string }> }
 ) {
-  await requireAdminUser();
-
+  const adminUser = await requireAdminUser();
   const { productId } = await context.params;
 
   if (!isUuid(productId)) {
@@ -141,13 +141,24 @@ export async function POST(
     });
   }
 
-  const { error: insertError } = await supabaseAdmin
+  const { data: insertedData, error: insertError } = await supabaseAdmin
     .from("product_media")
-    .insert(insertedRows);
+    .insert(insertedRows)
+    .select("id");
 
   if (insertError) {
     redirect(backToEditor(productId, "error=video-insert"));
   }
+
+  await logAdminMediaEvent({
+    adminEmail: adminUser.email,
+    actionType: "upload_video",
+    productId: product.id,
+    details: {
+      count: insertedRows.length,
+      mediaIds: (insertedData ?? []).map((row) => row.id),
+    },
+  });
 
   redirect(backToEditor(productId, `success=videos-uploaded&count=${insertedRows.length}`));
 }

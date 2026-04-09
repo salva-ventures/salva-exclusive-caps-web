@@ -60,6 +60,12 @@ async function getAdminDashboardData() {
     );
   });
 
+  const { data: recentEvents } = await supabaseAdmin
+    .from("admin_media_events")
+    .select("id, admin_email, action_type, product_id, media_id, details_json, created_at")
+    .order("created_at", { ascending: false })
+    .limit(20);
+
   return {
     totalProducts: totalProducts ?? 0,
     totalActiveImages: totalActiveImages ?? 0,
@@ -68,6 +74,7 @@ async function getAdminDashboardData() {
     productsWithoutMedia: productsWithoutMedia.slice(0, 10),
     productsWithFewImages: productsWithFewImages.slice(0, 10),
     productsWithVideos: productsWithVideos.slice(0, 10),
+    recentEvents: recentEvents ?? [],
   };
 }
 
@@ -117,6 +124,45 @@ function ProductListCard({
   );
 }
 
+function RecentActivityCard({
+  events,
+}: {
+  events: Array<{
+    id: string;
+    admin_email: string;
+    action_type: string;
+    product_id: string | null;
+    media_id: string | null;
+    details_json: Record<string, unknown> | null;
+    created_at: string;
+  }>;
+}) {
+  return (
+    <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+      <h3 className="text-lg font-semibold text-white">Actividad reciente</h3>
+
+      {events.length === 0 ? (
+        <p className="mt-4 text-sm text-white/55">Sin actividad registrada.</p>
+      ) : (
+        <div className="mt-4 space-y-3">
+          {events.map((event) => (
+            <div
+              key={event.id}
+              className="rounded-2xl border border-white/10 px-4 py-3"
+            >
+              <p className="text-sm font-medium text-white">{event.action_type}</p>
+              <p className="mt-1 text-sm text-white/55">{event.admin_email}</p>
+              <p className="mt-1 text-xs text-white/40">
+                {new Date(event.created_at).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default async function AdminHomePage() {
   await requireAdminUser();
   const data = await getAdminDashboardData();
@@ -131,7 +177,7 @@ export default async function AdminHomePage() {
           Resumen operativo
         </h2>
         <p className="mt-2 max-w-2xl text-white/65">
-          Vista rapida del estado actual del catalogo y de los medios.
+          Vista rapida del estado actual del catalogo, medios y actividad reciente.
         </p>
       </div>
 
@@ -156,6 +202,8 @@ export default async function AdminHomePage() {
           items={data.productsWithVideos}
         />
       </div>
+
+      <RecentActivityCard events={data.recentEvents} />
     </section>
   );
 }

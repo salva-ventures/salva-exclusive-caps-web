@@ -2,15 +2,15 @@ import "server-only";
 
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-function getAllowedAdminEmails(): string[] {
-  const raw = process.env.ADMIN_EMAILS ?? "";
+export type AdminRole = "super_admin";
 
-  return raw
-    .split(",")
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
-}
+export type AuthenticatedAdminUser = {
+  id: string;
+  email: string;
+  role: AdminRole;
+};
 
 export async function getAuthenticatedUser() {
   const supabase = await createSupabaseServerClient();
@@ -23,19 +23,39 @@ export async function getAuthenticatedUser() {
   return data.user ?? null;
 }
 
-export async function requireAdminUser() {
+export async function getAuthenticatedAdminUser(): Promise<AuthenticatedAdminUser | null> {
   const user = await getAuthenticatedUser();
 
   if (!user?.email) {
-    redirect("/admin/login");
+    return null;
   }
 
-  const allowedEmails = getAllowedAdminEmails();
   const email = user.email.toLowerCase();
 
-  if (!allowedEmails.includes(email)) {
-    redirect("/admin/login");
+  const { data, error } = await supabaseAdmin
+    .from("admin_users")
+    .select("id, email, role, is_active")
+    .eq("email", email)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
   }
 
-  return user;
+  return {
+    id: data.id,
+    email: data.email,
+    role: data.role,
+  } as AuthenticatedAdminUser;
+}
+
+export async function requireAdminUser(): Promise<AuthenticatedAdminUser> {
+  const adminUser = await getAuthenticatedAdminUser();
+
+  if (!adminUser?.email) {
+    redirect("/admin/login?error=invalid");
+  }
+
+  return adminUser;
 }
