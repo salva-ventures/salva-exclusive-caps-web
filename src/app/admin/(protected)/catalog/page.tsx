@@ -1,11 +1,14 @@
 import Link from "next/link";
 import AdminToast from "@/components/admin/AdminToast";
+import AdminCreateProductDrawer from "@/components/admin/AdminCreateProductDrawer";
 import AdminCatalogWorkspace from "@/components/admin/AdminCatalogWorkspace";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { listAdminCatalogProducts } from "@/lib/admin/catalog";
 
 function getSuccessMessage(success?: string, count?: string) {
   switch (success) {
+    case "product-created":
+      return "Producto creado correctamente.";
     case "product-updated":
       return "Producto de catalogo actualizado correctamente.";
     case "product-moved":
@@ -59,6 +62,12 @@ function getErrorMessage(error?: string) {
       return "La accion masiva no es valida.";
     case "bulk-update-failed":
       return "No se pudo ejecutar la accion masiva.";
+    case "create-missing-name":
+      return "Debes capturar el nombre del nuevo producto.";
+    case "create-invalid-slug":
+      return "El slug del nuevo producto no es valido.";
+    case "create-product-failed":
+      return "No se pudo crear el nuevo producto.";
     default:
       return null;
   }
@@ -140,6 +149,8 @@ export default async function AdminCatalogPage({
             >
               Filtros administrables
             </Link>
+
+            <AdminCreateProductDrawer scope={scope} />
           </div>
 
           <form className="grid gap-3 md:grid-cols-[1.3fr_0.8fr_0.8fr_auto]">
