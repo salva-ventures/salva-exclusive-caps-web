@@ -3,8 +3,15 @@ import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export type AdminCatalogScope = "retail" | "wholesale";
-
 export type AdminCatalogStatus = "active" | "draft" | "archived";
+
+export type AdminCatalogTagRow = {
+  id: string;
+  tag: string;
+  catalog_scope: "retail" | "wholesale" | "both";
+  sort_order: number;
+  is_active: boolean;
+};
 
 export type AdminCatalogProductRow = {
   id: string;
@@ -26,6 +33,7 @@ export type AdminCatalogProductRow = {
   wholesale_label: string | null;
   primary_image_url: string | null;
   media_count: number;
+  tags: AdminCatalogTagRow[];
 };
 
 type RawRow = {
@@ -55,6 +63,15 @@ type RawRow = {
         status: string;
       }>
     | null;
+  product_catalog_tags:
+    | Array<{
+        id: string;
+        tag: string;
+        catalog_scope: "retail" | "wholesale" | "both";
+        sort_order: number;
+        is_active: boolean;
+      }>
+    | null;
 };
 
 export type AdminCatalogFilters = {
@@ -68,7 +85,6 @@ function toNumberOrNull(value: string | number | null): number | null {
   if (value === null || value === undefined || value === "") {
     return null;
   }
-
   const num = Number(value);
   return Number.isFinite(num) ? num : null;
 }
@@ -102,6 +118,13 @@ export async function listAdminCatalogProducts(
         sort_order,
         media_type,
         status
+      ),
+      product_catalog_tags (
+        id,
+        tag,
+        catalog_scope,
+        sort_order,
+        is_active
       )
     `);
 
@@ -123,6 +146,10 @@ export async function listAdminCatalogProducts(
       activeMedia.find((media) => media.media_type === "image") ??
       null;
 
+    const tags = (row.product_catalog_tags ?? [])
+      .filter((tag) => tag.is_active)
+      .sort((a, b) => a.sort_order - b.sort_order);
+
     return {
       id: row.id,
       slug: row.slug,
@@ -143,6 +170,7 @@ export async function listAdminCatalogProducts(
       wholesale_label: row.wholesale_label,
       primary_image_url: primaryImage?.public_url ?? null,
       media_count: activeMedia.length,
+      tags,
     };
   });
 
