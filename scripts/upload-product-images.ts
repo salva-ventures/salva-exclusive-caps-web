@@ -17,13 +17,17 @@ type ProductRow = {
   slug: string
 }
 
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const mediaImportPath = process.env.MEDIA_IMPORT_PATH
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Falta ${name}`)
+  }
+  return value
+}
 
-if (!supabaseUrl) throw new Error("Falta SUPABASE_URL")
-if (!supabaseServiceRoleKey) throw new Error("Falta SUPABASE_SERVICE_ROLE_KEY")
-if (!mediaImportPath) throw new Error("Falta MEDIA_IMPORT_PATH")
+const supabaseUrl = requireEnv("SUPABASE_URL")
+const supabaseServiceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY")
+const mediaImportPath = requireEnv("MEDIA_IMPORT_PATH")
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
 
@@ -65,7 +69,7 @@ function readCsv(): CsvRow[] {
   })
 
   if (!cleanedRows.length) {
-    throw new Error("El CSV está vacío")
+    throw new Error("El CSV esta vacio")
   }
 
   return cleanedRows
@@ -122,7 +126,7 @@ async function uploadFolder(row: CsvRow, productMap: Map<string, ProductRow>) {
   const productSlug = String(row.product_slug ?? "").trim()
 
   if (!folderName || !productSlug) {
-    console.warn("Fila inválida en CSV:", row)
+    console.warn("Fila invalida en CSV:", row)
     return
   }
 
@@ -135,7 +139,7 @@ async function uploadFolder(row: CsvRow, productMap: Map<string, ProductRow>) {
   const files = getFilesFromFolder(folderPath)
 
   if (!files.length) {
-    console.warn(`Carpeta sin imágenes válidas: ${folderName}`)
+    console.warn(`Carpeta sin imagenes validas: ${folderName}`)
     return
   }
 

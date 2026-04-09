@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -29,12 +29,17 @@ type ProductWithSupabaseImages = Product & {
 export default function ProductDetailPage({ params }: Props) {
   const { slug } = use(params);
   const product = getProductBySlug(slug);
-  if (!product) notFound();
+
+  if (!product) {
+    notFound();
+  }
+
+  const safeProduct = product;
 
   const [imageMap, setImageMap] = useState<ProductImagesMap>({});
   const [activeImage, setActiveImage] = useState(0);
 
-  const relatedProducts = product.relatedSlugs
+  const relatedProducts = safeProduct.relatedSlugs
     .map((relatedSlug) => products.find((p) => p.slug === relatedSlug))
     .filter((p): p is NonNullable<typeof p> => Boolean(p))
     .slice(0, 4);
@@ -44,7 +49,7 @@ export default function ProductDetailPage({ params }: Props) {
 
     async function loadImages() {
       try {
-        const slugs = [product.slug, ...relatedProducts.map((p) => p.slug)];
+        const slugs = [safeProduct.slug, ...relatedProducts.map((p) => p.slug)];
         const map = await getProductImagesBySlugs(slugs);
 
         if (!cancelled) {
@@ -60,15 +65,15 @@ export default function ProductDetailPage({ params }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [product.slug, relatedProducts]);
+  }, [safeProduct.slug, relatedProducts]);
 
   const productGalleryUrls = useMemo(() => {
-    const supabaseGallery = getGalleryImages(imageMap, product.slug).map(
+    const supabaseGallery = getGalleryImages(imageMap, safeProduct.slug).map(
       (img) => img.public_url
     );
 
-    return supabaseGallery.length > 0 ? supabaseGallery : product.images;
-  }, [imageMap, product.images, product.slug]);
+    return supabaseGallery.length > 0 ? supabaseGallery : safeProduct.images;
+  }, [imageMap, safeProduct.images, safeProduct.slug]);
 
   useEffect(() => {
     if (activeImage > productGalleryUrls.length - 1) {
@@ -89,7 +94,7 @@ export default function ProductDetailPage({ params }: Props) {
   );
 
   const waMessage = encodeURIComponent(
-    `Hola, me interesa la gorra "${product.name}" (SKU: ${product.sku}). ¿Está disponible?`
+    `Hola, me interesa la gorra "${safeProduct.name}" (SKU: ${safeProduct.sku}). ¿Está disponible?`
   );
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${waMessage}`;
 
@@ -137,15 +142,15 @@ export default function ProductDetailPage({ params }: Props) {
 
           <div className="flex flex-col">
             <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">
-              {product.tipo}
+              {safeProduct.tipo}
             </p>
             <h1 className="text-white font-bold text-3xl md:text-4xl tracking-tight mb-4">
-              {product.name}
+              {safeProduct.name}
             </h1>
-            <p className="text-[#888] text-sm mb-6">SKU: {product.sku}</p>
+            <p className="text-[#888] text-sm mb-6">SKU: {safeProduct.sku}</p>
 
             <p className="text-[#ccc] leading-relaxed mb-8">
-              {product.shortDescription}
+              {safeProduct.shortDescription}
             </p>
 
             <div className="mb-6">
@@ -153,7 +158,7 @@ export default function ProductDetailPage({ params }: Props) {
                 Colores disponibles
               </p>
               <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
+                {safeProduct.colors.map((color) => (
                   <span
                     key={color}
                     className="border border-[#333] text-[#888] px-3 py-1 text-xs"

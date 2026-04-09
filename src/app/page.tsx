@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -75,7 +75,7 @@ export default function HomePage() {
           setImageMap(map);
         }
       } catch (error) {
-        console.error("Error cargando imágenes desde Supabase:", error);
+        console.error("Error cargando imÃ¡genes desde Supabase:", error);
       }
     }
 
@@ -88,7 +88,7 @@ export default function HomePage() {
 
   const featuredWithSupabaseImages = featured.map((product) => ({
     ...product,
-    image: getPrimaryImageUrl(imageMap, product.slug, product.image),
+    image: getPrimaryImageUrl(imageMap, product.slug, product.images?.[0]),
     gallery: getGalleryImages(imageMap, product.slug),
   }));
 
@@ -227,7 +227,7 @@ export default function HomePage() {
             >
               <div className="absolute inset-y-0 left-[-140%] w-[70%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-[shine_4.6s_ease-in-out_infinite]" />
               <Sparkles className="h-3.5 w-3.5" />
-              Diseño, presencia y carácter
+              DiseÃ±o, presencia y carÃ¡cter
             </motion.div>
 
             <motion.h1
@@ -263,7 +263,7 @@ export default function HomePage() {
                   href="/catalogo"
                   className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)] transition-all duration-300 hover:bg-white/92"
                 >
-                  Ver catálogo
+                  Ver catÃ¡logo
                 </Link>
               </motion.div>
 
@@ -320,7 +320,7 @@ export default function HomePage() {
               {[
                 { label: "Entrega", value: "Inmediata" },
                 { label: "Cobertura", value: "Nacional e internacional" },
-                { label: "Atención", value: "Directa por WhatsApp" },
+                { label: "AtenciÃ³n", value: "Directa por WhatsApp" },
               ].map((item) => (
                 <motion.div
                   key={item.label}
@@ -413,18 +413,18 @@ export default function HomePage() {
               Entregas
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-              Disponibilidad y envíos
+              Disponibilidad y envÃ­os
             </h2>
             <p className="mt-5 text-base leading-8 text-white/72 sm:text-lg">
-              Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. Envíos
-              nacionales e internacionales con cotización por separado. Toda
+              Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. EnvÃ­os
+              nacionales e internacionales con cotizaciÃ³n por separado. Toda
               disponibilidad se confirma directamente por WhatsApp.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               {[
                 "Entrega inmediata",
-                "Confirmación por WhatsApp",
+                "ConfirmaciÃ³n por WhatsApp",
                 "Cobertura nacional e internacional",
               ].map((item) => (
                 <span
@@ -442,7 +442,7 @@ export default function HomePage() {
                   href="/disponibilidad"
                   className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-sm font-semibold uppercase tracking-[0.28em] text-white shadow-[0_12px_30px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-500"
                 >
-                  Ver detalles de envío
+                  Ver detalles de envÃ­o
                 </Link>
               </motion.div>
             </div>
@@ -457,10 +457,10 @@ export default function HomePage() {
               {
                 title: "Disponibilidad",
                 description:
-                  "Sujeta a existencias y confirmación directa por WhatsApp.",
+                  "Sujeta a existencias y confirmaciÃ³n directa por WhatsApp.",
               },
               {
-                title: "Envíos",
+                title: "EnvÃ­os",
                 description:
                   "Cobertura nacional e internacional con costo adicional.",
               },
@@ -499,14 +499,14 @@ export default function HomePage() {
         >
           <motion.div variants={fadeUp} className="max-w-2xl">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
-              Colección
+              ColecciÃ³n
             </p>
             <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
               Productos destacados
             </h2>
             <p className="leading-relaxed text-white/55">
-              Una selección de modelos representativos de la propuesta de{" "}
-              {BRAND.name}, con diseño, presencia y carácter.
+              Una selecciÃ³n de modelos representativos de la propuesta de{" "}
+              {BRAND.name}, con diseÃ±o, presencia y carÃ¡cter.
             </p>
           </motion.div>
 
@@ -519,7 +519,7 @@ export default function HomePage() {
               href="/catalogo"
               className="inline-flex items-center gap-2 self-start rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-white/18 hover:bg-white/[0.08] hover:text-red-500"
             >
-              Ver catálogo completo
+              Ver catÃ¡logo completo
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           </motion.div>
@@ -566,21 +566,21 @@ export default function HomePage() {
                 className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#111] p-8`}
               >
                 <p className="mb-3 text-xs uppercase tracking-[0.35em] text-red-600">
-                  Nuestra visión
+                  Nuestra visiÃ³n
                 </p>
                 <h3 className="mb-4 text-2xl font-bold text-white">
-                  Construir una marca referente en México
+                  Construir una marca referente en MÃ©xico
                 </h3>
                 <p className="mb-6 text-sm leading-relaxed text-white/55">
                   Posicionar a {BRAND.name} como una marca referente en gorras
-                  premium dentro de México, combinando diseño, identidad, orden
+                  premium dentro de MÃ©xico, combinando diseÃ±o, identidad, orden
                   comercial y una experiencia de compra confiable.
                 </p>
                 <Link
                   href="/nosotros"
                   className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-red-600 transition-colors duration-300 hover:text-white"
                 >
-                  Conocer más
+                  Conocer mÃ¡s
                 </Link>
               </motion.div>
             </motion.div>
@@ -590,13 +590,13 @@ export default function HomePage() {
                 Sobre nosotros
               </p>
               <h2 className="mb-6 text-3xl font-bold tracking-tight text-white md:text-4xl">
-                Identidad, diseño y confianza
+                Identidad, diseÃ±o y confianza
               </h2>
               <p className="leading-relaxed text-white/55">
                 Somos una marca mexicana enfocada en ofrecer gorras premium con
-                identidad propia. Apostamos por una imagen sólida, una operación
+                identidad propia. Apostamos por una imagen sÃ³lida, una operaciÃ³n
                 seria y una propuesta pensada para clientes que valoran estilo,
-                exclusividad y atención directa.
+                exclusividad y atenciÃ³n directa.
               </p>
             </motion.div>
           </div>
@@ -623,16 +623,16 @@ export default function HomePage() {
           <div className="space-y-4">
             {[
               {
-                q: "¿Cómo puedo realizar un pedido?",
-                a: "Contáctanos directamente por WhatsApp seleccionando el producto que te interesa. Ahí confirmamos disponibilidad, pago y entrega.",
+                q: "Â¿CÃ³mo puedo realizar un pedido?",
+                a: "ContÃ¡ctanos directamente por WhatsApp seleccionando el producto que te interesa. AhÃ­ confirmamos disponibilidad, pago y entrega.",
               },
               {
-                q: "¿Cómo manejan entregas y envíos?",
-                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(", ")}, sujeta a existencias y coordinación directa. También realizamos envíos nacionales e internacionales con costo extra.`,
+                q: "Â¿CÃ³mo manejan entregas y envÃ­os?",
+                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(", ")}, sujeta a existencias y coordinaciÃ³n directa. TambiÃ©n realizamos envÃ­os nacionales e internacionales con costo extra.`,
               },
               {
-                q: "¿Las fotos corresponden al producto real?",
-                a: "Sí. Las fotografías del catálogo corresponden a los modelos reales disponibles.",
+                q: "Â¿Las fotos corresponden al producto real?",
+                a: "SÃ­. Las fotografÃ­as del catÃ¡logo corresponden a los modelos reales disponibles.",
               },
             ].map((item, i) => (
               <motion.div
@@ -691,7 +691,7 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
                   Si buscas comprar gorras por volumen para revender o surtir tu
-                  negocio, conoce nuestra atención personalizada para mayoreo.
+                  negocio, conoce nuestra atenciÃ³n personalizada para mayoreo.
                   Atendemos tiendas, revendedores, boutiques, emprendedores,
                   marcas y otros negocios con seguimiento directo por WhatsApp.
                 </p>
@@ -721,10 +721,10 @@ export default function HomePage() {
 
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
                 {[
-                  "Atención personalizada",
+                  "AtenciÃ³n personalizada",
                   "Compra por volumen",
-                  "Selección de modelos según negocio",
-                  "Envíos nacionales e internacionales",
+                  "SelecciÃ³n de modelos segÃºn negocio",
+                  "EnvÃ­os nacionales e internacionales",
                 ].map((item) => (
                   <div
                     key={item}
@@ -761,11 +761,11 @@ export default function HomePage() {
                 Cierre comercial
               </p>
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-                ¿Listo para elegir tu próxima gorra?
+                Â¿Listo para elegir tu prÃ³xima gorra?
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/60">
-                Explora el catálogo o recibe atención directa por WhatsApp para
-                confirmar disponibilidad, entrega o envío.
+                Explora el catÃ¡logo o recibe atenciÃ³n directa por WhatsApp para
+                confirmar disponibilidad, entrega o envÃ­o.
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
@@ -774,7 +774,7 @@ export default function HomePage() {
                     href="/catalogo"
                     className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/92"
                   >
-                    Ver catálogo
+                    Ver catÃ¡logo
                   </Link>
                 </motion.div>
 
@@ -799,8 +799,8 @@ export default function HomePage() {
               >
                 {[
                   "Entrega inmediata",
-                  "Atención directa",
-                  "Envíos nacionales e internacionales",
+                  "AtenciÃ³n directa",
+                  "EnvÃ­os nacionales e internacionales",
                 ].map((item) => (
                   <motion.div
                     key={item}
@@ -884,3 +884,4 @@ export default function HomePage() {
     </div>
   );
 }
+
