@@ -3,12 +3,12 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function loginAdmin(formData: FormData) {
+export async function loginAdmin(formData: FormData): Promise<void> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { error: "Correo y contraseña son obligatorios." };
+    redirect("/admin/login?error=missing");
   }
 
   const supabase = await createSupabaseServerClient();
@@ -19,7 +19,7 @@ export async function loginAdmin(formData: FormData) {
   });
 
   if (error) {
-    return { error: "No se pudo iniciar sesión." };
+    redirect("/admin/login?error=invalid");
   }
 
   redirect("/admin");
