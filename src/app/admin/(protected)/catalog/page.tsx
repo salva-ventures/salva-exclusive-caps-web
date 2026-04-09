@@ -121,87 +121,96 @@ export default async function AdminCatalogPage({
           Admin Catalog Manager
         </h2>
         <p className="mt-2 text-white/65">
-          Gestiona menudeo y mayoreo con una vista compacta, ordenada y funcional.
+          Vista premium compacta con editor lateral, modos de trabajo y mejor experiencia movil.
         </p>
       </div>
 
       {successMessage && <SuccessBanner message={successMessage} />}
       {errorMessage && <ErrorBanner message={errorMessage} />}
 
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href="/admin/catalog?scope=retail"
-          className={`rounded-2xl px-5 py-3 text-sm transition ${
-            scope === "retail"
-              ? "bg-white text-black"
-              : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-          }`}
-        >
-          Menudeo
-        </Link>
-
-        <Link
-          href="/admin/catalog?scope=wholesale"
-          className={`rounded-2xl px-5 py-3 text-sm transition ${
-            scope === "wholesale"
-              ? "bg-white text-black"
-              : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-          }`}
-        >
-          Mayoreo
-        </Link>
-      </div>
-
-      <form className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
-        <div className="grid gap-4 lg:grid-cols-[1.5fr_0.8fr_0.8fr_auto]">
-          <input type="hidden" name="scope" value={scope} />
-
-          <input
-            name="q"
-            type="text"
-            defaultValue={q}
-            placeholder="Buscar por nombre, slug, SKU, marca o colaboracion"
-            className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
-          />
-
-          <select
-            name="status"
-            defaultValue={status}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
-          >
-            <option value="all">Todos los status</option>
-            <option value="active">Active</option>
-            <option value="draft">Draft</option>
-            <option value="archived">Archived</option>
-          </select>
-
-          <select
-            name="visibility"
-            defaultValue={visibility}
-            className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
-          >
-            <option value="all">Toda visibilidad</option>
-            <option value="visible">Visibles</option>
-            <option value="hidden">Ocultos</option>
-          </select>
-
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/admin/catalog?scope=retail"
+              className={`rounded-2xl px-5 py-3 text-sm transition ${
+                scope === "retail"
+                  ? "bg-white text-black"
+                  : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+              }`}
             >
-              Filtrar
-            </button>
+              Menudeo
+            </Link>
 
             <Link
-              href={`/admin/catalog?scope=${scope}`}
-              className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
+              href="/admin/catalog?scope=wholesale"
+              className={`rounded-2xl px-5 py-3 text-sm transition ${
+                scope === "wholesale"
+                  ? "bg-white text-black"
+                  : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
+              }`}
             >
-              Limpiar
+              Mayoreo
+            </Link>
+
+            <Link
+              href="/admin/catalog/filters"
+              className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-white/80 transition hover:bg-white/[0.04]"
+            >
+              Filtros administrables
             </Link>
           </div>
+
+          <form className="grid gap-3 md:grid-cols-[1.3fr_0.8fr_0.8fr_auto]">
+            <input type="hidden" name="scope" value={scope} />
+
+            <input
+              name="q"
+              type="text"
+              defaultValue={q}
+              placeholder="Buscar por nombre, slug, SKU, marca o colaboracion"
+              className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+            />
+
+            <select
+              name="status"
+              defaultValue={status}
+              className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+            >
+              <option value="all">Todos los status</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+
+            <select
+              name="visibility"
+              defaultValue={visibility}
+              className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+            >
+              <option value="all">Toda visibilidad</option>
+              <option value="visible">Visibles</option>
+              <option value="hidden">Ocultos</option>
+            </select>
+
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+              >
+                Filtrar
+              </button>
+
+              <Link
+                href={`/admin/catalog?scope=${scope}`}
+                className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
+              >
+                Limpiar
+              </Link>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
 
       <AdminCatalogBoard
         scope={scope}
