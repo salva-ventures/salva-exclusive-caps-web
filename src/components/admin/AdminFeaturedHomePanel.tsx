@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useEffect, useMemo, useState } from "react";
 
 type FeaturedItem = {
@@ -93,7 +95,7 @@ export default function AdminFeaturedHomePanel({
             Destacados configurados
           </h3>
           <p className="mt-1 text-sm text-white/45">
-            Controla qué productos aparecen en la página principal y en qué orden.
+            Controla quÃƒÂ© productos aparecen en la pÃƒÂ¡gina principal y en quÃƒÂ© orden.
           </p>
         </div>
 
@@ -111,7 +113,7 @@ export default function AdminFeaturedHomePanel({
         <p className="text-sm text-white/55">Cargando destacados...</p>
       ) : items.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/55">
-          Aún no hay productos destacados en home.
+          AÃƒÂºn no hay productos destacados en home.
         </div>
       ) : (
         <div className="grid gap-3">
@@ -124,11 +126,7 @@ export default function AdminFeaturedHomePanel({
                 <div className="flex min-w-0 items-center gap-4">
                   <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                     {item.primary_image_url ? (
-                      <img
-                        src={item.primary_image_url}
-                        alt={item.product_name}
-                        className="h-full w-full object-cover"
-                      />
+                      <Image src={item.primary_image_url} alt={item.product_name} width={64} height={64} className="h-full w-full object-cover" sizes="64px" />
                     ) : (
                       <span className="text-[10px] text-white/35">Sin imagen</span>
                     )}
@@ -142,7 +140,7 @@ export default function AdminFeaturedHomePanel({
                       {item.product_slug}
                     </p>
                     <p className="mt-1 text-xs text-white/40">
-                      Posición actual: #{index + 1}
+                      PosiciÃƒÂ³n actual: #{index + 1}
                     </p>
                   </div>
                 </div>

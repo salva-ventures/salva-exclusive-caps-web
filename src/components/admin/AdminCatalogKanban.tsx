@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 type CatalogTag = {
   id: string;
   tag: string;
@@ -107,11 +109,7 @@ export default function AdminCatalogKanban({
                       <div className="flex items-start gap-3">
                         <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5">
                           {product.primary_image_url ? (
-                            <img
-                              src={product.primary_image_url}
-                              alt={product.name}
-                              className="h-full w-full object-cover"
-                            />
+                            <Image src={product.primary_image_url} alt={product.name} width={64} height={64} className="h-full w-full object-cover" sizes="64px" />
                           ) : (
                             <div className="flex h-full items-center justify-center text-[10px] text-white/35">
                               Sin imagen

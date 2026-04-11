@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useMemo, useState } from "react";
 import AdminCatalogDrawer from "@/components/admin/AdminCatalogDrawer";
 import AdminDuplicateProductDrawer from "@/components/admin/AdminDuplicateProductDrawer";
@@ -155,7 +157,7 @@ export default function AdminCatalogList({
                 disabled={selectedIds.length === 0}
                 className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Ejecutar acción masiva
+                Ejecutar acciÃƒÂ³n masiva
               </button>
             </div>
           </div>
@@ -201,11 +203,7 @@ export default function AdminCatalogList({
 
                   <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                     {product.primary_image_url ? (
-                      <img
-                        src={product.primary_image_url}
-                        alt={product.name}
-                        className="h-full w-full object-cover"
-                      />
+                      <Image src={product.primary_image_url} alt={product.name} fill className="object-cover" sizes="108px" />
                     ) : (
                       <div className="flex h-full items-center justify-center text-xs text-white/35">
                         Sin imagen
@@ -286,7 +284,7 @@ export default function AdminCatalogList({
                         <Badge key={tag.id}>{tag.tag}</Badge>
                       ))}
                       {visibleTags.length > 6 && (
-                        <Badge tone="yellow">+{visibleTags.length - 6} más</Badge>
+                        <Badge tone="yellow">+{visibleTags.length - 6} mÃƒÂ¡s</Badge>
                       )}
                     </div>
                   )}

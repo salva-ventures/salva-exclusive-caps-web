@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Lane = 0 | 1 | 2;
 type FallingType = "cap" | "hat";
@@ -158,7 +158,7 @@ export default function CapCatchGame() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [hasStarted, isRunning]);
+  }, [hasStarted, isRunning, startGame]);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -237,7 +237,7 @@ export default function CapCatchGame() {
     animationFrame = requestAnimationFrame(update);
 
     return () => cancelAnimationFrame(animationFrame);
-  }, [isRunning, playerLane]);
+  }, [endGame, isRunning, playerLane]);
 
   useEffect(() => {
     if (!isRunning && hasStarted) {
@@ -279,7 +279,7 @@ export default function CapCatchGame() {
           Vidas: <strong className="text-white">{lives}</strong>
         </span>
         <span>
-          Récord: <strong className="text-white">{bestScore}</strong>
+          RÃƒÂ©cord: <strong className="text-white">{bestScore}</strong>
         </span>
       </div>
 
@@ -306,7 +306,7 @@ export default function CapCatchGame() {
           onClick={toggleMute}
           className="absolute right-3 top-3 z-30 rounded-full border border-white/15 bg-black/35 px-3 py-2 text-xs text-white backdrop-blur transition hover:bg-black/50"
         >
-          {isMuted ? "Activar música" : "Silenciar"}
+          {isMuted ? "Activar mÃƒÂºsica" : "Silenciar"}
         </button>
 
         {items.map((item) => (
@@ -342,7 +342,7 @@ export default function CapCatchGame() {
         >
           <Image
             src="/salva-gorrin.png"
-            alt="Salva Gorrín"
+            alt="Salva GorrÃƒÂ­n"
             width={PLAYER_WIDTH}
             height={PLAYER_HEIGHT}
             priority
@@ -362,12 +362,12 @@ export default function CapCatchGame() {
            <div className="mt-4 space-y-3">
   <p className="max-w-xs text-sm leading-6 text-white/80">
     Atrapa las gorras, evita los sombreros y sobrevive con tus 3
-    vidas. Cada vez caerán más rápido y con mayor frecuencia.
+    vidas. Cada vez caerÃƒÂ¡n mÃƒÂ¡s rÃƒÂ¡pido y con mayor frecuencia.
   </p>
 
   <div className="max-w-xs rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3">
     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-400">
-      Próximamente: Reto Salva Gorrín
+      PrÃƒÂ³ximamente: Reto Salva GorrÃƒÂ­n
     </p>
     <p className="mt-2 text-sm leading-6 text-white/80">
       Demuestra tu nivel y compite por recompensas exclusivas.
@@ -429,13 +429,13 @@ export default function CapCatchGame() {
           onClick={moveLeft}
           className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10"
         >
-          ←
+          Ã¢â€ Â
         </button>
         <button
           onClick={moveRight}
           className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white transition hover:bg-white/10"
         >
-          →
+          Ã¢â€ â€™
         </button>
       </div>
     </div>

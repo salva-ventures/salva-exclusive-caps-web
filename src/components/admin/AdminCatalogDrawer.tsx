@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 type CatalogTag = {
   id: string;
   tag: string;
@@ -88,11 +90,7 @@ export default function AdminCatalogDrawer({
           <div className="grid gap-4 md:grid-cols-[120px_1fr]">
             <div className="relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               {product.primary_image_url ? (
-                <img
-                  src={product.primary_image_url}
-                  alt={product.name}
-                  className="h-full w-full object-cover"
-                />
+                <Image src={product.primary_image_url} alt={product.name} fill className="object-cover" sizes="120px" />
               ) : (
                 <div className="flex h-full items-center justify-center text-xs text-white/35">
                   Sin imagen
@@ -151,7 +149,7 @@ export default function AdminCatalogDrawer({
               </div>
 
               <div>
-                <label className="mb-2 block text-sm text-white/70">Status catálogo</label>
+                <label className="mb-2 block text-sm text-white/70">Status catÃƒÂ¡logo</label>
                 <select
                   name="catalog_status"
                   defaultValue={product.catalog_status}
@@ -298,7 +296,7 @@ export default function AdminCatalogDrawer({
                         type="submit"
                         className="text-white/55 hover:text-white"
                       >
-                        ×
+                        Ãƒâ€”
                       </button>
                     </form>
                   </div>
