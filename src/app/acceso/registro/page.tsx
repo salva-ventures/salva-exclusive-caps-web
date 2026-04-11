@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { registerCustomer } from "@/app/acceso/actions";
 
-function getMessage(error?: string) {
+function getMessage(error?: string, detail?: string) {
   switch (error) {
     case "missing-fields":
       return "Debes capturar nombre, correo y ambas contraseñas.";
@@ -10,7 +10,7 @@ function getMessage(error?: string) {
     case "password-mismatch":
       return "Las contraseñas no coinciden.";
     case "register-failed":
-      return "No se pudo crear la cuenta.";
+      return detail ? `No se pudo crear la cuenta: ${detail}` : "No se pudo crear la cuenta.";
     default:
       return null;
   }
@@ -19,10 +19,10 @@ function getMessage(error?: string) {
 export default async function AccesoRegistroPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; detail?: string }>;
 }) {
   const params = await searchParams;
-  const errorMessage = getMessage(params.error);
+  const errorMessage = getMessage(params.error, params.detail);
 
   return (
     <main className="min-h-screen bg-black text-white">

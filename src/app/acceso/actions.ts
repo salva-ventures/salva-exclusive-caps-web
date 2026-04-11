@@ -7,6 +7,10 @@ function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
+function safeMessage(message: string) {
+  return encodeURIComponent(message.slice(0, 180));
+}
+
 export async function loginCustomer(formData: FormData) {
   const email = normalizeEmail(String(formData.get("email") ?? ""));
   const password = String(formData.get("password") ?? "");
@@ -23,7 +27,8 @@ export async function loginCustomer(formData: FormData) {
   });
 
   if (error) {
-    redirect("/acceso/login?error=invalid-credentials");
+    console.error("loginCustomer error:", error);
+    redirect(`/acceso/login?error=invalid-credentials&detail=${safeMessage(error.message)}`);
   }
 
   redirect("/cuenta");
@@ -50,7 +55,7 @@ export async function registerCustomer(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -62,8 +67,15 @@ export async function registerCustomer(formData: FormData) {
   });
 
   if (error) {
-    redirect("/acceso/registro?error=register-failed");
+    console.error("registerCustomer error:", error);
+    redirect(`/acceso/registro?error=register-failed&detail=${safeMessage(error.message)}`);
   }
+
+  console.log("registerCustomer success:", {
+    userId: data.user?.id ?? null,
+    email: data.user?.email ?? null,
+    session: Boolean(data.session),
+  });
 
   redirect("/acceso/login?success=registered");
 }
