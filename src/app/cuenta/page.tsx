@@ -92,6 +92,17 @@ export default async function CuentaPage() {
     .eq("id", customer.id)
     .maybeSingle();
 
+  const { data: interests } = await supabase
+    .from("customer_interests")
+    .select(`
+      interest_code,
+      customer_interest_catalog (
+        label,
+        category
+      )
+    `)
+    .eq("customer_id", customer.id);
+
   const displayName = profile
     ? buildFullName({
         first_name: profile.first_name,
@@ -255,6 +266,30 @@ export default async function CuentaPage() {
               <p className="mt-1 text-xs text-white/45">
                 {profile?.acquisition_source_detail?.trim() || "Sin detalle adicional"}
               </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4 md:col-span-2">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Intereses</p>
+              {interests && interests.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {interests.map((item, index) => {
+                    const catalog = Array.isArray(item.customer_interest_catalog)
+                      ? item.customer_interest_catalog[0]
+                      : item.customer_interest_catalog;
+
+                    return (
+                      <span
+                        key={`${item.interest_code}-${index}`}
+                        className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-white/85"
+                      >
+                        {catalog?.label ?? item.interest_code}
+                      </span>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-white/80">Sin intereses capturados.</p>
+              )}
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">

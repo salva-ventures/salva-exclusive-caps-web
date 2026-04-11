@@ -42,10 +42,16 @@ export default async function CuentaPerfilPage({
     .eq("id", customer.id)
     .maybeSingle();
 
+  const { data: selectedInterests } = await supabase
+    .from("customer_interests")
+    .select("interest_code")
+    .eq("customer_id", customer.id);
+
   return (
     <CuentaPerfilClient
       customerEmail={customer.email}
       profile={profile}
+      selectedInterests={(selectedInterests ?? []).map((item) => item.interest_code)}
       error={params.error}
       success={params.success}
     />

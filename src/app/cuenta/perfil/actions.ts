@@ -7,17 +7,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 const allowedCustomerTypes = new Set(["retail", "wholesale"]);
 const allowedContactChannels = new Set(["whatsapp", "email", "instagram"]);
 const allowedAgeRanges = new Set(["under_18", "18_24", "25_34", "35_44", "45_plus", ""]);
-const allowedAcquisitionSources = new Set([
-  "instagram",
-  "facebook",
-  "whatsapp",
-  "recomendacion",
-  "google",
-  "tiktok",
-  "evento",
-  "otro",
-  "",
-]);
 
 function cleanText(value: FormDataEntryValue | null, maxLength: number) {
   return String(value ?? "").trim().replace(/\s+/g, " ").slice(0, maxLength);
@@ -80,6 +69,13 @@ export async function updateCustomerProfile(formData: FormData) {
   const acquisitionSourceDetail = cleanText(formData.get("acquisition_source_detail"), 120);
   const acceptedMarketing = formData.get("accepted_marketing") === "on";
 
+  const selectedInterests = formData
+    .getAll("interests")
+    .map((value) => cleanText(value, 50).toLowerCase())
+    .filter(Boolean);
+
+  const uniqueInterests = Array.from(new Set(selectedInterests));
+
   if (!firstName) {
     redirect("/cuenta/perfil?error=missing-first-name");
   }
@@ -100,8 +96,8 @@ export async function updateCustomerProfile(formData: FormData) {
     redirect("/cuenta/perfil?error=invalid-age-range");
   }
 
-  if (!allowedAcquisitionSources.has(acquisitionSource)) {
-    redirect("/cuenta/perfil?error=invalid-acquisition-source");
+  if (uniqueInterests.length > 5) {
+    redirect("/cuenta/perfil?error=too-many-interests");
   }
 
   let countryName: string | null = null;
@@ -157,6 +153,34 @@ export async function updateCustomerProfile(formData: FormData) {
     cityName = city.name;
   }
 
+  if (acquisitionSource) {
+    const { data: source } = await supabase
+      .from("customer_acquisition_source_catalog")
+      .select("code")
+      .eq("code", acquisitionSource)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!source) {
+      redirect("/cuenta/perfil?error=invalid-acquisition-source");
+    }
+  }
+
+  if (uniqueInterests.length > 0) {
+    const { data: validInterests } = await supabase
+      .from("customer_interest_catalog")
+      .select("code")
+      .in("code", uniqueInterests)
+      .eq("is_active", true);
+
+    const validCodes = new Set((validInterests ?? []).map((item) => item.code));
+    const invalidInterest = uniqueInterests.find((code) => !validCodes.has(code));
+
+    if (invalidInterest) {
+      redirect("/cuenta/perfil?error=invalid-interest");
+    }
+  }
+
   const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
   const legacyPhone = [phoneCountryCode ? `+${phoneCountryCode}` : "", phoneNational]
     .filter(Boolean)
@@ -209,6 +233,30 @@ export async function updateCustomerProfile(formData: FormData) {
 
   if (error) {
     redirect("/cuenta/perfil?error=update-failed");
+  }
+
+  const { error: deleteError } = await supabase
+    .from("customer_interests")
+    .delete()
+    .eq("customer_id", customer.id);
+
+  if (deleteError) {
+    redirect("/cuenta/perfil?error=update-failed");
+  }
+
+  if (uniqueInterests.length > 0) {
+    const { error: insertError } = await supabase
+      .from("customer_interests")
+      .insert(
+        uniqueInterests.map((interestCode) => ({
+          customer_id: customer.id,
+          interest_code: interestCode,
+        }))
+      );
+
+    if (insertError) {
+      redirect("/cuenta/perfil?error=update-failed");
+    }
   }
 
   redirect("/cuenta/perfil?success=updated");

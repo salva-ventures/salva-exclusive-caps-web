@@ -11,6 +11,12 @@ import {
   type GeoCountry,
   type GeoState,
 } from "@/lib/geo/client";
+import {
+  fetchAcquisitionSources,
+  fetchInterestOptions,
+  type AcquisitionSourceOption,
+  type InterestOption,
+} from "@/lib/profile/client";
 
 type ProfileData = {
   full_name: string | null;
@@ -64,6 +70,10 @@ function getMessage(error?: string, success?: string) {
       return { tone: "error", text: "Rango de edad inválido." };
     case "invalid-acquisition-source":
       return { tone: "error", text: "Origen de adquisición inválido." };
+    case "invalid-interest":
+      return { tone: "error", text: "Uno de los intereses seleccionados es inválido." };
+    case "too-many-interests":
+      return { tone: "error", text: "Puedes seleccionar máximo 5 intereses." };
     case "update-failed":
       return { tone: "error", text: "No se pudo actualizar el perfil." };
     default:
@@ -74,11 +84,13 @@ function getMessage(error?: string, success?: string) {
 export default function CuentaPerfilClient({
   customerEmail,
   profile,
+  selectedInterests,
   error,
   success,
 }: {
   customerEmail: string;
   profile: ProfileData;
+  selectedInterests: string[];
   error?: string;
   success?: string;
 }) {
@@ -87,25 +99,35 @@ export default function CuentaPerfilClient({
   const [countries, setCountries] = useState<GeoCountry[]>([]);
   const [states, setStates] = useState<GeoState[]>([]);
   const [cities, setCities] = useState<GeoCity[]>([]);
+  const [sourceOptions, setSourceOptions] = useState<AcquisitionSourceOption[]>([]);
+  const [interestOptions, setInterestOptions] = useState<InterestOption[]>([]);
 
   const [selectedCountryCode, setSelectedCountryCode] = useState(profile?.country_code ?? "");
   const [selectedStateId, setSelectedStateId] = useState(profile?.state_id ?? "");
   const [selectedCityId, setSelectedCityId] = useState(profile?.city_id ?? "");
   const [phoneCountryCode, setPhoneCountryCode] = useState(profile?.phone_country_code ?? "");
+  const [interestSelection, setInterestSelection] = useState<string[]>(selectedInterests ?? []);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadCountries() {
+    async function loadStaticOptions() {
       try {
-        const data = await fetchCountries();
+        const [countriesData, sourcesData, interestsData] = await Promise.all([
+          fetchCountries(),
+          fetchAcquisitionSources(),
+          fetchInterestOptions(),
+        ]);
+
         if (!cancelled) {
-          setCountries(data);
+          setCountries(countriesData);
+          setSourceOptions(sourcesData);
+          setInterestOptions(interestsData);
         }
       } catch {}
     }
 
-    loadCountries();
+    loadStaticOptions();
     return () => {
       cancelled = true;
     };
@@ -175,6 +197,18 @@ export default function CuentaPerfilClient({
     () => phoneCountryCode.replace(/\D/g, "").slice(0, 10),
     [phoneCountryCode]
   );
+
+  function toggleInterest(code: string) {
+    setInterestSelection((prev) => {
+      if (prev.includes(code)) {
+        return prev.filter((item) => item !== code);
+      }
+      if (prev.length >= 5) {
+        return prev;
+      }
+      return [...prev, code];
+    });
+  }
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -414,14 +448,11 @@ export default function CuentaPerfilClient({
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
                 >
                   <option value="">Prefiero no decirlo</option>
-                  <option value="instagram">Instagram</option>
-                  <option value="facebook">Facebook</option>
-                  <option value="whatsapp">WhatsApp</option>
-                  <option value="recomendacion">Recomendación</option>
-                  <option value="google">Google</option>
-                  <option value="tiktok">TikTok</option>
-                  <option value="evento">Evento</option>
-                  <option value="otro">Otro</option>
+                  {sourceOptions.map((source) => (
+                    <option key={source.code} value={source.code}>
+                      {source.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -435,6 +466,49 @@ export default function CuentaPerfilClient({
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none placeholder:text-white/35"
                   placeholder="Ejemplo: Recomendación de un amigo, anuncio, historia, etc."
                 />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm text-white/80">
+                  Intereses (opcional, máximo 5)
+                </label>
+                <div className="grid gap-2 md:grid-cols-2">
+                  {interestOptions.map((interest) => {
+                    const isChecked = interestSelection.includes(interest.code);
+                    const disableNew = !isChecked && interestSelection.length >= 5;
+
+                    return (
+                      <label
+                        key={interest.code}
+                        className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm ${
+                          isChecked
+                            ? "border-white/20 bg-white/[0.08] text-white"
+                            : "border-white/10 bg-black/20 text-white/80"
+                        } ${disableNew ? "opacity-50" : ""}`}
+                      >
+                        <input
+                          type="checkbox"
+                          name="interests"
+                          value={interest.code}
+                          checked={isChecked}
+                          disabled={disableNew}
+                          onChange={() => toggleInterest(interest.code)}
+                          className="mt-1 h-4 w-4 rounded border-white/20 bg-transparent"
+                        />
+                        <span>
+                          <span className="block">{interest.label}</span>
+                          <span className="text-xs text-white/45">
+                            {interest.category ?? "general"}
+                          </span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                <p className="mt-2 text-xs text-white/45">
+                  Seleccionados: {interestSelection.length}/5
+                </p>
               </div>
 
               <div className="md:col-span-2">
