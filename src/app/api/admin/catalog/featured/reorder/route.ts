@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     : [];
 
   if (!placement) {
-    return NextResponse.json({ error: "Placement invÃ¡lido." }, { status: 400 });
+    return NextResponse.json({ error: "Placement invÃƒÂ¡lido." }, { status: 400 });
   }
 
   if (!orderedProductIds.length) {
