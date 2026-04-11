@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import CatalogDynamicFilters from "@/components/catalog/CatalogDynamicFilters";
+import {
+  matchesCatalogFilters,
+  type CatalogFilterGroup,
+  type SelectedCatalogFilters,
+} from "@/lib/catalog/filter-engine";
 import { fetchPublicCatalog, type PublicCatalogItem } from "@/lib/catalog/public-catalog";
 
 type SortOption =
@@ -76,6 +82,9 @@ export default function CatalogoMayoreoRealtime() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [dynamicFilterGroups, setDynamicFilterGroups] = useState<CatalogFilterGroup[]>([]);
+  const [selectedDynamicFilters, setSelectedDynamicFilters] = useState<SelectedCatalogFilters>({});
+
   const [search, setSearch] = useState("");
   const [stockFilter, setStockFilter] = useState<"all" | "available" | "soldout">("all");
   const [rarityFilter, setRarityFilter] = useState<"all" | "Selecta" | "Destacada" | "Elite" | "Legendaria">("all");
@@ -96,6 +105,48 @@ export default function CatalogoMayoreoRealtime() {
   useEffect(() => {
     void loadCatalog();
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFilters() {
+      try {
+        const response = await fetch("/api/catalog/filters?scope=wholesale");
+        if (!response.ok) return;
+
+        const json = await response.json();
+
+        if (!cancelled) {
+          setDynamicFilterGroups(json.groups ?? []);
+        }
+      } catch {
+      }
+    }
+
+    loadFilters();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function toggleDynamicFilter(groupKey: string, value: string) {
+    setSelectedDynamicFilters((current) => {
+      const existing = current[groupKey] ?? [];
+      const nextValues = existing.includes(value)
+        ? existing.filter((item) => item !== value)
+        : [...existing, value];
+
+      return {
+        ...current,
+        [groupKey]: nextValues,
+      };
+    });
+  }
+
+  function clearDynamicFilters() {
+    setSelectedDynamicFilters({});
+  }
 
   const rarityOptions = useMemo(() => {
     const unique = new Set<string>();
@@ -121,7 +172,10 @@ export default function CatalogoMayoreoRealtime() {
       .filter((item) => {
         if (rarityFilter === "all") return true;
         return item.rarity_name === rarityFilter;
-      });
+      })
+      .filter((item) =>
+        matchesCatalogFilters(item, selectedDynamicFilters, dynamicFilterGroups)
+      );
 
     result.sort((a, b) => {
       if (sortBy === "name-asc") return a.name.localeCompare(b.name, "es");
@@ -131,7 +185,7 @@ export default function CatalogoMayoreoRealtime() {
     });
 
     return result;
-  }, [items, rarityFilter, search, sortBy, stockFilter]);
+  }, [items, rarityFilter, search, sortBy, stockFilter, selectedDynamicFilters, dynamicFilterGroups]);
 
   const summary = useMemo(() => {
     const total = items.length;
@@ -225,6 +279,13 @@ export default function CatalogoMayoreoRealtime() {
             <option value="minqty-asc">Menor mínimo</option>
           </select>
         </div>
+
+        <CatalogDynamicFilters
+          groups={dynamicFilterGroups}
+          selectedFilters={selectedDynamicFilters}
+          onToggleValue={toggleDynamicFilter}
+          onClearAll={clearDynamicFilters}
+        />
 
         <div className="text-sm text-white/50">
           Resultados: {filteredItems.length}
