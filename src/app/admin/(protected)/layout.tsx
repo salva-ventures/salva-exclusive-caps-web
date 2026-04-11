@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { ReactNode } from "react";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { logoutAdmin } from "@/app/admin/actions";
+import AdminNav from "@/components/admin/AdminNav";
 
 export default async function AdminLayout({
   children,
@@ -13,7 +13,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="border-b border-white/10 bg-white/[0.02]">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-white/50">
               Salva Exclusive Caps
@@ -22,62 +22,15 @@ export default async function AdminLayout({
             <p className="mt-1 text-sm text-white/45">{user.email}</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Inicio
-            </Link>
-
-            <Link
-              href="/admin/analytics"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Analytics
-            </Link>
-
-            <Link
-              href="/admin/catalog"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Catalogo
-            </Link>
-
-            <Link
-              href="/admin/catalog/filters"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Filtros
-            </Link>
-
-            <Link
-              href="/admin/products"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Productos
-            </Link>
-
-            <Link
-              href="/admin/history"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Historial
-            </Link>
-
-            <Link
-              href="/admin/admins"
-              className="rounded-xl border border-white/10 px-4 py-2 text-sm text-white/80 transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              Admins
-            </Link>
+          <div className="flex flex-col items-start gap-3 lg:items-end">
+            <AdminNav />
 
             <form action={logoutAdmin}>
               <button
                 type="submit"
                 className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
               >
-                Cerrar sesion
+                Cerrar sesión
               </button>
             </form>
           </div>

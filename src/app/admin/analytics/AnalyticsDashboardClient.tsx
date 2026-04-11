@@ -40,6 +40,8 @@ type DashboardState = {
   recentCustomers: RecentlyActiveCustomerRow[];
 };
 
+type DatePreset = "7d" | "30d" | "90d" | "custom";
+
 const initialState: DashboardState = {
   overview: null,
   registrations: [],
@@ -53,7 +55,7 @@ const initialState: DashboardState = {
 };
 
 function formatDate(value: string | null | undefined) {
-  if (!value) return "â€”";
+  if (!value) return "—";
   return new Date(value).toLocaleString("es-MX");
 }
 
@@ -75,7 +77,7 @@ function stageLabel(stage: string) {
     case "verified_email":
       return "Correo verificado";
     case "logged_in":
-      return "Con login";
+      return "Con acceso";
     case "profile_completed":
       return "Perfil completo";
     default:
@@ -97,11 +99,13 @@ function customerName(customer: RecentlyActiveCustomerRow) {
 function SectionCard({
   eyebrow,
   title,
+  description,
   children,
   aside,
 }: {
   eyebrow: string;
   title: string;
+  description?: string;
   children: React.ReactNode;
   aside?: React.ReactNode;
 }) {
@@ -111,6 +115,9 @@ function SectionCard({
         <div>
           <p className="text-[11px] uppercase tracking-[0.24em] text-white/40">{eyebrow}</p>
           <h2 className="mt-2 text-xl font-semibold text-white">{title}</h2>
+          {description ? (
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/50">{description}</p>
+          ) : null}
         </div>
         {aside ? <div>{aside}</div> : null}
       </div>
@@ -145,10 +152,33 @@ function EmptyState({ text }: { text: string }) {
   );
 }
 
+function toInputDate(date: Date) {
+  const offset = date.getTimezoneOffset();
+  const adjusted = new Date(date.getTime() - offset * 60000);
+  return adjusted.toISOString().slice(0, 10);
+}
+
+function startOfDay(date: Date) {
+  const copy = new Date(date);
+  copy.setHours(0, 0, 0, 0);
+  return copy;
+}
+
+function endOfDay(date: Date) {
+  const copy = new Date(date);
+  copy.setHours(23, 59, 59, 999);
+  return copy;
+}
+
 export default function AnalyticsDashboardClient() {
   const [state, setState] = useState<DashboardState>(initialState);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const today = useMemo(() => new Date(), []);
+  const [preset, setPreset] = useState<DatePreset>("30d");
+  const [fromDate, setFromDate] = useState(toInputDate(new Date(today.getTime() - 29 * 86400000)));
+  const [toDate, setToDate] = useState(toInputDate(today));
 
   useEffect(() => {
     let cancelled = false;
@@ -176,8 +206,8 @@ export default function AnalyticsDashboardClient() {
           fetchAdminAnalyticsJson<{ acquisition: AcquisitionRow[] }>("/api/admin/analytics/acquisition"),
           fetchAdminAnalyticsJson<{ interests: InterestRow[] }>("/api/admin/analytics/interests"),
           fetchAdminAnalyticsJson<{ eventTypes: EventTypeRow[] }>("/api/admin/analytics/events/by-type"),
-          fetchAdminAnalyticsJson<{ recentEvents: RecentEventRow[] }>("/api/admin/analytics/events/recent?limit=25"),
-          fetchAdminAnalyticsJson<{ customers: RecentlyActiveCustomerRow[] }>("/api/admin/analytics/customers/recently-active?limit=20"),
+          fetchAdminAnalyticsJson<{ recentEvents: RecentEventRow[] }>("/api/admin/analytics/events/recent?limit=100"),
+          fetchAdminAnalyticsJson<{ customers: RecentlyActiveCustomerRow[] }>("/api/admin/analytics/customers/recently-active?limit=100"),
         ]);
 
         if (!cancelled) {
@@ -210,29 +240,129 @@ export default function AnalyticsDashboardClient() {
     };
   }, []);
 
+  useEffect(() => {
+    const base = new Date(today);
+
+    if (preset === "7d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 6 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+
+    if (preset === "30d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 29 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+
+    if (preset === "90d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 89 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+  }, [preset, today]);
+
+  const rangeStart = useMemo(() => startOfDay(new Date(fromDate)), [fromDate]);
+  const rangeEnd = useMemo(() => endOfDay(new Date(toDate)), [toDate]);
+
+  const filteredRegistrations = useMemo(
+    () =>
+      state.registrations.filter((item) => {
+        const date = new Date(item.day);
+        return date >= rangeStart && date <= rangeEnd;
+      }),
+    [state.registrations, rangeStart, rangeEnd]
+  );
+
+  const filteredActivity = useMemo(
+    () =>
+      state.activity.filter((item) => {
+        const date = new Date(item.day);
+        return date >= rangeStart && date <= rangeEnd;
+      }),
+    [state.activity, rangeStart, rangeEnd]
+  );
+
+  const filteredEvents = useMemo(
+    () =>
+      state.recentEvents.filter((item) => {
+        const date = new Date(item.event_timestamp);
+        return date >= rangeStart && date <= rangeEnd;
+      }),
+    [state.recentEvents, rangeStart, rangeEnd]
+  );
+
+  const filteredCustomers = useMemo(
+    () =>
+      state.recentCustomers.filter((item) => {
+        if (!item.last_seen_at) return false;
+        const date = new Date(item.last_seen_at);
+        return date >= rangeStart && date <= rangeEnd;
+      }),
+    [state.recentCustomers, rangeStart, rangeEnd]
+  );
+
   const registrationChartData = useMemo(
     () =>
-      [...state.registrations]
-        .slice(0, 14)
-        .reverse()
+      [...filteredRegistrations]
+        .slice(-14)
         .map((item) => ({
           ...item,
           label: formatShortDate(item.day),
         })),
-    [state.registrations]
+    [filteredRegistrations]
   );
 
   const activityChartData = useMemo(
     () =>
-      [...state.activity]
-        .slice(0, 14)
-        .reverse()
+      [...filteredActivity]
+        .slice(-14)
         .map((item) => ({
           ...item,
           label: formatShortDate(item.day),
         })),
-    [state.activity]
+    [filteredActivity]
   );
+
+  const filteredOverview = useMemo(() => {
+    const verifiedInRange = filteredCustomers.filter((item) => item.email_verified_at).length;
+    const completedInRange = filteredCustomers.filter((item) => item.profile_completed_at).length;
+    const avgCompletion =
+      filteredCustomers.length > 0
+        ? Math.round(
+            filteredCustomers.reduce((sum, item) => sum + (item.profile_completion_percent ?? 0), 0) /
+              filteredCustomers.length
+          )
+        : 0;
+
+    return {
+      totalCustomersVisible: filteredCustomers.length,
+      verifiedInRange,
+      completedInRange,
+      avgCompletion,
+      totalEventsVisible: filteredEvents.length,
+    };
+  }, [filteredCustomers, filteredEvents]);
+
+  const filteredEventTypes = useMemo(() => {
+    const map = new Map<string, { total_events: number; unique_customers: Set<string> }>();
+
+    for (const event of filteredEvents) {
+      const current = map.get(event.event_type) ?? {
+        total_events: 0,
+        unique_customers: new Set<string>(),
+      };
+
+      current.total_events += 1;
+      if (event.customer_id) current.unique_customers.add(event.customer_id);
+      map.set(event.event_type, current);
+    }
+
+    return Array.from(map.entries())
+      .map(([event_type, value]) => ({
+        event_type,
+        total_events: value.total_events,
+        unique_customers: value.unique_customers.size,
+      }))
+      .sort((a, b) => b.total_events - a.total_events);
+  }, [filteredEvents]);
 
   const topAcquisition = useMemo(
     () => [...state.acquisition].sort((a, b) => b.total_customers - a.total_customers).slice(0, 6),
@@ -276,36 +406,98 @@ export default function AnalyticsDashboardClient() {
 
   return (
     <div className="space-y-6">
+      <SectionCard
+        eyebrow="Control"
+        title="Rango de fechas"
+        description="Filtra la lectura visual del dashboard para revisar actividad reciente, ventanas mensuales o un periodo personalizado."
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { value: "7d", label: "Últimos 7 días" },
+              { value: "30d", label: "Últimos 30 días" },
+              { value: "90d", label: "Últimos 90 días" },
+              { value: "custom", label: "Personalizado" },
+            ].map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setPreset(item.value as DatePreset)}
+                className={`rounded-full border px-4 py-2 text-sm transition ${
+                  preset === item.value
+                    ? "border-white/25 bg-white/[0.10] text-white"
+                    : "border-white/10 bg-black/20 text-white/70 hover:border-white/20 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm text-white/70">
+              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">Desde</span>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => {
+                  setPreset("custom");
+                  setFromDate(e.target.value);
+                }}
+                className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+              />
+            </label>
+
+            <label className="text-sm text-white/70">
+              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">Hasta</span>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => {
+                  setPreset("custom");
+                  setToDate(e.target.value);
+                }}
+                className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none"
+              />
+            </label>
+          </div>
+        </div>
+      </SectionCard>
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <MetricCard
-          label="Clientes"
-          value={overview?.total_customers ?? 0}
-          helper="Total registrados"
+          label="Clientes visibles"
+          value={filteredOverview.totalCustomersVisible}
+          helper="Activos en el rango"
         />
         <MetricCard
           label="Verificados"
-          value={overview?.verified_customers ?? 0}
-          helper="Correo confirmado"
+          value={filteredOverview.verifiedInRange}
+          helper="Con correo confirmado"
         />
         <MetricCard
-          label="Activos 7d"
-          value={overview?.active_last_7d ?? 0}
-          helper="Vistos recientemente"
+          label="Eventos visibles"
+          value={filteredOverview.totalEventsVisible}
+          helper="Eventos en el rango"
         />
         <MetricCard
-          label="Activos 30d"
-          value={overview?.active_last_30d ?? 0}
-          helper="Ventana mensual"
+          label="Perfiles completos"
+          value={filteredOverview.completedInRange}
+          helper="Completados al 100%"
         />
         <MetricCard
           label="Perfil promedio"
-          value={formatPercent(overview?.avg_profile_completion_percent)}
-          helper="Calidad de datos"
+          value={formatPercent(filteredOverview.avgCompletion)}
+          helper={`Global actual: ${formatPercent(overview?.avg_profile_completion_percent)}`}
         />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Registros" title="Registros por dÃ­a">
+        <SectionCard
+          eyebrow="Registros"
+          title="Registros por día"
+          description="Lectura de altas diarias dentro del rango seleccionado."
+        >
           {registrationChartData.length > 0 ? (
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -326,11 +518,15 @@ export default function AnalyticsDashboardClient() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <EmptyState text="AÃºn no hay datos de registros para mostrar." />
+            <EmptyState text="No hay datos de registros dentro del rango seleccionado." />
           )}
         </SectionCard>
 
-        <SectionCard eyebrow="Actividad" title="Logins por dÃ­a">
+        <SectionCard
+          eyebrow="Actividad"
+          title="Accesos por día"
+          description="Mide el ritmo de uso real del módulo de cuenta en el periodo actual."
+        >
           {activityChartData.length > 0 ? (
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -349,7 +545,7 @@ export default function AnalyticsDashboardClient() {
                   <Line
                     type="monotone"
                     dataKey="logins"
-                    name="Logins"
+                    name="Accesos"
                     stroke="rgba(255,255,255,0.92)"
                     strokeWidth={3}
                     dot={false}
@@ -358,13 +554,17 @@ export default function AnalyticsDashboardClient() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <EmptyState text="AÃºn no hay actividad suficiente para graficar." />
+            <EmptyState text="No hay accesos suficientes para graficar en este rango." />
           )}
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <SectionCard eyebrow="Funnel" title="Embudo de activaciÃ³n">
+        <SectionCard
+          eyebrow="Embudo"
+          title="Embudo de activación"
+          description="Resume el paso desde registro hasta perfil completo."
+        >
           {state.funnel.length > 0 ? (
             <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
               <div className="h-80">
@@ -404,14 +604,18 @@ export default function AnalyticsDashboardClient() {
               </div>
             </div>
           ) : (
-            <EmptyState text="AÃºn no hay datos del funnel de activaciÃ³n." />
+            <EmptyState text="Todavía no hay datos suficientes para mostrar el embudo." />
           )}
         </SectionCard>
 
-        <SectionCard eyebrow="Eventos" title="Tipos de evento">
+        <SectionCard
+          eyebrow="Eventos"
+          title="Tipos de evento en el rango"
+          description="Distribución de los eventos visibles filtrados por fecha."
+        >
           <div className="space-y-3">
-            {state.eventTypes.length > 0 ? (
-              state.eventTypes.slice(0, 10).map((item) => (
+            {filteredEventTypes.length > 0 ? (
+              filteredEventTypes.slice(0, 10).map((item) => (
                 <div
                   key={item.event_type}
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3"
@@ -419,21 +623,25 @@ export default function AnalyticsDashboardClient() {
                   <div>
                     <p className="text-sm font-medium text-white">{eventLabel(item.event_type)}</p>
                     <p className="text-xs text-white/45">
-                      {item.unique_customers} clientes Ãºnicos
+                      {item.unique_customers} clientes únicos
                     </p>
                   </div>
                   <p className="text-sm font-semibold text-white">{item.total_events}</p>
                 </div>
               ))
             ) : (
-              <EmptyState text="TodavÃ­a no hay eventos registrados." />
+              <EmptyState text="No hay eventos dentro del rango seleccionado." />
             )}
           </div>
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="AdquisiciÃ³n" title="Fuentes mÃ¡s fuertes">
+        <SectionCard
+          eyebrow="Adquisición"
+          title="Fuentes principales"
+          description="Canales declarados por los clientes al completar su perfil."
+        >
           {topAcquisition.length > 0 ? (
             <div className="space-y-3">
               {topAcquisition.map((row) => (
@@ -445,7 +653,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{row.label}</p>
                       <p className="text-xs text-white/45">
-                        Verificados: {row.verified_customers} Â· Activos 30d: {row.active_last_30d}
+                        Verificados: {row.verified_customers} · Activos 30d: {row.active_last_30d}
                       </p>
                     </div>
                     <div className="text-right">
@@ -457,11 +665,15 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="No hay fuentes de adquisiciÃ³n con datos aÃºn." />
+            <EmptyState text="Aún no hay fuentes de adquisición con datos útiles." />
           )}
         </SectionCard>
 
-        <SectionCard eyebrow="Intereses" title="Intereses principales">
+        <SectionCard
+          eyebrow="Intereses"
+          title="Intereses principales"
+          description="Qué temas y preferencias capturan más atención dentro del perfil."
+        >
           {topInterests.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {topInterests.map((row) => (
@@ -481,16 +693,20 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="TodavÃ­a no hay intereses capturados." />
+            <EmptyState text="Todavía no hay intereses capturados para mostrar." />
           )}
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Eventos recientes" title="Actividad reciente">
-          {state.recentEvents.length > 0 ? (
+        <SectionCard
+          eyebrow="Eventos recientes"
+          title="Actividad reciente"
+          description="Lectura cronológica de los eventos capturados para clientes."
+        >
+          {filteredEvents.length > 0 ? (
             <div className="space-y-3">
-              {state.recentEvents.map((event) => (
+              {filteredEvents.slice(0, 25).map((event) => (
                 <div
                   key={event.id}
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
@@ -508,7 +724,7 @@ export default function AnalyticsDashboardClient() {
                         ) : null}
                       </div>
                       <p className="mt-1 text-xs text-white/45">
-                        {event.email ?? "Sin correo"} Â· {event.page_path ?? "sin ruta"}
+                        {event.email ?? "Sin correo"} · {event.page_path ?? "sin ruta"}
                       </p>
                     </div>
                     <p className="text-xs text-white/45">{formatDate(event.event_timestamp)}</p>
@@ -517,14 +733,18 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="AÃºn no hay eventos recientes para listar." />
+            <EmptyState text="No hay eventos recientes dentro del rango seleccionado." />
           )}
         </SectionCard>
 
-        <SectionCard eyebrow="Clientes activos" title="Recientemente activos">
-          {state.recentCustomers.length > 0 ? (
+        <SectionCard
+          eyebrow="Clientes activos"
+          title="Clientes recientemente activos"
+          description="Perfiles con actividad reciente detectada en el periodo visible."
+        >
+          {filteredCustomers.length > 0 ? (
             <div className="space-y-3">
-              {state.recentCustomers.map((customer) => (
+              {filteredCustomers.slice(0, 20).map((customer) => (
                 <div
                   key={customer.id}
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
@@ -533,7 +753,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{customerName(customer)}</p>
                       <p className="mt-1 text-xs text-white/45">
-                        {customer.email ?? "Sin correo"} Â· {customer.customer_type ?? "sin tipo"}
+                        {customer.email ?? "Sin correo"} · {customer.customer_type ?? "sin tipo"}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {customer.country_code ? (
@@ -564,13 +784,17 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="TodavÃ­a no hay clientes activos recientes." />
+            <EmptyState text="No hay clientes activos recientes dentro del rango seleccionado." />
           )}
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Detalle" title="Tabla de adquisiciÃ³n completa">
+        <SectionCard
+          eyebrow="Detalle"
+          title="Adquisición completa"
+          description="Tabla compacta para lectura rápida y validación manual."
+        >
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-white/80">
               <thead className="text-left text-white/40">
@@ -595,13 +819,17 @@ export default function AnalyticsDashboardClient() {
           </div>
         </SectionCard>
 
-        <SectionCard eyebrow="Detalle" title="Tabla de intereses completa">
+        <SectionCard
+          eyebrow="Detalle"
+          title="Intereses completos"
+          description="Tabla completa de intereses declarados y su peso relativo."
+        >
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-white/80">
               <thead className="text-left text-white/40">
                 <tr className="border-b border-white/8">
-                  <th className="pb-3 pr-4 font-medium">InterÃ©s</th>
-                  <th className="pb-3 pr-4 font-medium">CategorÃ­a</th>
+                  <th className="pb-3 pr-4 font-medium">Interés</th>
+                  <th className="pb-3 pr-4 font-medium">Categoría</th>
                   <th className="pb-3 pr-4 font-medium">Clientes</th>
                   <th className="pb-3 font-medium">Activos 30d</th>
                 </tr>
