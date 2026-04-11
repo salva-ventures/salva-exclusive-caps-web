@@ -5,6 +5,7 @@ import AdminCatalogBoard from "@/components/admin/AdminCatalogBoard";
 import AdminCatalogDrawer from "@/components/admin/AdminCatalogDrawer";
 import AdminCatalogKanban from "@/components/admin/AdminCatalogKanban";
 import AdminCatalogList from "@/components/admin/AdminCatalogList";
+import AdminFeaturedHomePanel from "@/components/admin/AdminFeaturedHomePanel";
 
 type CatalogTag = {
   id: string;
@@ -35,6 +36,7 @@ type CatalogProduct = {
   primary_image_url: string | null;
   media_count: number;
   tags: CatalogTag[];
+  is_featured_home?: boolean;
 };
 
 type WorkMode = "explore" | "select" | "order";
@@ -62,6 +64,8 @@ export default function AdminCatalogWorkspace({
 
   return (
     <div className="space-y-4">
+      <AdminFeaturedHomePanel scope={scope} />
+
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-4 md:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>

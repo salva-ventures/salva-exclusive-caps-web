@@ -34,6 +34,7 @@ type CatalogProduct = {
   primary_image_url: string | null;
   media_count: number;
   tags: CatalogTag[];
+  is_featured_home?: boolean;
 };
 
 type WorkMode = "explore" | "select";
@@ -237,6 +238,7 @@ export default function AdminCatalogList({
                       </Badge>
                       <Badge tone="blue">Orden #{sortOrder}</Badge>
                       <Badge>{scope === "retail" ? "Menudeo" : "Mayoreo"}</Badge>
+                      {product.is_featured_home ? <Badge tone="yellow">Home</Badge> : null}
                     </div>
                   </div>
 
@@ -299,6 +301,28 @@ export default function AdminCatalogList({
                         Editar
                       </button>
                     )}
+
+                    <form
+                      action={
+                        product.is_featured_home
+                          ? "/api/admin/catalog/featured/remove"
+                          : "/api/admin/catalog/featured/add"
+                      }
+                      method="post"
+                    >
+                      <input type="hidden" name="scope" value={scope} />
+                      <input type="hidden" name="product_id" value={product.id} />
+                      <button
+                        type="submit"
+                        className={`rounded-xl px-4 py-2 text-sm transition ${
+                          product.is_featured_home
+                            ? "border border-yellow-500/20 bg-yellow-500/10 text-yellow-200 hover:bg-yellow-500/15"
+                            : "border border-white/10 text-white/85 hover:bg-white/[0.06]"
+                        }`}
+                      >
+                        {product.is_featured_home ? "Quitar de home" : "Destacar en home"}
+                      </button>
+                    </form>
 
                     <AdminDuplicateProductDrawer
                       scope={scope}

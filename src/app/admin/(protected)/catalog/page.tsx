@@ -4,6 +4,7 @@ import AdminCreateProductDrawer from "@/components/admin/AdminCreateProductDrawe
 import AdminCatalogWorkspace from "@/components/admin/AdminCatalogWorkspace";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { listAdminCatalogProducts } from "@/lib/admin/catalog";
+import { listFeaturedProductIds } from "@/lib/catalog/featured";
 
 function getSuccessMessage(success?: string, count?: string) {
   switch (success) {
@@ -27,6 +28,12 @@ function getSuccessMessage(success?: string, count?: string) {
       return "Tag eliminada correctamente.";
     case "bulk-updated":
       return `Accion masiva aplicada a ${count ?? "0"} producto(s).`;
+    case "featured-added":
+      return "Producto agregado a destacados home.";
+    case "featured-removed":
+      return "Producto quitado de destacados home.";
+    case "featured-reordered":
+      return "Orden de destacados home actualizado.";
     default:
       return null;
   }
@@ -98,6 +105,18 @@ function getErrorMessage(error?: string) {
       return "No se pudo archivar el producto.";
     case "restore-failed":
       return "No se pudo restaurar el producto.";
+    case "featured-invalid-product":
+      return "El producto para destacados no es valido.";
+    case "featured-product-not-found":
+      return "No se encontro el producto para destacados.";
+    case "featured-already-exists":
+      return "Ese producto ya estaba en destacados home.";
+    case "featured-add-failed":
+      return "No se pudo agregar el producto a destacados home.";
+    case "featured-not-found":
+      return "No se encontro el destacado a quitar.";
+    case "featured-remove-failed":
+      return "No se pudo quitar el producto de destacados home.";
     default:
       return null;
   }
@@ -124,12 +143,20 @@ export default async function AdminCatalogPage({
   const status = params.status ?? "all";
   const visibility = params.visibility ?? "all";
 
-  const products = await listAdminCatalogProducts({
-    scope,
-    q,
-    status,
-    visibility,
-  });
+  const [products, featuredIds] = await Promise.all([
+    listAdminCatalogProducts({
+      scope,
+      q,
+      status,
+      visibility,
+    }),
+    listFeaturedProductIds("home"),
+  ]);
+
+  const productsWithFeatured = products.map((product) => ({
+    ...product,
+    is_featured_home: featuredIds.has(product.id),
+  }));
 
   const successMessage = getSuccessMessage(params.success, params.count);
   const errorMessage = getErrorMessage(params.error);
@@ -235,10 +262,10 @@ export default async function AdminCatalogPage({
       </div>
 
       <div className="text-sm text-white/50">
-        {products.length} producto{products.length === 1 ? "" : "s"} en {scope === "retail" ? "menudeo" : "mayoreo"}
+        {productsWithFeatured.length} producto{productsWithFeatured.length === 1 ? "" : "s"} en {scope === "retail" ? "menudeo" : "mayoreo"}
       </div>
 
-      <AdminCatalogWorkspace scope={scope} products={products} />
+      <AdminCatalogWorkspace scope={scope} products={productsWithFeatured} />
 
       <AdminToast message={successMessage} tone="success" />
       <AdminToast message={errorMessage} tone="error" />
