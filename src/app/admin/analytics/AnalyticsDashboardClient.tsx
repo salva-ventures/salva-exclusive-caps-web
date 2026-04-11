@@ -29,7 +29,11 @@ import {
 } from "@/lib/admin/analytics-client";
 
 type DashboardState = {
-  overview: AnalyticsOverview | null;
+  overview: (AnalyticsOverview & {
+    total_events_in_range?: number;
+    range_from?: string;
+    range_to?: string;
+  }) | null;
   registrations: RegistrationRow[];
   activity: ActivityRow[];
   funnel: FunnelRow[];
@@ -158,18 +162,6 @@ function toInputDate(date: Date) {
   return adjusted.toISOString().slice(0, 10);
 }
 
-function startOfDay(date: Date) {
-  const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
-  return copy;
-}
-
-function endOfDay(date: Date) {
-  const copy = new Date(date);
-  copy.setHours(23, 59, 59, 999);
-  return copy;
-}
-
 export default function AnalyticsDashboardClient() {
   const [state, setState] = useState<DashboardState>(initialState);
   const [loading, setLoading] = useState(true);
@@ -177,8 +169,29 @@ export default function AnalyticsDashboardClient() {
 
   const today = useMemo(() => new Date(), []);
   const [preset, setPreset] = useState<DatePreset>("30d");
-  const [fromDate, setFromDate] = useState(toInputDate(new Date(today.getTime() - 29 * 86400000)));
+  const [fromDate, setFromDate] = useState(
+    toInputDate(new Date(today.getTime() - 29 * 86400000))
+  );
   const [toDate, setToDate] = useState(toInputDate(today));
+
+  useEffect(() => {
+    const base = new Date(today);
+
+    if (preset === "7d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 6 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+
+    if (preset === "30d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 29 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+
+    if (preset === "90d") {
+      setFromDate(toInputDate(new Date(base.getTime() - 89 * 86400000)));
+      setToDate(toInputDate(base));
+    }
+  }, [preset, today]);
 
   useEffect(() => {
     let cancelled = false;
@@ -187,6 +200,11 @@ export default function AnalyticsDashboardClient() {
       try {
         setLoading(true);
         setError(null);
+
+        const params = new URLSearchParams({
+          from: fromDate,
+          to: toDate,
+        }).toString();
 
         const [
           overviewJson,
@@ -199,15 +217,33 @@ export default function AnalyticsDashboardClient() {
           recentEventsJson,
           recentCustomersJson,
         ] = await Promise.all([
-          fetchAdminAnalyticsJson<{ overview: AnalyticsOverview | null }>("/api/admin/analytics/overview"),
-          fetchAdminAnalyticsJson<{ registrations: RegistrationRow[] }>("/api/admin/analytics/registrations"),
-          fetchAdminAnalyticsJson<{ activity: ActivityRow[] }>("/api/admin/analytics/activity"),
-          fetchAdminAnalyticsJson<{ funnel: FunnelRow[] }>("/api/admin/analytics/funnel"),
-          fetchAdminAnalyticsJson<{ acquisition: AcquisitionRow[] }>("/api/admin/analytics/acquisition"),
-          fetchAdminAnalyticsJson<{ interests: InterestRow[] }>("/api/admin/analytics/interests"),
-          fetchAdminAnalyticsJson<{ eventTypes: EventTypeRow[] }>("/api/admin/analytics/events/by-type"),
-          fetchAdminAnalyticsJson<{ recentEvents: RecentEventRow[] }>("/api/admin/analytics/events/recent?limit=100"),
-          fetchAdminAnalyticsJson<{ customers: RecentlyActiveCustomerRow[] }>("/api/admin/analytics/customers/recently-active?limit=100"),
+          fetchAdminAnalyticsJson<{
+            overview: DashboardState["overview"];
+          }>(`/api/admin/analytics/overview?${params}`),
+          fetchAdminAnalyticsJson<{
+            registrations: RegistrationRow[];
+          }>(`/api/admin/analytics/registrations?${params}`),
+          fetchAdminAnalyticsJson<{
+            activity: ActivityRow[];
+          }>(`/api/admin/analytics/activity?${params}`),
+          fetchAdminAnalyticsJson<{
+            funnel: FunnelRow[];
+          }>(`/api/admin/analytics/funnel?${params}`),
+          fetchAdminAnalyticsJson<{
+            acquisition: AcquisitionRow[];
+          }>(`/api/admin/analytics/acquisition?${params}`),
+          fetchAdminAnalyticsJson<{
+            interests: InterestRow[];
+          }>(`/api/admin/analytics/interests?${params}`),
+          fetchAdminAnalyticsJson<{
+            eventTypes: EventTypeRow[];
+          }>(`/api/admin/analytics/events/by-type?${params}`),
+          fetchAdminAnalyticsJson<{
+            recentEvents: RecentEventRow[];
+          }>(`/api/admin/analytics/events/recent?${params}&limit=100`),
+          fetchAdminAnalyticsJson<{
+            customers: RecentlyActiveCustomerRow[];
+          }>(`/api/admin/analytics/customers/recently-active?${params}&limit=100`),
         ]);
 
         if (!cancelled) {
@@ -238,131 +274,33 @@ export default function AnalyticsDashboardClient() {
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  useEffect(() => {
-    const base = new Date(today);
-
-    if (preset === "7d") {
-      setFromDate(toInputDate(new Date(base.getTime() - 6 * 86400000)));
-      setToDate(toInputDate(base));
-    }
-
-    if (preset === "30d") {
-      setFromDate(toInputDate(new Date(base.getTime() - 29 * 86400000)));
-      setToDate(toInputDate(base));
-    }
-
-    if (preset === "90d") {
-      setFromDate(toInputDate(new Date(base.getTime() - 89 * 86400000)));
-      setToDate(toInputDate(base));
-    }
-  }, [preset, today]);
-
-  const rangeStart = useMemo(() => startOfDay(new Date(fromDate)), [fromDate]);
-  const rangeEnd = useMemo(() => endOfDay(new Date(toDate)), [toDate]);
-
-  const filteredRegistrations = useMemo(
-    () =>
-      state.registrations.filter((item) => {
-        const date = new Date(item.day);
-        return date >= rangeStart && date <= rangeEnd;
-      }),
-    [state.registrations, rangeStart, rangeEnd]
-  );
-
-  const filteredActivity = useMemo(
-    () =>
-      state.activity.filter((item) => {
-        const date = new Date(item.day);
-        return date >= rangeStart && date <= rangeEnd;
-      }),
-    [state.activity, rangeStart, rangeEnd]
-  );
-
-  const filteredEvents = useMemo(
-    () =>
-      state.recentEvents.filter((item) => {
-        const date = new Date(item.event_timestamp);
-        return date >= rangeStart && date <= rangeEnd;
-      }),
-    [state.recentEvents, rangeStart, rangeEnd]
-  );
-
-  const filteredCustomers = useMemo(
-    () =>
-      state.recentCustomers.filter((item) => {
-        if (!item.last_seen_at) return false;
-        const date = new Date(item.last_seen_at);
-        return date >= rangeStart && date <= rangeEnd;
-      }),
-    [state.recentCustomers, rangeStart, rangeEnd]
-  );
+  }, [fromDate, toDate]);
 
   const registrationChartData = useMemo(
     () =>
-      [...filteredRegistrations]
+      [...state.registrations]
+        .slice()
+        .reverse()
         .slice(-14)
         .map((item) => ({
           ...item,
           label: formatShortDate(item.day),
         })),
-    [filteredRegistrations]
+    [state.registrations]
   );
 
   const activityChartData = useMemo(
     () =>
-      [...filteredActivity]
+      [...state.activity]
+        .slice()
+        .reverse()
         .slice(-14)
         .map((item) => ({
           ...item,
           label: formatShortDate(item.day),
         })),
-    [filteredActivity]
+    [state.activity]
   );
-
-  const filteredOverview = useMemo(() => {
-    const verifiedInRange = filteredCustomers.filter((item) => item.email_verified_at).length;
-    const completedInRange = filteredCustomers.filter((item) => item.profile_completed_at).length;
-    const avgCompletion =
-      filteredCustomers.length > 0
-        ? Math.round(
-            filteredCustomers.reduce((sum, item) => sum + (item.profile_completion_percent ?? 0), 0) /
-              filteredCustomers.length
-          )
-        : 0;
-
-    return {
-      totalCustomersVisible: filteredCustomers.length,
-      verifiedInRange,
-      completedInRange,
-      avgCompletion,
-      totalEventsVisible: filteredEvents.length,
-    };
-  }, [filteredCustomers, filteredEvents]);
-
-  const filteredEventTypes = useMemo(() => {
-    const map = new Map<string, { total_events: number; unique_customers: Set<string> }>();
-
-    for (const event of filteredEvents) {
-      const current = map.get(event.event_type) ?? {
-        total_events: 0,
-        unique_customers: new Set<string>(),
-      };
-
-      current.total_events += 1;
-      if (event.customer_id) current.unique_customers.add(event.customer_id);
-      map.set(event.event_type, current);
-    }
-
-    return Array.from(map.entries())
-      .map(([event_type, value]) => ({
-        event_type,
-        total_events: value.total_events,
-        unique_customers: value.unique_customers.size,
-      }))
-      .sort((a, b) => b.total_events - a.total_events);
-  }, [filteredEvents]);
 
   const topAcquisition = useMemo(
     () => [...state.acquisition].sort((a, b) => b.total_customers - a.total_customers).slice(0, 6),
@@ -409,7 +347,7 @@ export default function AnalyticsDashboardClient() {
       <SectionCard
         eyebrow="Control"
         title="Rango de fechas"
-        description="Filtra la lectura visual del dashboard para revisar actividad reciente, ventanas mensuales o un periodo personalizado."
+        description="Ahora el rango sí se calcula desde backend. Todo el dashboard consume datos ya filtrados en servidor."
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-wrap gap-2">
@@ -436,7 +374,9 @@ export default function AnalyticsDashboardClient() {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm text-white/70">
-              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">Desde</span>
+              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">
+                Desde
+              </span>
               <input
                 type="date"
                 value={fromDate}
@@ -449,7 +389,9 @@ export default function AnalyticsDashboardClient() {
             </label>
 
             <label className="text-sm text-white/70">
-              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">Hasta</span>
+              <span className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">
+                Hasta
+              </span>
               <input
                 type="date"
                 value={toDate}
@@ -467,28 +409,28 @@ export default function AnalyticsDashboardClient() {
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <MetricCard
           label="Clientes visibles"
-          value={filteredOverview.totalCustomersVisible}
-          helper="Activos en el rango"
+          value={overview?.total_customers ?? 0}
+          helper="Con actividad en el rango"
         />
         <MetricCard
           label="Verificados"
-          value={filteredOverview.verifiedInRange}
-          helper="Con correo confirmado"
+          value={overview?.verified_customers ?? 0}
+          helper="Correo confirmado"
         />
         <MetricCard
           label="Eventos visibles"
-          value={filteredOverview.totalEventsVisible}
+          value={overview?.total_events_in_range ?? 0}
           helper="Eventos en el rango"
         />
         <MetricCard
           label="Perfiles completos"
-          value={filteredOverview.completedInRange}
+          value={overview?.completed_profiles ?? 0}
           helper="Completados al 100%"
         />
         <MetricCard
           label="Perfil promedio"
-          value={formatPercent(filteredOverview.avgCompletion)}
-          helper={`Global actual: ${formatPercent(overview?.avg_profile_completion_percent)}`}
+          value={formatPercent(overview?.avg_profile_completion_percent)}
+          helper={`Ventana ${overview?.range_from ?? fromDate} a ${overview?.range_to ?? toDate}`}
         />
       </section>
 
@@ -611,11 +553,11 @@ export default function AnalyticsDashboardClient() {
         <SectionCard
           eyebrow="Eventos"
           title="Tipos de evento en el rango"
-          description="Distribución de los eventos visibles filtrados por fecha."
+          description="Distribución de los eventos visibles ya filtrados desde backend."
         >
           <div className="space-y-3">
-            {filteredEventTypes.length > 0 ? (
-              filteredEventTypes.slice(0, 10).map((item) => (
+            {state.eventTypes.length > 0 ? (
+              state.eventTypes.slice(0, 10).map((item) => (
                 <div
                   key={item.event_type}
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/20 px-4 py-3"
@@ -653,7 +595,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{row.label}</p>
                       <p className="text-xs text-white/45">
-                        Verificados: {row.verified_customers} · Activos 30d: {row.active_last_30d}
+                        Verificados: {row.verified_customers} · Activos en rango: {row.active_last_30d}
                       </p>
                     </div>
                     <div className="text-right">
@@ -687,7 +629,7 @@ export default function AnalyticsDashboardClient() {
                   </p>
                   <div className="mt-4 flex items-end justify-between gap-4">
                     <p className="text-xl font-semibold text-white">{row.total_customers}</p>
-                    <p className="text-xs text-white/45">Activos 30d: {row.active_last_30d}</p>
+                    <p className="text-xs text-white/45">Activos en rango: {row.active_last_30d}</p>
                   </div>
                 </div>
               ))}
@@ -704,9 +646,9 @@ export default function AnalyticsDashboardClient() {
           title="Actividad reciente"
           description="Lectura cronológica de los eventos capturados para clientes."
         >
-          {filteredEvents.length > 0 ? (
+          {state.recentEvents.length > 0 ? (
             <div className="space-y-3">
-              {filteredEvents.slice(0, 25).map((event) => (
+              {state.recentEvents.slice(0, 25).map((event) => (
                 <div
                   key={event.id}
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
@@ -742,9 +684,9 @@ export default function AnalyticsDashboardClient() {
           title="Clientes recientemente activos"
           description="Perfiles con actividad reciente detectada en el periodo visible."
         >
-          {filteredCustomers.length > 0 ? (
+          {state.recentCustomers.length > 0 ? (
             <div className="space-y-3">
-              {filteredCustomers.slice(0, 20).map((customer) => (
+              {state.recentCustomers.slice(0, 20).map((customer) => (
                 <div
                   key={customer.id}
                   className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4"
@@ -831,7 +773,7 @@ export default function AnalyticsDashboardClient() {
                   <th className="pb-3 pr-4 font-medium">Interés</th>
                   <th className="pb-3 pr-4 font-medium">Categoría</th>
                   <th className="pb-3 pr-4 font-medium">Clientes</th>
-                  <th className="pb-3 font-medium">Activos 30d</th>
+                  <th className="pb-3 font-medium">Activos en rango</th>
                 </tr>
               </thead>
               <tbody>
