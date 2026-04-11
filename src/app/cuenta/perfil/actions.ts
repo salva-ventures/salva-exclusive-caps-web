@@ -20,9 +20,9 @@ function calculateProfileCompletion(values: {
   last_name: string;
   phone_country_code: string;
   phone_national: string;
-  country: string;
-  state: string;
-  city: string;
+  country_code: string;
+  state_id: string;
+  city_id: string;
   address_line_1: string;
   postal_code: string;
   customer_type: string;
@@ -33,9 +33,9 @@ function calculateProfileCompletion(values: {
     (values.last_name ? 10 : 0) +
     (values.phone_country_code ? 8 : 0) +
     (values.phone_national ? 10 : 0) +
-    (values.country ? 10 : 0) +
-    (values.state ? 10 : 0) +
-    (values.city ? 10 : 0) +
+    (values.country_code ? 10 : 0) +
+    (values.state_id ? 10 : 0) +
+    (values.city_id ? 10 : 0) +
     (values.address_line_1 ? 12 : 0) +
     (values.postal_code ? 8 : 0) +
     (values.customer_type ? 5 : 0) +
@@ -52,9 +52,11 @@ export async function updateCustomerProfile(formData: FormData) {
   const lastName = cleanText(formData.get("last_name"), 70);
   const phoneCountryCode = digitsOnly(cleanText(formData.get("phone_country_code"), 10), 10);
   const phoneNational = digitsOnly(cleanText(formData.get("phone_national"), 20), 20);
-  const city = cleanText(formData.get("city"), 80);
-  const state = cleanText(formData.get("state"), 80);
-  const country = cleanText(formData.get("country"), 80);
+
+  const countryCode = cleanText(formData.get("country_code"), 10).toUpperCase();
+  const stateId = cleanText(formData.get("state_id"), 50);
+  const cityId = cleanText(formData.get("city_id"), 50);
+
   const addressLine1 = cleanText(formData.get("address_line_1"), 140);
   const addressLine2 = cleanText(formData.get("address_line_2"), 140);
   const postalCode = cleanText(formData.get("postal_code"), 20);
@@ -79,6 +81,59 @@ export async function updateCustomerProfile(formData: FormData) {
     redirect("/cuenta/perfil?error=invalid-contact-channel");
   }
 
+  let countryName: string | null = null;
+  let stateName: string | null = null;
+  let cityName: string | null = null;
+
+  if (countryCode) {
+    const { data: country } = await supabase
+      .from("countries")
+      .select("code, name, phone_code")
+      .eq("code", countryCode)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!country) {
+      redirect("/cuenta/perfil?error=invalid-country");
+    }
+
+    countryName = country.name;
+
+    if (!phoneCountryCode && country.phone_code) {
+      redirect("/cuenta/perfil?error=missing-phone-country-code");
+    }
+  }
+
+  if (stateId) {
+    const { data: state } = await supabase
+      .from("country_states")
+      .select("id, name, country_code")
+      .eq("id", stateId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!state || (countryCode && state.country_code !== countryCode)) {
+      redirect("/cuenta/perfil?error=invalid-state");
+    }
+
+    stateName = state.name;
+  }
+
+  if (cityId) {
+    const { data: city } = await supabase
+      .from("state_cities")
+      .select("id, name, state_id")
+      .eq("id", cityId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!city || (stateId && city.state_id !== stateId)) {
+      redirect("/cuenta/perfil?error=invalid-city");
+    }
+
+    cityName = city.name;
+  }
+
   const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
   const legacyPhone = [phoneCountryCode ? `+${phoneCountryCode}` : "", phoneNational]
     .filter(Boolean)
@@ -90,9 +145,9 @@ export async function updateCustomerProfile(formData: FormData) {
     last_name: lastName,
     phone_country_code: phoneCountryCode,
     phone_national: phoneNational,
-    country,
-    state,
-    city,
+    country_code: countryCode,
+    state_id: stateId,
+    city_id: cityId,
     address_line_1: addressLine1,
     postal_code: postalCode,
     customer_type: customerType,
@@ -108,9 +163,12 @@ export async function updateCustomerProfile(formData: FormData) {
       phone: legacyPhone || null,
       phone_country_code: phoneCountryCode || null,
       phone_national: phoneNational || null,
-      city: city || null,
-      state: state || null,
-      country: country || null,
+      country_code: countryCode || null,
+      state_id: stateId || null,
+      city_id: cityId || null,
+      country: countryName,
+      state: stateName,
+      city: cityName,
       address_line_1: addressLine1 || null,
       address_line_2: addressLine2 || null,
       postal_code: postalCode || null,
