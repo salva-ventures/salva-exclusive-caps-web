@@ -11,8 +11,16 @@ function safeMessage(message: string) {
   return encodeURIComponent(message.slice(0, 180));
 }
 
+function isStrongPassword(password: string) {
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,64}$/.test(password);
+}
+
+function cleanText(value: FormDataEntryValue | null, maxLength: number) {
+  return String(value ?? "").trim().replace(/\s+/g, " ").slice(0, maxLength);
+}
+
 export async function loginCustomer(formData: FormData) {
-  const email = normalizeEmail(String(formData.get("email") ?? ""));
+  const email = normalizeEmail(cleanText(formData.get("email"), 120));
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
@@ -21,7 +29,7 @@ export async function loginCustomer(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -31,13 +39,25 @@ export async function loginCustomer(formData: FormData) {
     redirect(`/acceso/login?error=invalid-credentials&detail=${safeMessage(error.message)}`);
   }
 
+  if (data.user?.id) {
+    await supabase.rpc("touch_customer_last_login", {
+      p_customer_id: data.user.id,
+    });
+
+    if (data.user.email_confirmed_at) {
+      await supabase.rpc("touch_customer_email_verified", {
+        p_customer_id: data.user.id,
+      });
+    }
+  }
+
   redirect("/cuenta");
 }
 
 export async function registerCustomer(formData: FormData) {
-  const fullName = String(formData.get("full_name") ?? "").trim();
-  const phone = String(formData.get("phone") ?? "").trim();
-  const email = normalizeEmail(String(formData.get("email") ?? ""));
+  const fullName = cleanText(formData.get("full_name"), 80);
+  const phone = cleanText(formData.get("phone"), 30);
+  const email = normalizeEmail(cleanText(formData.get("email"), 120));
   const password = String(formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirm_password") ?? "");
 
@@ -45,7 +65,11 @@ export async function registerCustomer(formData: FormData) {
     redirect("/acceso/registro?error=missing-fields");
   }
 
-  if (password.length < 6) {
+  if (fullName.length < 2) {
+    redirect("/acceso/registro?error=invalid-name");
+  }
+
+  if (!isStrongPassword(password)) {
     redirect("/acceso/registro?error=weak-password");
   }
 
@@ -63,6 +87,7 @@ export async function registerCustomer(formData: FormData) {
         full_name: fullName,
         phone: phone || null,
       },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/acceso/login?success=verified-email`,
     },
   });
 
@@ -84,4 +109,99 @@ export async function logoutCustomer() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   redirect("/acceso/login?success=logged-out");
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const email = normalizeEmail(cleanText(formData.get("email"), 120));
+
+  if (!email) {
+    redirect("/acceso/recuperar?error=missing-email");
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/acceso/restablecer`,
+  });
+
+  if (error) {
+    console.error("requestPasswordReset error:", error);
+    redirect(`/acceso/recuperar?error=reset-request-failed&detail=${safeMessage(error.message)}`);
+  }
+
+  redirect("/acceso/recuperar?success=sent");
+}
+
+export async function updateCustomerPassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirm_password") ?? "");
+
+  if (!password || !confirmPassword) {
+    redirect("/acceso/restablecer?error=missing-fields");
+  }
+
+  if (!isStrongPassword(password)) {
+    redirect("/acceso/restablecer?error=weak-password");
+  }
+
+  if (password !== confirmPassword) {
+    redirect("/acceso/restablecer?error=password-mismatch");
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  const { data: userData } = await supabase.auth.getUser();
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (error) {
+    console.error("updateCustomerPassword error:", error);
+    redirect(`/acceso/restablecer?error=update-failed&detail=${safeMessage(error.message)}`);
+  }
+
+  if (userData.user?.id) {
+    await supabase.rpc("touch_customer_password_changed", {
+      p_customer_id: userData.user.id,
+    });
+  }
+
+  redirect("/acceso/login?success=password-updated");
+}
+
+export async function changeCustomerPassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirm_password") ?? "");
+
+  if (!password || !confirmPassword) {
+    redirect("/cuenta/seguridad?error=missing-fields");
+  }
+
+  if (!isStrongPassword(password)) {
+    redirect("/cuenta/seguridad?error=weak-password");
+  }
+
+  if (password !== confirmPassword) {
+    redirect("/cuenta/seguridad?error=password-mismatch");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data: userData } = await supabase.auth.getUser();
+
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (error) {
+    console.error("changeCustomerPassword error:", error);
+    redirect(`/cuenta/seguridad?error=update-failed&detail=${safeMessage(error.message)}`);
+  }
+
+  if (userData.user?.id) {
+    await supabase.rpc("touch_customer_password_changed", {
+      p_customer_id: userData.user.id,
+    });
+  }
+
+  redirect("/cuenta/seguridad?success=password-updated");
 }
