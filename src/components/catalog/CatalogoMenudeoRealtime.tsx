@@ -50,7 +50,7 @@ function getAvailabilityLabel(status: string, stockAvailable: number) {
 
   switch (status) {
     case "coming_soon":
-      return "Disponible prÃ³ximamente";
+      return "Disponible prÃƒÂ³ximamente";
     case "backorder":
       return "Resurtido en proceso";
     default:
@@ -83,7 +83,7 @@ function rarityRank(rarityName: string | null) {
 export default function CatalogoMenudeoRealtime() {
   usePageView({
     pagePath: "/catalogo/menudeo",
-    pageTitle: "Catálogo Menudeo | Salva Exclusive Caps",
+    pageTitle: "CatÃ¡logo Menudeo | Salva Exclusive Caps",
     entitySlug: "catalogo-menudeo",
   });
 
@@ -93,7 +93,7 @@ export default function CatalogoMenudeoRealtime() {
       entityType: "catalog",
       entitySlug: "menudeo",
       pagePath: "/catalogo/menudeo",
-      pageTitle: "Catálogo Menudeo | Salva Exclusive Caps",
+      pageTitle: "CatÃ¡logo Menudeo | Salva Exclusive Caps",
       eventData: {
         scope: "retail",
       },
@@ -228,7 +228,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-white/70">Cargando catÃ¡logo...</p>
+          <p className="text-white/70">Cargando catÃƒÂ¡logo...</p>
         </div>
       </section>
     );
@@ -238,7 +238,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-red-300">Error cargando catÃ¡logo: {error}</p>
+          <p className="text-red-300">Error cargando catÃƒÂ¡logo: {error}</p>
         </div>
       </section>
     );
@@ -248,7 +248,7 @@ export default function CatalogoMenudeoRealtime() {
     <section className="px-6 py-12">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-white">CatÃ¡logo menudeo</h1>
+          <h1 className="text-3xl font-bold text-white">CatÃƒÂ¡logo menudeo</h1>
           <p className="text-white/70">
             Todas las piezas incluyen caja protectora y protector contra polvo y suciedad.
           </p>
@@ -271,6 +271,22 @@ export default function CatalogoMenudeoRealtime() {
             placeholder="Buscar gorra..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+                  onBlur={() => {
+                    const normalizedSearch = search.trim();
+                    if (!normalizedSearch) return;
+
+                    trackClientEvent({
+                      eventType: "search_performed",
+                      entityType: "catalog",
+                      entitySlug: "menudeo",
+                      pagePath: "/catalogo/menudeo",
+                      pageTitle: "Catálogo Menudeo | Salva Exclusive Caps",
+                      searchQuery: normalizedSearch,
+                      eventData: {
+                        scope: "retail",
+                      },
+                    });
+                  }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/40"
           />
 
