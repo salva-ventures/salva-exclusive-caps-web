@@ -157,7 +157,7 @@ export default function AdminCatalogList({
                 disabled={selectedIds.length === 0}
                 className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Ejecutar acciÃƒÂ³n masiva
+                Ejecutar acción masiva
               </button>
             </div>
           </div>
@@ -284,7 +284,7 @@ export default function AdminCatalogList({
                         <Badge key={tag.id}>{tag.tag}</Badge>
                       ))}
                       {visibleTags.length > 6 && (
-                        <Badge tone="yellow">+{visibleTags.length - 6} mÃƒÂ¡s</Badge>
+                        <Badge tone="yellow">+{visibleTags.length - 6} más</Badge>
                       )}
                     </div>
                   )}

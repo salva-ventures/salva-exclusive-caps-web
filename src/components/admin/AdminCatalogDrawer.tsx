@@ -149,7 +149,7 @@ export default function AdminCatalogDrawer({
               </div>
 
               <div>
-                <label className="mb-2 block text-sm text-white/70">Status catÃƒÂ¡logo</label>
+                <label className="mb-2 block text-sm text-white/70">Status catálogo</label>
                 <select
                   name="catalog_status"
                   defaultValue={product.catalog_status}
@@ -296,7 +296,7 @@ export default function AdminCatalogDrawer({
                         type="submit"
                         className="text-white/55 hover:text-white"
                       >
-                        Ãƒâ€”
+                        ×
                       </button>
                     </form>
                   </div>

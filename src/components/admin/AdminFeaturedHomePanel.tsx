@@ -95,7 +95,7 @@ export default function AdminFeaturedHomePanel({
             Destacados configurados
           </h3>
           <p className="mt-1 text-sm text-white/45">
-            Controla quÃƒÂ© productos aparecen en la pÃƒÂ¡gina principal y en quÃƒÂ© orden.
+            Controla qué productos aparecen en la página principal y en qué orden.
           </p>
         </div>
 
@@ -113,7 +113,7 @@ export default function AdminFeaturedHomePanel({
         <p className="text-sm text-white/55">Cargando destacados...</p>
       ) : items.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/55">
-          AÃƒÂºn no hay productos destacados en home.
+          Aún no hay productos destacados en home.
         </div>
       ) : (
         <div className="grid gap-3">
@@ -140,7 +140,7 @@ export default function AdminFeaturedHomePanel({
                       {item.product_slug}
                     </p>
                     <p className="mt-1 text-xs text-white/40">
-                      PosiciÃƒÂ³n actual: #{index + 1}
+                      Posición actual: #{index + 1}
                     </p>
                   </div>
                 </div>
