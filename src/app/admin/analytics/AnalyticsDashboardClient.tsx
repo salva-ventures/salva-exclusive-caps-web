@@ -53,7 +53,7 @@ const initialState: DashboardState = {
 };
 
 function formatDate(value: string | null | undefined) {
-  if (!value) return "—";
+  if (!value) return "â€”";
   return new Date(value).toLocaleString("es-MX");
 }
 
@@ -92,10 +92,6 @@ function eventLabel(value: string) {
 function customerName(customer: RecentlyActiveCustomerRow) {
   const name = [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim();
   return name || customer.email || "Cliente";
-}
-
-function cx(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
 }
 
 function SectionCard({
@@ -309,7 +305,7 @@ export default function AnalyticsDashboardClient() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Registros" title="Registros por día">
+        <SectionCard eyebrow="Registros" title="Registros por dÃ­a">
           {registrationChartData.length > 0 ? (
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -330,11 +326,11 @@ export default function AnalyticsDashboardClient() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <EmptyState text="Aún no hay datos de registros para mostrar." />
+            <EmptyState text="AÃºn no hay datos de registros para mostrar." />
           )}
         </SectionCard>
 
-        <SectionCard eyebrow="Actividad" title="Logins por día">
+        <SectionCard eyebrow="Actividad" title="Logins por dÃ­a">
           {activityChartData.length > 0 ? (
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -362,13 +358,13 @@ export default function AnalyticsDashboardClient() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <EmptyState text="Aún no hay actividad suficiente para graficar." />
+            <EmptyState text="AÃºn no hay actividad suficiente para graficar." />
           )}
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <SectionCard eyebrow="Funnel" title="Embudo de activación">
+        <SectionCard eyebrow="Funnel" title="Embudo de activaciÃ³n">
           {state.funnel.length > 0 ? (
             <div className="grid gap-5 lg:grid-cols-[1fr_280px]">
               <div className="h-80">
@@ -388,7 +384,7 @@ export default function AnalyticsDashboardClient() {
                         fill="rgba(255,255,255,0.8)"
                         stroke="none"
                         dataKey="stage"
-                        formatter={(value: string) => stageLabel(value)}
+                        formatter={(value) => stageLabel(String(value ?? ""))}
                       />
                     </Funnel>
                   </FunnelChart>
@@ -408,7 +404,7 @@ export default function AnalyticsDashboardClient() {
               </div>
             </div>
           ) : (
-            <EmptyState text="Aún no hay datos del funnel de activación." />
+            <EmptyState text="AÃºn no hay datos del funnel de activaciÃ³n." />
           )}
         </SectionCard>
 
@@ -423,21 +419,21 @@ export default function AnalyticsDashboardClient() {
                   <div>
                     <p className="text-sm font-medium text-white">{eventLabel(item.event_type)}</p>
                     <p className="text-xs text-white/45">
-                      {item.unique_customers} clientes únicos
+                      {item.unique_customers} clientes Ãºnicos
                     </p>
                   </div>
                   <p className="text-sm font-semibold text-white">{item.total_events}</p>
                 </div>
               ))
             ) : (
-              <EmptyState text="Todavía no hay eventos registrados." />
+              <EmptyState text="TodavÃ­a no hay eventos registrados." />
             )}
           </div>
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Adquisición" title="Fuentes más fuertes">
+        <SectionCard eyebrow="AdquisiciÃ³n" title="Fuentes mÃ¡s fuertes">
           {topAcquisition.length > 0 ? (
             <div className="space-y-3">
               {topAcquisition.map((row) => (
@@ -449,7 +445,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{row.label}</p>
                       <p className="text-xs text-white/45">
-                        Verificados: {row.verified_customers} · Activos 30d: {row.active_last_30d}
+                        Verificados: {row.verified_customers} Â· Activos 30d: {row.active_last_30d}
                       </p>
                     </div>
                     <div className="text-right">
@@ -461,7 +457,7 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="No hay fuentes de adquisición con datos aún." />
+            <EmptyState text="No hay fuentes de adquisiciÃ³n con datos aÃºn." />
           )}
         </SectionCard>
 
@@ -485,7 +481,7 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="Todavía no hay intereses capturados." />
+            <EmptyState text="TodavÃ­a no hay intereses capturados." />
           )}
         </SectionCard>
       </section>
@@ -512,7 +508,7 @@ export default function AnalyticsDashboardClient() {
                         ) : null}
                       </div>
                       <p className="mt-1 text-xs text-white/45">
-                        {event.email ?? "Sin correo"} · {event.page_path ?? "sin ruta"}
+                        {event.email ?? "Sin correo"} Â· {event.page_path ?? "sin ruta"}
                       </p>
                     </div>
                     <p className="text-xs text-white/45">{formatDate(event.event_timestamp)}</p>
@@ -521,7 +517,7 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="Aún no hay eventos recientes para listar." />
+            <EmptyState text="AÃºn no hay eventos recientes para listar." />
           )}
         </SectionCard>
 
@@ -537,7 +533,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{customerName(customer)}</p>
                       <p className="mt-1 text-xs text-white/45">
-                        {customer.email ?? "Sin correo"} · {customer.customer_type ?? "sin tipo"}
+                        {customer.email ?? "Sin correo"} Â· {customer.customer_type ?? "sin tipo"}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {customer.country_code ? (
@@ -568,13 +564,13 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="Todavía no hay clientes activos recientes." />
+            <EmptyState text="TodavÃ­a no hay clientes activos recientes." />
           )}
         </SectionCard>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-2">
-        <SectionCard eyebrow="Detalle" title="Tabla de adquisición completa">
+        <SectionCard eyebrow="Detalle" title="Tabla de adquisiciÃ³n completa">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-white/80">
               <thead className="text-left text-white/40">
@@ -604,8 +600,8 @@ export default function AnalyticsDashboardClient() {
             <table className="min-w-full text-sm text-white/80">
               <thead className="text-left text-white/40">
                 <tr className="border-b border-white/8">
-                  <th className="pb-3 pr-4 font-medium">Interés</th>
-                  <th className="pb-3 pr-4 font-medium">Categoría</th>
+                  <th className="pb-3 pr-4 font-medium">InterÃ©s</th>
+                  <th className="pb-3 pr-4 font-medium">CategorÃ­a</th>
                   <th className="pb-3 pr-4 font-medium">Clientes</th>
                   <th className="pb-3 font-medium">Activos 30d</th>
                 </tr>
