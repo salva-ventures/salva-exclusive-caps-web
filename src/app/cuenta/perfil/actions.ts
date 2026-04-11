@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { requireCustomer } from "@/lib/auth/customer";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { trackCustomerEvent } from "@/lib/analytics/customer-events";
 
 const allowedCustomerTypes = new Set(["retail", "wholesale"]);
 const allowedContactChannels = new Set(["whatsapp", "email", "instagram"]);
@@ -258,6 +259,24 @@ export async function updateCustomerProfile(formData: FormData) {
       redirect("/cuenta/perfil?error=update-failed");
     }
   }
+
+  await trackCustomerEvent({
+    eventType: "customer_profile_updated",
+    customerId: customer.id,
+    pagePath: "/cuenta/perfil",
+    eventData: {
+      country_code: countryCode || null,
+      state_id: stateId || null,
+      city_id: cityId || null,
+      customer_type: customerType,
+      preferred_contact_channel: preferredContactChannel,
+      age_range: ageRange || null,
+      acquisition_source: acquisitionSource || null,
+      interests_count: uniqueInterests.length,
+      profile_completion_percent: profileCompletionPercent,
+      accepted_marketing: acceptedMarketing,
+    },
+  });
 
   redirect("/cuenta/perfil?success=updated");
 }

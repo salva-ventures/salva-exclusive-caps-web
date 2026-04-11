@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { trackCustomerEvent } from "@/lib/analytics/customer-events";
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -49,6 +50,15 @@ export async function loginCustomer(formData: FormData) {
         p_customer_id: data.user.id,
       });
     }
+
+    await trackCustomerEvent({
+      eventType: "customer_logged_in",
+      customerId: data.user.id,
+      pagePath: "/acceso/login",
+      eventData: {
+        email_confirmed: Boolean(data.user.email_confirmed_at),
+      },
+    });
   }
 
   redirect("/cuenta");
@@ -102,11 +112,33 @@ export async function registerCustomer(formData: FormData) {
     session: Boolean(data.session),
   });
 
+  if (data.user?.id) {
+    await trackCustomerEvent({
+      eventType: "customer_registered",
+      customerId: data.user.id,
+      pagePath: "/acceso/registro",
+      eventData: {
+        has_session: Boolean(data.session),
+        email: data.user.email ?? null,
+      },
+    });
+  }
+
   redirect("/acceso/login?success=registered");
 }
 
 export async function logoutCustomer() {
   const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (data.user?.id) {
+    await trackCustomerEvent({
+      eventType: "customer_logged_out",
+      customerId: data.user.id,
+      pagePath: "/cuenta",
+    });
+  }
+
   await supabase.auth.signOut();
   redirect("/acceso/login?success=logged-out");
 }
@@ -123,6 +155,16 @@ export async function requestPasswordReset(formData: FormData) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/acceso/restablecer`,
   });
+
+  if (!error) {
+    await trackCustomerEvent({
+      eventType: "customer_password_reset_requested",
+      pagePath: "/acceso/recuperar",
+      eventData: {
+        email,
+      },
+    });
+  }
 
   if (error) {
     console.error("requestPasswordReset error:", error);
@@ -164,6 +206,12 @@ export async function updateCustomerPassword(formData: FormData) {
     await supabase.rpc("touch_customer_password_changed", {
       p_customer_id: userData.user.id,
     });
+
+    await trackCustomerEvent({
+      eventType: "customer_password_reset_completed",
+      customerId: userData.user.id,
+      pagePath: "/acceso/restablecer",
+    });
   }
 
   redirect("/acceso/login?success=password-updated");
@@ -200,6 +248,12 @@ export async function changeCustomerPassword(formData: FormData) {
   if (userData.user?.id) {
     await supabase.rpc("touch_customer_password_changed", {
       p_customer_id: userData.user.id,
+    });
+
+    await trackCustomerEvent({
+      eventType: "customer_password_changed",
+      customerId: userData.user.id,
+      pagePath: "/cuenta/seguridad",
     });
   }
 
