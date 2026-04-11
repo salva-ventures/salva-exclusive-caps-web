@@ -9,11 +9,12 @@ import { CONTACT } from "@/config/brand";
 
 const navLinks = [
   { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "CatÃ¡logo" },
+  { href: "/catalogo", label: "Catálogo" },
   { href: "/disponibilidad", label: "Disponibilidad" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/faq", label: "FAQ" },
   { href: "/contacto", label: "Contacto" },
+  { href: "/acceso", label: "Cuenta" },
 ];
 
 const fadeDown = {
@@ -209,23 +210,12 @@ export default function Navbar() {
                     </motion.a>
                   ))}
                 </div>
-
-                <motion.a
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-red-600/30 bg-red-600 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-white shadow-[0_10px_28px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-700"
-                >
-                  WhatsApp
-                </motion.a>
               </div>
 
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen((prev) => !prev)}
-                aria-label={isOpen ? "Cerrar menÃº" : "Abrir menÃº"}
+                aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white transition-all duration-300 hover:border-white/22 hover:bg-white/[0.08] lg:hidden"
               >
                 {isOpen ? <X size={19} /> : <Menu size={19} />}
@@ -259,7 +249,7 @@ export default function Navbar() {
               <div className="relative flex max-h-[calc(100dvh-104px)] flex-col">
                 <div className="border-b border-white/10 px-5 py-5">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
-                    NavegaciÃ³n
+                    Navegación
                   </p>
                   <h3 className="mt-2 text-xl font-semibold text-white">
                     Explora la marca
@@ -307,20 +297,6 @@ export default function Navbar() {
                       </motion.a>
                     ))}
                   </div>
-
-                  <motion.a
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.24, delay: 0.16 }}
-                    href={waLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setIsOpen(false)}
-                    className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-red-600 bg-red-600 px-5 py-4 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:bg-red-700"
-                  >
-                    Hablar por WhatsApp
-                  </motion.a>
                 </div>
               </div>
             </motion.div>
