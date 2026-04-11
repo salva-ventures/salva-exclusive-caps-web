@@ -1,64 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase/client";
-
-type RawChannel = {
-  channel: "retail" | "wholesale";
-  price: number | null;
-  availability_status: string;
-  is_enabled: boolean;
-  is_visible: boolean;
-  min_qty: number | null;
-  lead_time_text: string | null;
-  sales_notes: string | null;
-};
-
-type RawInventory = {
-  stock_on_hand: number;
-  stock_reserved: number;
-  stock_available: number;
-};
-
-type RawImage = {
-  public_url: string;
-  alt_text: string | null;
-  sort_order: number;
-  is_primary: boolean;
-  media_type: string;
-  status: string;
-};
-
-type RawProduct = {
-  id: string;
-  slug: string;
-  name: string;
-  brand_name: string | null;
-  collab_name: string | null;
-  model_name: string | null;
-  has_nfc: boolean;
-  includes_box: boolean;
-  includes_dust_protector: boolean;
-  rarity_name: string | null;
-  rarity_color: string | null;
-  product_channels: RawChannel[];
-  inventory: RawInventory[];
-  product_media: RawImage[];
-};
-
-type CatalogItem = {
-  id: string;
-  slug: string;
-  name: string;
-  rarity_name: string | null;
-  rarity_color: string | null;
-  availability_status: string;
-  stock_available: number;
-  min_qty: number;
-  lead_time_text: string | null;
-  image_url: string | null;
-  image_alt: string;
-};
+import { fetchPublicCatalog, type PublicCatalogItem } from "@/lib/catalog/public-catalog";
 
 type SortOption =
   | "featured"
@@ -116,8 +59,20 @@ function getAvailabilityLabel(status: string, stockAvailable: number) {
   }
 }
 
+function formatWholesaleText(item: PublicCatalogItem) {
+  if (item.label?.trim()) return item.label;
+  if (item.price !== null) {
+    return new Intl.NumberFormat("es-MX", {
+      style: "currency",
+      currency: "MXN",
+      maximumFractionDigits: 0,
+    }).format(item.price);
+  }
+  return "Precio sujeto a cotización";
+}
+
 export default function CatalogoMayoreoRealtime() {
-  const [items, setItems] = useState<CatalogItem[]>([]);
+  const [items, setItems] = useState<PublicCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -126,101 +81,20 @@ export default function CatalogoMayoreoRealtime() {
   const [rarityFilter, setRarityFilter] = useState<"all" | "Selecta" | "Destacada" | "Elite" | "Legendaria">("all");
   const [sortBy, setSortBy] = useState<SortOption>("featured");
 
-  async function fetchCatalog() {
-    setError(null);
-
-    const { data, error } = await supabase
-      .from("products")
-      .select(`
-        id,
-        slug,
-        name,
-        rarity_name,
-        rarity_color,
-        product_channels!inner (
-          channel,
-          price,
-          availability_status,
-          is_enabled,
-          is_visible,
-          min_qty,
-          lead_time_text,
-          sales_notes
-        ),
-        inventory (
-          stock_on_hand,
-          stock_reserved,
-          stock_available
-        ),
-        product_media (
-          public_url,
-          alt_text,
-          sort_order,
-          is_primary,
-          media_type,
-          status
-        )
-      `)
-      .eq("is_active", true)
-      .eq("product_channels.channel", "wholesale")
-      .eq("product_channels.is_enabled", true)
-      .eq("product_channels.is_visible", true);
-
-    if (error) {
-      setError(error.message);
+  async function loadCatalog() {
+    try {
+      setError(null);
+      const data = await fetchPublicCatalog("wholesale");
+      setItems(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const mapped: CatalogItem[] = ((data ?? []) as unknown as RawProduct[]).map((row) => {
-      const channel = Array.isArray(row.product_channels) ? row.product_channels[0] : null;
-      const inventory = Array.isArray(row.inventory) ? row.inventory[0] : null;
-
-      const sortedImages = Array.isArray(row.product_media)
-        ? row.product_media
-            .filter((img) => img.media_type === "image" && img.status === "active")
-            .sort((a, b) => {
-              if (a.is_primary && !b.is_primary) return -1;
-              if (!a.is_primary && b.is_primary) return 1;
-              return a.sort_order - b.sort_order;
-            })
-        : [];
-
-      const firstImage = sortedImages[0] ?? null;
-
-      return {
-        id: row.id,
-        slug: row.slug,
-        name: row.name,
-        rarity_name: row.rarity_name,
-        rarity_color: row.rarity_color,
-        availability_status: channel?.availability_status ?? "unavailable",
-        stock_available: inventory?.stock_available ?? 0,
-        min_qty: channel?.min_qty ?? 10,
-        lead_time_text: channel?.lead_time_text ?? null,
-        image_url: firstImage?.public_url ?? null,
-        image_alt: firstImage?.alt_text ?? row.name,
-      };
-    });
-
-    setItems(mapped);
-    setLoading(false);
   }
 
   useEffect(() => {
-    void fetchCatalog();
-
-    const channel = supabase
-      .channel("catalogo-mayoreo-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => void fetchCatalog())
-      .on("postgres_changes", { event: "*", schema: "public", table: "product_channels" }, () => void fetchCatalog())
-      .on("postgres_changes", { event: "*", schema: "public", table: "inventory" }, () => void fetchCatalog())
-      .on("postgres_changes", { event: "*", schema: "public", table: "product_media" }, () => void fetchCatalog())
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(channel);
-    };
+    void loadCatalog();
   }, []);
 
   const rarityOptions = useMemo(() => {
@@ -253,14 +127,7 @@ export default function CatalogoMayoreoRealtime() {
       if (sortBy === "name-asc") return a.name.localeCompare(b.name, "es");
       if (sortBy === "stock-desc") return b.stock_available - a.stock_available;
       if (sortBy === "minqty-asc") return a.min_qty - b.min_qty;
-
-      const stockDiff = Number(b.stock_available > 0) - Number(a.stock_available > 0);
-      if (stockDiff !== 0) return stockDiff;
-
-      const rarityDiff = rarityRank(b.rarity_name) - rarityRank(a.rarity_name);
-      if (rarityDiff !== 0) return rarityDiff;
-
-      return a.name.localeCompare(b.name, "es");
+      return a.sort_order - b.sort_order;
     });
 
     return result;
@@ -398,15 +265,21 @@ export default function CatalogoMayoreoRealtime() {
                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">
                       Mínimo {item.min_qty}
                     </span>
+
+                    {item.label ? (
+                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/85">
+                        {item.label}
+                      </span>
+                    ) : null}
                   </div>
 
                   <div>
                     <h2 className="text-lg font-semibold text-white">{item.name}</h2>
                     <p className="mt-2 text-base font-medium text-white/85">
-                      Precio sujeto a cotización
+                      {formatWholesaleText(item)}
                     </p>
                     <p className="mt-1 text-sm text-white/50">
-                      {item.lead_time_text ?? "Resurtido y tiempos sujetos a proveedor."}
+                      {item.lead_time_text ?? item.sales_notes ?? "Resurtido y tiempos sujetos a proveedor."}
                     </p>
                   </div>
 
