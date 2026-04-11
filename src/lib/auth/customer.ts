@@ -31,3 +31,11 @@ export async function requireCustomer(): Promise<AuthenticatedCustomer> {
 
   return customer;
 }
+
+export async function redirectIfAuthenticatedCustomer() {
+  const customer = await getAuthenticatedCustomer();
+
+  if (customer) {
+    redirect("/cuenta");
+  }
+}

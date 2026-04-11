@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { loginCustomer } from "@/app/acceso/actions";
+import { redirectIfAuthenticatedCustomer } from "@/lib/auth/customer";
 
-function getMessage(error?: string, success?: string) {
+function getMessage(error?: string, success?: string, detail?: string) {
   if (success === "registered") {
     return { tone: "success", text: "Cuenta creada correctamente. Ya puedes iniciar sesión." };
   }
@@ -14,7 +15,10 @@ function getMessage(error?: string, success?: string) {
     case "missing-fields":
       return { tone: "error", text: "Debes capturar correo y contraseña." };
     case "invalid-credentials":
-      return { tone: "error", text: "Correo o contraseña inválidos." };
+      return {
+        tone: "error",
+        text: detail ? `Correo o contraseña inválidos: ${detail}` : "Correo o contraseña inválidos.",
+      };
     default:
       return null;
   }
@@ -23,10 +27,12 @@ function getMessage(error?: string, success?: string) {
 export default async function AccesoLoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; success?: string }>;
+  searchParams: Promise<{ error?: string; success?: string; detail?: string }>;
 }) {
+  await redirectIfAuthenticatedCustomer();
+
   const params = await searchParams;
-  const message = getMessage(params.error, params.success);
+  const message = getMessage(params.error, params.success, params.detail);
 
   return (
     <main className="min-h-screen bg-black text-white">

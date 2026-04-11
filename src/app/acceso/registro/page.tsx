@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { registerCustomer } from "@/app/acceso/actions";
+import { redirectIfAuthenticatedCustomer } from "@/lib/auth/customer";
 
 function getMessage(error?: string, detail?: string) {
   switch (error) {
@@ -21,6 +22,8 @@ export default async function AccesoRegistroPage({
 }: {
   searchParams: Promise<{ error?: string; detail?: string }>;
 }) {
+  await redirectIfAuthenticatedCustomer();
+
   const params = await searchParams;
   const errorMessage = getMessage(params.error, params.detail);
 

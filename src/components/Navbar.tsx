@@ -6,15 +6,15 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, ChevronRight } from "lucide-react";
 import { CONTACT } from "@/config/brand";
+import { supabase } from "@/lib/supabase/client";
 
-const navLinks = [
+const baseNavLinks = [
   { href: "/", label: "Inicio" },
   { href: "/catalogo", label: "Catálogo" },
   { href: "/disponibilidad", label: "Disponibilidad" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/faq", label: "FAQ" },
   { href: "/contacto", label: "Contacto" },
-  { href: "/acceso", label: "Cuenta" },
 ];
 
 const fadeDown = {
@@ -54,8 +54,14 @@ const mobilePanel = {
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [hasCustomerSession, setHasCustomerSession] = useState(false);
 
   const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
+
+  const navLinks = [
+    ...baseNavLinks,
+    { href: hasCustomerSession ? "/cuenta" : "/acceso", label: "Cuenta" },
+  ];
 
   const socialLinks = [
     {
@@ -135,6 +141,29 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadSession() {
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+      setHasCustomerSession(Boolean(data.session));
+    }
+
+    loadSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasCustomerSession(Boolean(session));
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <>
