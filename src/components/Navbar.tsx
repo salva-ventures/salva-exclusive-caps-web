@@ -9,12 +9,12 @@ import { CONTACT } from "@/config/brand";
 
 const navLinks = [
   { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "CatÃƒÂ¡logo" },
+  { href: "/catalogo", label: "Catálogo" },
   { href: "/disponibilidad", label: "Disponibilidad" },
   { href: "/nosotros", label: "Nosotros" },
   { href: "/faq", label: "FAQ" },
   { href: "/contacto", label: "Contacto" },
-  { href: "/acceso", label: "Acceso" },
+  { href: "/mayoreo", label: "Mayoreo" },
 ];
 
 const fadeDown = {
@@ -226,7 +226,7 @@ export default function Navbar() {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen((prev) => !prev)}
-                aria-label={isOpen ? "Cerrar menÃƒÂº" : "Abrir menÃƒÂº"}
+                aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white transition-all duration-300 hover:border-white/22 hover:bg-white/[0.08] lg:hidden"
               >
                 {isOpen ? <X size={19} /> : <Menu size={19} />}
@@ -260,7 +260,7 @@ export default function Navbar() {
               <div className="relative flex max-h-[calc(100dvh-104px)] flex-col">
                 <div className="border-b border-white/10 px-5 py-5">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
-                    NavegaciÃƒÂ³n
+                    Navegación
                   </p>
                   <h3 className="mt-2 text-xl font-semibold text-white">
                     Explora la marca

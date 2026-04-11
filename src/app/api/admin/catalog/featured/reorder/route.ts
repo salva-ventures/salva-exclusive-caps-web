@@ -13,15 +13,21 @@ export async function POST(request: Request) {
 
   const placement = body?.placement === "home" ? "home" : null;
   const orderedProductIds = Array.isArray(body?.orderedProductIds)
-    ? body.orderedProductIds.filter((value: unknown): value is string => typeof value === "string" && isUuid(value))
+    ? body.orderedProductIds.filter(
+        (value: unknown): value is string =>
+          typeof value === "string" && isUuid(value)
+      )
     : [];
 
   if (!placement) {
-    return NextResponse.json({ error: "Placement invÃƒÂ¡lido." }, { status: 400 });
+    return NextResponse.json({ error: "Placement inválido." }, { status: 400 });
   }
 
   if (!orderedProductIds.length) {
-    return NextResponse.json({ error: "No se recibieron productos para reordenar." }, { status: 400 });
+    return NextResponse.json(
+      { error: "No se recibieron productos para reordenar." },
+      { status: 400 }
+    );
   }
 
   const { data: existingRows, error: existingError } = await supabaseAdmin
