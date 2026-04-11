@@ -1,5 +1,5 @@
-import Link from "next/link";
 import PageViewTracker from "@/components/analytics/PageViewTracker";
+import CatalogoSelectorButtons from "@/components/analytics/CatalogoSelectorButtons";
 
 export default function CatalogoPage() {
   return (
@@ -55,14 +55,7 @@ export default function CatalogoPage() {
                   </div>
                 </div>
 
-                <div className="mt-8">
-                  <Link
-                    href="/catalogo/menudeo"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-4 text-sm font-semibold text-black transition hover:bg-white/90"
-                  >
-                    Entrar a Menudeo
-                  </Link>
-                </div>
+                <CatalogoSelectorButtons mode="menudeo" />
               </div>
             </article>
 
@@ -94,14 +87,7 @@ export default function CatalogoPage() {
                   </div>
                 </div>
 
-                <div className="mt-8">
-                  <Link
-                    href="/catalogo/mayoreo"
-                    className="inline-flex w-full items-center justify-center rounded-full bg-red-600 px-6 py-4 text-sm font-semibold text-white transition hover:bg-red-500"
-                  >
-                    Entrar a Mayoreo
-                  </Link>
-                </div>
+                <CatalogoSelectorButtons mode="mayoreo" />
               </div>
             </article>
           </div>
