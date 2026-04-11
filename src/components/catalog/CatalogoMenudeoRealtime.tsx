@@ -47,7 +47,7 @@ function getAvailabilityLabel(status: string, stockAvailable: number) {
 
   switch (status) {
     case "coming_soon":
-      return "Disponible prÃƒÂ³ximamente";
+      return "Disponible próximamente";
     case "backorder":
       return "Resurtido en proceso";
     default:
@@ -207,7 +207,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-white/70">Cargando catÃƒÂ¡logo...</p>
+          <p className="text-white/70">Cargando catálogo...</p>
         </div>
       </section>
     );
@@ -217,7 +217,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-red-300">Error cargando catÃƒÂ¡logo: {error}</p>
+          <p className="text-red-300">Error cargando catálogo: {error}</p>
         </div>
       </section>
     );
@@ -227,7 +227,7 @@ export default function CatalogoMenudeoRealtime() {
     <section className="px-6 py-12">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-white">CatÃƒÂ¡logo menudeo</h1>
+          <h1 className="text-3xl font-bold text-white">Catálogo menudeo</h1>
           <p className="text-white/70">
             Todas las piezas incluyen caja protectora y protector contra polvo y suciedad.
           </p>
