@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 
-import { useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useState } from "react";
+import { usePageView } from "@/lib/analytics/use-page-view";
+import { trackClientEvent } from "@/lib/analytics/track-client";
+import { trackWhatsAppClick } from "@/lib/analytics/contact-clicks";
 import CatalogDynamicFilters from "@/components/catalog/CatalogDynamicFilters";
 import {
   matchesCatalogFilters,
@@ -47,7 +50,7 @@ function getAvailabilityLabel(status: string, stockAvailable: number) {
 
   switch (status) {
     case "coming_soon":
-      return "Disponible próximamente";
+      return "Disponible prÃ³ximamente";
     case "backorder":
       return "Resurtido en proceso";
     default:
@@ -78,6 +81,24 @@ function rarityRank(rarityName: string | null) {
 }
 
 export default function CatalogoMenudeoRealtime() {
+  usePageView({
+    pagePath: "/catalogo/menudeo",
+    pageTitle: "Catálogo Menudeo | Salva Exclusive Caps",
+    entitySlug: "catalogo-menudeo",
+  });
+
+  useEffect(() => {
+    trackClientEvent({
+      eventType: "catalog_view",
+      entityType: "catalog",
+      entitySlug: "menudeo",
+      pagePath: "/catalogo/menudeo",
+      pageTitle: "Catálogo Menudeo | Salva Exclusive Caps",
+      eventData: {
+        scope: "retail",
+      },
+    });
+  }, []);
   const [items, setItems] = useState<PublicCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -207,7 +228,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-white/70">Cargando catálogo...</p>
+          <p className="text-white/70">Cargando catÃ¡logo...</p>
         </div>
       </section>
     );
@@ -217,7 +238,7 @@ export default function CatalogoMenudeoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-red-300">Error cargando catálogo: {error}</p>
+          <p className="text-red-300">Error cargando catÃ¡logo: {error}</p>
         </div>
       </section>
     );
@@ -227,7 +248,7 @@ export default function CatalogoMenudeoRealtime() {
     <section className="px-6 py-12">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-white">Catálogo menudeo</h1>
+          <h1 className="text-3xl font-bold text-white">CatÃ¡logo menudeo</h1>
           <p className="text-white/70">
             Todas las piezas incluyen caja protectora y protector contra polvo y suciedad.
           </p>
