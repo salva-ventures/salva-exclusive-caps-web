@@ -62,7 +62,7 @@ function getAvailabilityLabel(status: string, stockAvailable: number) {
 
   switch (status) {
     case "coming_soon":
-      return "Disponible prÃ³ximamente";
+      return "Disponible prÃƒÂ³ximamente";
     case "backorder":
       return "Resurtido en proceso";
     default:
@@ -79,13 +79,13 @@ function formatWholesaleText(item: PublicCatalogItem) {
       maximumFractionDigits: 0,
     }).format(item.price);
   }
-  return "Precio sujeto a cotizaciÃ³n";
+  return "Precio sujeto a cotizaciÃƒÂ³n";
 }
 
 export default function CatalogoMayoreoRealtime() {
   usePageView({
     pagePath: "/catalogo/mayoreo",
-    pageTitle: "Catálogo Mayoreo | Salva Exclusive Caps",
+    pageTitle: "CatÃ¡logo Mayoreo | Salva Exclusive Caps",
     entitySlug: "catalogo-mayoreo",
   });
 
@@ -95,7 +95,7 @@ export default function CatalogoMayoreoRealtime() {
       entityType: "catalog",
       entitySlug: "mayoreo",
       pagePath: "/catalogo/mayoreo",
-      pageTitle: "Catálogo Mayoreo | Salva Exclusive Caps",
+      pageTitle: "CatÃ¡logo Mayoreo | Salva Exclusive Caps",
       eventData: {
         scope: "wholesale",
       },
@@ -222,7 +222,7 @@ export default function CatalogoMayoreoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-white/70">Cargando catÃ¡logo mayoreo...</p>
+          <p className="text-white/70">Cargando catÃƒÂ¡logo mayoreo...</p>
         </div>
       </section>
     );
@@ -232,7 +232,7 @@ export default function CatalogoMayoreoRealtime() {
     return (
       <section className="px-6 py-12">
         <div className="mx-auto max-w-7xl">
-          <p className="text-red-300">Error cargando catÃ¡logo: {error}</p>
+          <p className="text-red-300">Error cargando catÃƒÂ¡logo: {error}</p>
         </div>
       </section>
     );
@@ -242,9 +242,9 @@ export default function CatalogoMayoreoRealtime() {
     <section className="px-6 py-12">
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-white">CatÃ¡logo mayoreo</h1>
+          <h1 className="text-3xl font-bold text-white">CatÃƒÂ¡logo mayoreo</h1>
           <p className="max-w-3xl text-white/70">
-            Precio sujeto a cotizaciÃ³n y confirmaciÃ³n final. Pedido mÃ­nimo general: 10 piezas.
+            Precio sujeto a cotizaciÃƒÂ³n y confirmaciÃƒÂ³n final. Pedido mÃƒÂ­nimo general: 10 piezas.
           </p>
           <div className="flex flex-wrap gap-3 text-sm">
             <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/80">
@@ -262,9 +262,25 @@ export default function CatalogoMayoreoRealtime() {
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <input
             type="text"
-            placeholder="Buscar modelo o colaboraciÃ³n..."
+            placeholder="Buscar modelo o colaboraciÃƒÂ³n..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+                  onBlur={() => {
+                    const normalizedSearch = search.trim();
+                    if (!normalizedSearch) return;
+
+                    trackClientEvent({
+                      eventType: "search_performed",
+                      entityType: "catalog",
+                      entitySlug: "mayoreo",
+                      pagePath: "/catalogo/mayoreo",
+                      pageTitle: "Catálogo Mayoreo | Salva Exclusive Caps",
+                      searchQuery: normalizedSearch,
+                      eventData: {
+                        scope: "wholesale",
+                      },
+                    });
+                  }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/40"
           />
 
@@ -299,7 +315,7 @@ export default function CatalogoMayoreoRealtime() {
             <option value="featured">Orden recomendado</option>
             <option value="name-asc">Nombre A-Z</option>
             <option value="stock-desc">Mayor stock</option>
-            <option value="minqty-asc">Menor mÃ­nimo</option>
+            <option value="minqty-asc">Menor mÃƒÂ­nimo</option>
           </select>
         </div>
 
@@ -343,7 +359,7 @@ export default function CatalogoMayoreoRealtime() {
                     ) : null}
 
                     <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/70">
-                      MÃ­nimo {item.min_qty}
+                      MÃƒÂ­nimo {item.min_qty}
                     </span>
 
                     {item.label ? (
@@ -378,7 +394,7 @@ export default function CatalogoMayoreoRealtime() {
                       type="button"
                       className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90"
                     >
-                      Solicitar cotizaciÃ³n
+                      Solicitar cotizaciÃƒÂ³n
                     </button>
                   </div>
                 </div>
