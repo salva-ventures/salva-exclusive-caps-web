@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -6,14 +6,8 @@ import { CheckCircle2, ArrowUpRight, Sparkles } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import ProductCard from "@/components/ProductCard";
-import { getFeaturedProducts } from "@/data/products";
 import { BRAND, CONTACT, DELIVERY_INFO } from "@/config/brand";
-import {
-  getGalleryImages,
-  getPrimaryImageUrl,
-  getProductImagesBySlugs,
-  type ProductImagesMap,
-} from "@/lib/catalog/getProductImages";
+import { fetchPublicCatalog, type PublicCatalogItem } from "@/lib/catalog/public-catalog";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -58,39 +52,59 @@ const sectionGlow =
   "absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.025),transparent_16%,transparent_84%,rgba(255,255,255,0.018))]";
 
 export default function HomePage() {
-  const featured = getFeaturedProducts();
-  const [imageMap, setImageMap] = useState<ProductImagesMap>({});
-  const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
+  const [featuredItems, setFeaturedItems] = useState<PublicCatalogItem[]>([]);
+const waLink = `https://wa.me/${CONTACT.whatsapp.number.replace(/\+/g, "")}?text=${encodeURIComponent(CONTACT.whatsapp.defaultMessage)}`;
 
-  useEffect(() => {
-    let cancelled = false;
+useEffect(() => {
+  let cancelled = false;
 
-    async function loadImages() {
-      try {
-        const map = await getProductImagesBySlugs(
-          featured.map((product) => product.slug)
-        );
+  async function loadFeatured() {
+    try {
+      const items = await fetchPublicCatalog("retail");
 
-        if (!cancelled) {
-          setImageMap(map);
-        }
-      } catch (error) {
-        console.error("Error cargando imÃ¡genes desde Supabase:", error);
+      if (!cancelled) {
+        setFeaturedItems(items.slice(0, 8));
       }
+    } catch (error) {
+      console.error("Error cargando productos destacados reales:", error);
     }
+  }
 
-    loadImages();
+  loadFeatured();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [featured]);
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
-  const featuredWithSupabaseImages = featured.map((product) => ({
-    ...product,
-    image: getPrimaryImageUrl(imageMap, product.slug, product.images?.[0]),
-    gallery: getGalleryImages(imageMap, product.slug),
-  }));
+const featuredWithSupabaseImages = featuredItems.map((item, index) => ({
+  id: item.id,
+  slug: item.slug,
+  sku: item.slug.toUpperCase(),
+  name: item.name,
+  brand: item.brand_name ?? "Salva Exclusive Caps",
+  collab: item.collab_name,
+  tipo: item.category_name ?? "Exclusiva",
+  colors: item.rarity_name ? [item.rarity_name] : ["premium"],
+  shortDescription:
+    item.sales_notes ??
+    item.label ??
+    "Modelo disponible dentro de la selección destacada de Salva Exclusive Caps.",
+  images: item.image_url ? [item.image_url] : ["/branding/hero-star.png"],
+  featured: index < 4,
+  sortOrder: item.sort_order,
+  relatedSlugs: [],
+  image: item.image_url ?? "/branding/hero-star.png",
+  gallery: item.image_url
+    ? [
+        {
+          public_url: item.image_url,
+          sort_order: 0,
+          is_primary: true,
+        },
+      ]
+    : [],
+}));
 
   const heroRef = useRef<HTMLElement | null>(null);
 
@@ -227,7 +241,7 @@ export default function HomePage() {
             >
               <div className="absolute inset-y-0 left-[-140%] w-[70%] skew-x-[-20deg] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)] animate-[shine_4.6s_ease-in-out_infinite]" />
               <Sparkles className="h-3.5 w-3.5" />
-              DiseÃ±o, presencia y carÃ¡cter
+              DiseÃƒÆ’Ã‚Â±o, presencia y carÃƒÆ’Ã‚Â¡cter
             </motion.div>
 
             <motion.h1
@@ -263,7 +277,7 @@ export default function HomePage() {
                   href="/catalogo"
                   className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black shadow-[0_10px_30px_rgba(255,255,255,0.08)] transition-all duration-300 hover:bg-white/92"
                 >
-                  Ver catÃ¡logo
+                  Ver catÃƒÆ’Ã‚Â¡logo
                 </Link>
               </motion.div>
 
@@ -320,7 +334,7 @@ export default function HomePage() {
               {[
                 { label: "Entrega", value: "Inmediata" },
                 { label: "Cobertura", value: "Nacional e internacional" },
-                { label: "AtenciÃ³n", value: "Directa por WhatsApp" },
+                { label: "AtenciÃƒÆ’Ã‚Â³n", value: "Directa por WhatsApp" },
               ].map((item) => (
                 <motion.div
                   key={item.label}
@@ -413,18 +427,18 @@ export default function HomePage() {
               Entregas
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
-              Disponibilidad y envÃ­os
+              Disponibilidad y envÃƒÆ’Ã‚Â­os
             </h2>
             <p className="mt-5 text-base leading-8 text-white/72 sm:text-lg">
-              Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. EnvÃ­os
-              nacionales e internacionales con cotizaciÃ³n por separado. Toda
+              Entrega inmediata en {DELIVERY_INFO.immediate.join(", ")}. EnvÃƒÆ’Ã‚Â­os
+              nacionales e internacionales con cotizaciÃƒÆ’Ã‚Â³n por separado. Toda
               disponibilidad se confirma directamente por WhatsApp.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               {[
                 "Entrega inmediata",
-                "ConfirmaciÃ³n por WhatsApp",
+                "ConfirmaciÃƒÆ’Ã‚Â³n por WhatsApp",
                 "Cobertura nacional e internacional",
               ].map((item) => (
                 <span
@@ -442,7 +456,7 @@ export default function HomePage() {
                   href="/disponibilidad"
                   className="inline-flex items-center justify-center rounded-full bg-red-600 px-8 py-4 text-sm font-semibold uppercase tracking-[0.28em] text-white shadow-[0_12px_30px_rgba(220,38,38,0.18)] transition-all duration-300 hover:bg-red-500"
                 >
-                  Ver detalles de envÃ­o
+                  Ver detalles de envÃƒÆ’Ã‚Â­o
                 </Link>
               </motion.div>
             </div>
@@ -457,10 +471,10 @@ export default function HomePage() {
               {
                 title: "Disponibilidad",
                 description:
-                  "Sujeta a existencias y confirmaciÃ³n directa por WhatsApp.",
+                  "Sujeta a existencias y confirmaciÃƒÆ’Ã‚Â³n directa por WhatsApp.",
               },
               {
-                title: "EnvÃ­os",
+                title: "EnvÃƒÆ’Ã‚Â­os",
                 description:
                   "Cobertura nacional e internacional con costo adicional.",
               },
@@ -499,14 +513,14 @@ export default function HomePage() {
         >
           <motion.div variants={fadeUp} className="max-w-2xl">
             <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
-              ColecciÃ³n
+              ColecciÃƒÆ’Ã‚Â³n
             </p>
             <h2 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
               Productos destacados
             </h2>
             <p className="leading-relaxed text-white/55">
-              Una selecciÃ³n de modelos representativos de la propuesta de{" "}
-              {BRAND.name}, con diseÃ±o, presencia y carÃ¡cter.
+              Una selecciÃƒÆ’Ã‚Â³n de modelos representativos de la propuesta de{" "}
+              {BRAND.name}, con diseÃƒÆ’Ã‚Â±o, presencia y carÃƒÆ’Ã‚Â¡cter.
             </p>
           </motion.div>
 
@@ -519,7 +533,7 @@ export default function HomePage() {
               href="/catalogo"
               className="inline-flex items-center gap-2 self-start rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-xs font-semibold uppercase tracking-[0.22em] text-white transition-all duration-300 hover:border-white/18 hover:bg-white/[0.08] hover:text-red-500"
             >
-              Ver catÃ¡logo completo
+              Ver catÃƒÆ’Ã‚Â¡logo completo
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           </motion.div>
@@ -566,21 +580,21 @@ export default function HomePage() {
                 className={`${premiumCard} ${premiumHover} ${subtleOverlay} bg-[#111] p-8`}
               >
                 <p className="mb-3 text-xs uppercase tracking-[0.35em] text-red-600">
-                  Nuestra visiÃ³n
+                  Nuestra visiÃƒÆ’Ã‚Â³n
                 </p>
                 <h3 className="mb-4 text-2xl font-bold text-white">
-                  Construir una marca referente en MÃ©xico
+                  Construir una marca referente en MÃƒÆ’Ã‚Â©xico
                 </h3>
                 <p className="mb-6 text-sm leading-relaxed text-white/55">
                   Posicionar a {BRAND.name} como una marca referente en gorras
-                  premium dentro de MÃ©xico, combinando diseÃ±o, identidad, orden
+                  premium dentro de MÃƒÆ’Ã‚Â©xico, combinando diseÃƒÆ’Ã‚Â±o, identidad, orden
                   comercial y una experiencia de compra confiable.
                 </p>
                 <Link
                   href="/nosotros"
                   className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-red-600 transition-colors duration-300 hover:text-white"
                 >
-                  Conocer mÃ¡s
+                  Conocer mÃƒÆ’Ã‚Â¡s
                 </Link>
               </motion.div>
             </motion.div>
@@ -590,13 +604,13 @@ export default function HomePage() {
                 Sobre nosotros
               </p>
               <h2 className="mb-6 text-3xl font-bold tracking-tight text-white md:text-4xl">
-                Identidad, diseÃ±o y confianza
+                Identidad, diseÃƒÆ’Ã‚Â±o y confianza
               </h2>
               <p className="leading-relaxed text-white/55">
                 Somos una marca mexicana enfocada en ofrecer gorras premium con
-                identidad propia. Apostamos por una imagen sÃ³lida, una operaciÃ³n
+                identidad propia. Apostamos por una imagen sÃƒÆ’Ã‚Â³lida, una operaciÃƒÆ’Ã‚Â³n
                 seria y una propuesta pensada para clientes que valoran estilo,
-                exclusividad y atenciÃ³n directa.
+                exclusividad y atenciÃƒÆ’Ã‚Â³n directa.
               </p>
             </motion.div>
           </div>
@@ -623,16 +637,16 @@ export default function HomePage() {
           <div className="space-y-4">
             {[
               {
-                q: "Â¿CÃ³mo puedo realizar un pedido?",
-                a: "ContÃ¡ctanos directamente por WhatsApp seleccionando el producto que te interesa. AhÃ­ confirmamos disponibilidad, pago y entrega.",
+                q: "Ãƒâ€šÃ‚Â¿CÃƒÆ’Ã‚Â³mo puedo realizar un pedido?",
+                a: "ContÃƒÆ’Ã‚Â¡ctanos directamente por WhatsApp seleccionando el producto que te interesa. AhÃƒÆ’Ã‚Â­ confirmamos disponibilidad, pago y entrega.",
               },
               {
-                q: "Â¿CÃ³mo manejan entregas y envÃ­os?",
-                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(", ")}, sujeta a existencias y coordinaciÃ³n directa. TambiÃ©n realizamos envÃ­os nacionales e internacionales con costo extra.`,
+                q: "Ãƒâ€šÃ‚Â¿CÃƒÆ’Ã‚Â³mo manejan entregas y envÃƒÆ’Ã‚Â­os?",
+                a: `Entrega inmediata en ${DELIVERY_INFO.immediate.join(", ")}, sujeta a existencias y coordinaciÃƒÆ’Ã‚Â³n directa. TambiÃƒÆ’Ã‚Â©n realizamos envÃƒÆ’Ã‚Â­os nacionales e internacionales con costo extra.`,
               },
               {
-                q: "Â¿Las fotos corresponden al producto real?",
-                a: "SÃ­. Las fotografÃ­as del catÃ¡logo corresponden a los modelos reales disponibles.",
+                q: "Ãƒâ€šÃ‚Â¿Las fotos corresponden al producto real?",
+                a: "SÃƒÆ’Ã‚Â­. Las fotografÃƒÆ’Ã‚Â­as del catÃƒÆ’Ã‚Â¡logo corresponden a los modelos reales disponibles.",
               },
             ].map((item, i) => (
               <motion.div
@@ -691,7 +705,7 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-white/60 sm:text-base">
                   Si buscas comprar gorras por volumen para revender o surtir tu
-                  negocio, conoce nuestra atenciÃ³n personalizada para mayoreo.
+                  negocio, conoce nuestra atenciÃƒÆ’Ã‚Â³n personalizada para mayoreo.
                   Atendemos tiendas, revendedores, boutiques, emprendedores,
                   marcas y otros negocios con seguimiento directo por WhatsApp.
                 </p>
@@ -721,10 +735,10 @@ export default function HomePage() {
 
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
                 {[
-                  "AtenciÃ³n personalizada",
+                  "AtenciÃƒÆ’Ã‚Â³n personalizada",
                   "Compra por volumen",
-                  "SelecciÃ³n de modelos segÃºn negocio",
-                  "EnvÃ­os nacionales e internacionales",
+                  "SelecciÃƒÆ’Ã‚Â³n de modelos segÃƒÆ’Ã‚Âºn negocio",
+                  "EnvÃƒÆ’Ã‚Â­os nacionales e internacionales",
                 ].map((item) => (
                   <div
                     key={item}
@@ -761,11 +775,11 @@ export default function HomePage() {
                 Cierre comercial
               </p>
               <h2 className="text-3xl font-bold tracking-tight text-white md:text-5xl">
-                Â¿Listo para elegir tu prÃ³xima gorra?
+                Ãƒâ€šÃ‚Â¿Listo para elegir tu prÃƒÆ’Ã‚Â³xima gorra?
               </h2>
               <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-white/60">
-                Explora el catÃ¡logo o recibe atenciÃ³n directa por WhatsApp para
-                confirmar disponibilidad, entrega o envÃ­o.
+                Explora el catÃƒÆ’Ã‚Â¡logo o recibe atenciÃƒÆ’Ã‚Â³n directa por WhatsApp para
+                confirmar disponibilidad, entrega o envÃƒÆ’Ã‚Â­o.
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
@@ -774,7 +788,7 @@ export default function HomePage() {
                     href="/catalogo"
                     className="inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:bg-white/92"
                   >
-                    Ver catÃ¡logo
+                    Ver catÃƒÆ’Ã‚Â¡logo
                   </Link>
                 </motion.div>
 
@@ -799,8 +813,8 @@ export default function HomePage() {
               >
                 {[
                   "Entrega inmediata",
-                  "AtenciÃ³n directa",
-                  "EnvÃ­os nacionales e internacionales",
+                  "AtenciÃƒÆ’Ã‚Â³n directa",
+                  "EnvÃƒÆ’Ã‚Â­os nacionales e internacionales",
                 ].map((item) => (
                   <motion.div
                     key={item}
