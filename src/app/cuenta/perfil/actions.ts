@@ -6,6 +6,18 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const allowedCustomerTypes = new Set(["retail", "wholesale"]);
 const allowedContactChannels = new Set(["whatsapp", "email", "instagram"]);
+const allowedAgeRanges = new Set(["under_18", "18_24", "25_34", "35_44", "45_plus", ""]);
+const allowedAcquisitionSources = new Set([
+  "instagram",
+  "facebook",
+  "whatsapp",
+  "recomendacion",
+  "google",
+  "tiktok",
+  "evento",
+  "otro",
+  "",
+]);
 
 function cleanText(value: FormDataEntryValue | null, maxLength: number) {
   return String(value ?? "").trim().replace(/\s+/g, " ").slice(0, maxLength);
@@ -63,6 +75,9 @@ export async function updateCustomerProfile(formData: FormData) {
   const deliveryNotes = cleanText(formData.get("delivery_notes"), 300);
   const customerType = cleanText(formData.get("customer_type"), 20).toLowerCase();
   const preferredContactChannel = cleanText(formData.get("preferred_contact_channel"), 20).toLowerCase();
+  const ageRange = cleanText(formData.get("age_range"), 20).toLowerCase();
+  const acquisitionSource = cleanText(formData.get("acquisition_source"), 50).toLowerCase();
+  const acquisitionSourceDetail = cleanText(formData.get("acquisition_source_detail"), 120);
   const acceptedMarketing = formData.get("accepted_marketing") === "on";
 
   if (!firstName) {
@@ -79,6 +94,14 @@ export async function updateCustomerProfile(formData: FormData) {
 
   if (!allowedContactChannels.has(preferredContactChannel)) {
     redirect("/cuenta/perfil?error=invalid-contact-channel");
+  }
+
+  if (!allowedAgeRanges.has(ageRange)) {
+    redirect("/cuenta/perfil?error=invalid-age-range");
+  }
+
+  if (!allowedAcquisitionSources.has(acquisitionSource)) {
+    redirect("/cuenta/perfil?error=invalid-acquisition-source");
   }
 
   let countryName: string | null = null;
@@ -176,7 +199,11 @@ export async function updateCustomerProfile(formData: FormData) {
       customer_type: customerType,
       preferred_contact_channel: preferredContactChannel,
       accepted_marketing: acceptedMarketing,
+      age_range: ageRange || null,
+      acquisition_source: acquisitionSource || null,
+      acquisition_source_detail: acquisitionSourceDetail || null,
       profile_completion_percent: profileCompletionPercent,
+      last_seen_at: new Date().toISOString(),
     })
     .eq("id", customer.id);
 

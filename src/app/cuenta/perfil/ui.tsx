@@ -33,6 +33,9 @@ type ProfileData = {
   preferred_contact_channel: string | null;
   accepted_marketing: boolean | null;
   profile_completion_percent: number | null;
+  age_range: string | null;
+  acquisition_source: string | null;
+  acquisition_source_detail: string | null;
 } | null;
 
 function getMessage(error?: string, success?: string) {
@@ -57,6 +60,10 @@ function getMessage(error?: string, success?: string) {
       return { tone: "error", text: "Ciudad inválida para el estado seleccionado." };
     case "missing-phone-country-code":
       return { tone: "error", text: "Debes capturar la lada país." };
+    case "invalid-age-range":
+      return { tone: "error", text: "Rango de edad inválido." };
+    case "invalid-acquisition-source":
+      return { tone: "error", text: "Origen de adquisición inválido." };
     case "update-failed":
       return { tone: "error", text: "No se pudo actualizar el perfil." };
     default:
@@ -162,10 +169,6 @@ export default function CuentaPerfilClient({
     }
   }, [selectedCountryCode, countries, phoneCountryCode]);
 
-  const countryOptionsReady = countries.length > 0;
-  const stateOptionsReady = selectedCountryCode && states.length >= 0;
-  const cityOptionsReady = selectedStateId && cities.length >= 0;
-
   const completion = profile?.profile_completion_percent ?? 0;
 
   const normalizedPhoneCountryCode = useMemo(
@@ -248,12 +251,11 @@ export default function CuentaPerfilClient({
                   className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
                 >
                   <option value="">Selecciona un país</option>
-                  {countryOptionsReady &&
-                    countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.name}
-                      </option>
-                    ))}
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -286,12 +288,11 @@ export default function CuentaPerfilClient({
                   <option value="">
                     {selectedCountryCode ? "Selecciona un estado" : "Primero selecciona país"}
                   </option>
-                  {stateOptionsReady &&
-                    states.map((state) => (
-                      <option key={state.id} value={state.id}>
-                        {state.name}
-                      </option>
-                    ))}
+                  {states.map((state) => (
+                    <option key={state.id} value={state.id}>
+                      {state.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -307,12 +308,11 @@ export default function CuentaPerfilClient({
                   <option value="">
                     {selectedStateId ? "Selecciona una ciudad" : "Primero selecciona estado"}
                   </option>
-                  {cityOptionsReady &&
-                    cities.map((city) => (
-                      <option key={city.id} value={city.id}>
-                        {city.name}
-                      </option>
-                    ))}
+                  {cities.map((city) => (
+                    <option key={city.id} value={city.id}>
+                      {city.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -390,6 +390,53 @@ export default function CuentaPerfilClient({
                 </select>
               </div>
 
+              <div>
+                <label className="mb-2 block text-sm text-white/80">Rango de edad (opcional)</label>
+                <select
+                  name="age_range"
+                  defaultValue={profile?.age_range ?? ""}
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                >
+                  <option value="">Prefiero no decirlo</option>
+                  <option value="under_18">Menor de 18</option>
+                  <option value="18_24">18 a 24</option>
+                  <option value="25_34">25 a 34</option>
+                  <option value="35_44">35 a 44</option>
+                  <option value="45_plus">45+</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm text-white/80">¿Cómo nos conociste? (opcional)</label>
+                <select
+                  name="acquisition_source"
+                  defaultValue={profile?.acquisition_source ?? ""}
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none"
+                >
+                  <option value="">Prefiero no decirlo</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="recomendacion">Recomendación</option>
+                  <option value="google">Google</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="evento">Evento</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm text-white/80">Detalle adicional (opcional)</label>
+                <input
+                  name="acquisition_source_detail"
+                  type="text"
+                  maxLength={120}
+                  defaultValue={profile?.acquisition_source_detail ?? ""}
+                  className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white outline-none placeholder:text-white/35"
+                  placeholder="Ejemplo: Recomendación de un amigo, anuncio, historia, etc."
+                />
+              </div>
+
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm text-white/80">Correo</label>
                 <input
@@ -424,6 +471,10 @@ export default function CuentaPerfilClient({
                 Acepto recibir comunicaciones comerciales, novedades y mensajes relacionados con productos y disponibilidad.
               </span>
             </label>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-sm text-white/70">
+              Estos datos analíticos son opcionales y nos ayudan a entender mejor a nuestra comunidad sin hacer el registro pesado.
+            </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <button

@@ -34,7 +34,10 @@ export default async function CuentaPerfilPage({
       customer_type,
       preferred_contact_channel,
       accepted_marketing,
-      profile_completion_percent
+      profile_completion_percent,
+      age_range,
+      acquisition_source,
+      acquisition_source_detail
     `)
     .eq("id", customer.id)
     .maybeSingle();

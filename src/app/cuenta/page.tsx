@@ -33,9 +33,30 @@ function buildAddress(profile: {
   return parts.join(" · ");
 }
 
+function ageRangeLabel(value: string | null) {
+  switch (value) {
+    case "under_18":
+      return "Menor de 18";
+    case "18_24":
+      return "18 a 24";
+    case "25_34":
+      return "25 a 34";
+    case "35_44":
+      return "35 a 44";
+    case "45_plus":
+      return "45+";
+    default:
+      return "Sin capturar";
+  }
+}
+
 export default async function CuentaPage() {
   const customer = await requireCustomer();
   const supabase = await createSupabaseServerClient();
+
+  await supabase.rpc("touch_customer_last_seen", {
+    p_customer_id: customer.id,
+  });
 
   const { data: profile } = await supabase
     .from("customer_profiles")
@@ -60,7 +81,13 @@ export default async function CuentaPage() {
       profile_completion_percent,
       email_verified_at,
       last_login_at,
-      password_changed_at
+      password_changed_at,
+      age_range,
+      acquisition_source,
+      acquisition_source_detail,
+      profile_completed_at,
+      first_seen_at,
+      last_seen_at
     `)
     .eq("id", customer.id)
     .maybeSingle();
@@ -100,7 +127,7 @@ export default async function CuentaPage() {
             Hola{displayName ? `, ${displayName}` : ""}
           </h1>
           <p className="mt-4 text-sm leading-7 text-white/70 sm:text-base">
-            Tu cuenta ya está lista como base comercial para futuras compras, pedidos y seguimiento.
+            Tu cuenta ya está lista como base comercial y analítica para futuras compras, pedidos y seguimiento.
           </p>
 
           {!profile?.is_active ? (
@@ -209,6 +236,42 @@ export default async function CuentaPage() {
                 <p>{profile?.last_login_at ? "Último acceso registrado" : "Sin acceso registrado"}</p>
                 <p>{profile?.password_changed_at ? "Contraseña actualizada al menos una vez" : "Contraseña sin cambio registrado"}</p>
               </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Rango de edad</p>
+              <p className="mt-2 text-sm text-white/80">
+                {ageRangeLabel(profile?.age_range ?? null)}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Cómo nos conoció</p>
+              <p className="mt-2 text-sm text-white/80">
+                {profile?.acquisition_source ?? "Sin capturar"}
+              </p>
+              <p className="mt-1 text-xs text-white/45">
+                {profile?.acquisition_source_detail?.trim() || "Sin detalle adicional"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Primera vez visto</p>
+              <p className="mt-2 text-sm text-white/80">
+                {profile?.first_seen_at ? new Date(profile.first_seen_at).toLocaleString("es-MX") : "Sin registro"}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/40">Última vez visto</p>
+              <p className="mt-2 text-sm text-white/80">
+                {profile?.last_seen_at ? new Date(profile.last_seen_at).toLocaleString("es-MX") : "Sin registro"}
+              </p>
+              <p className="mt-1 text-xs text-white/45">
+                {profile?.profile_completed_at ? `Perfil completado: ${new Date(profile.profile_completed_at).toLocaleString("es-MX")}` : "Perfil aún no completado al 100%"}
+              </p>
             </div>
           </div>
 
