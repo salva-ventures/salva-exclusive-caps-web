@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import CatalogDynamicFilters from "@/components/catalog/CatalogDynamicFilters";
 import {
   matchesCatalogFilters,
@@ -87,6 +87,7 @@ export default function CatalogoMenudeoRealtime() {
   const [selectedDynamicFilters, setSelectedDynamicFilters] = useState<SelectedCatalogFilters>({});
 
   const [search, setSearch] = useState("");
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [nfcFilter, setNfcFilter] = useState<"all" | "with" | "without">("all");
   const [stockFilter, setStockFilter] = useState<"all" | "available" | "soldout">("all");
   const [rarityFilter, setRarityFilter] = useState<"all" | "Selecta" | "Destacada" | "Elite" | "Legendaria">("all");
@@ -264,13 +265,47 @@ export default function CatalogoMenudeoRealtime() {
             type="text"
             placeholder="Buscar gorra..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearch(value);
+
+              if (searchTimeoutRef.current) {
+                clearTimeout(searchTimeoutRef.current);
+              }
+
+              searchTimeoutRef.current = setTimeout(() => {
+                if (value.trim().length > 1) {
+                  trackClientEvent({
+                    eventType: "search_performed",
+                    entityType: "catalog",
+                    entitySlug: "menudeo",
+                    searchQuery: value,
+                    eventData: {
+                      source: "catalog-search",
+                    },
+                  });
+                }
+              }, 500);
+            }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/40"
           />
 
           <select
             value={nfcFilter}
-            onChange={(e) => setNfcFilter(e.target.value as typeof nfcFilter)}
+            onChange={(e) => {
+              const value = e.target.value as typeof nfcFilter;
+              setNfcFilter(value);
+
+              trackClientEvent({
+                eventType: "filter_applied",
+                entityType: "catalog",
+                entitySlug: "menudeo",
+                eventData: {
+                  filter: "nfc",
+                  value,
+                },
+              });
+            }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
           >
             <option value="all">Todas las piezas</option>
@@ -280,7 +315,20 @@ export default function CatalogoMenudeoRealtime() {
 
           <select
             value={stockFilter}
-            onChange={(e) => setStockFilter(e.target.value as typeof stockFilter)}
+            onChange={(e) => {
+              const value = e.target.value as typeof stockFilter;
+              setStockFilter(value);
+
+              trackClientEvent({
+                eventType: "filter_applied",
+                entityType: "catalog",
+                entitySlug: "menudeo",
+                eventData: {
+                  filter: "stock",
+                  value,
+                },
+              });
+            }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
           >
             <option value="all">Todo el stock</option>
@@ -290,7 +338,20 @@ export default function CatalogoMenudeoRealtime() {
 
           <select
             value={rarityFilter}
-            onChange={(e) => setRarityFilter(e.target.value as typeof rarityFilter)}
+            onChange={(e) => {
+              const value = e.target.value as typeof rarityFilter;
+              setRarityFilter(value);
+
+              trackClientEvent({
+                eventType: "filter_applied",
+                entityType: "catalog",
+                entitySlug: "menudeo",
+                eventData: {
+                  filter: "rarity",
+                  value,
+                },
+              });
+            }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
           >
             <option value="all">Todos los niveles</option>
@@ -303,7 +364,20 @@ export default function CatalogoMenudeoRealtime() {
 
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            onChange={(e) => {
+              const value = e.target.value as SortOption;
+              setSortBy(value);
+
+              trackClientEvent({
+                eventType: "filter_applied",
+                entityType: "catalog",
+                entitySlug: "menudeo",
+                eventData: {
+                  filter: "sort",
+                  value,
+                },
+              });
+            }}
             className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none"
           >
             <option value="featured">Orden recomendado</option>
@@ -417,5 +491,8 @@ export default function CatalogoMenudeoRealtime() {
     </section>
   );
 }
+
+
+
 
 
