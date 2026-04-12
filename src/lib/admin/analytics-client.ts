@@ -161,3 +161,36 @@ export type CommercialSegmentRow = {
   segment_code: string;
   segment_label: string;
 };
+
+export type ProductDemandRow = {
+  entity_id: string | null;
+  entity_slug: string | null;
+  product_views: number;
+  unique_customers: number;
+  unique_sessions: number;
+  product_views_7d: number;
+  product_views_30d: number;
+  menudeo_views: number;
+  mayoreo_views: number;
+  dominant_catalog: string | null;
+  first_event_at: string | null;
+  last_event_at: string | null;
+  recent_interest_ratio_pct: number;
+};
+
+export type SearchOpportunityRow = {
+  search_query_normalized: string;
+  search_query_sample: string | null;
+  total_searches: number;
+  unique_customers: number;
+  unique_sessions: number;
+  menudeo_searches: number;
+  mayoreo_searches: number;
+  dominant_catalog: string | null;
+  product_views_after_search: number;
+  search_to_product_view_rate_pct: number;
+  opportunity_code: string;
+  opportunity_label: string;
+  first_search_at: string | null;
+  last_search_at: string | null;
+};
