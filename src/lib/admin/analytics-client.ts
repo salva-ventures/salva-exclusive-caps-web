@@ -1,4 +1,4 @@
-export async function fetchAdminAnalyticsJson<T>(path: string): Promise<T> {
+﻿export async function fetchAdminAnalyticsJson<T>(path: string): Promise<T> {
   const response = await fetch(path, {
     method: "GET",
     cache: "no-store",
@@ -98,4 +98,19 @@ export type RecentlyActiveCustomerRow = {
   profile_completed_at: string | null;
   acquisition_source: string | null;
   country_code: string | null;
+};
+
+export type TopProductRow = {
+  entity_slug: string | null;
+  total_events: number;
+};
+
+export type SearchTermRow = {
+  search_query: string | null;
+  total_searches: number;
+};
+
+export type TopCatalogRow = {
+  entity_slug: string | null;
+  total_events: number;
 };

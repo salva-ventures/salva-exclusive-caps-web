@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -59,7 +59,7 @@ const initialState: DashboardState = {
 };
 
 function formatDate(value: string | null | undefined) {
-  if (!value) return "—";
+  if (!value) return "â€”";
   return new Date(value).toLocaleString("es-MX");
 }
 
@@ -347,14 +347,14 @@ export default function AnalyticsDashboardClient() {
       <SectionCard
         eyebrow="Control"
         title="Rango de fechas"
-        description="Ahora el rango sí se calcula desde backend. Todo el dashboard consume datos ya filtrados en servidor."
+        description="Ahora el rango sÃ­ se calcula desde backend. Todo el dashboard consume datos ya filtrados en servidor."
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex flex-wrap gap-2">
             {[
-              { value: "7d", label: "Últimos 7 días" },
-              { value: "30d", label: "Últimos 30 días" },
-              { value: "90d", label: "Últimos 90 días" },
+              { value: "7d", label: "Ãšltimos 7 dÃ­as" },
+              { value: "30d", label: "Ãšltimos 30 dÃ­as" },
+              { value: "90d", label: "Ãšltimos 90 dÃ­as" },
               { value: "custom", label: "Personalizado" },
             ].map((item) => (
               <button
@@ -437,7 +437,7 @@ export default function AnalyticsDashboardClient() {
       <section className="grid gap-6 xl:grid-cols-2">
         <SectionCard
           eyebrow="Registros"
-          title="Registros por día"
+          title="Registros por dÃ­a"
           description="Lectura de altas diarias dentro del rango seleccionado."
         >
           {registrationChartData.length > 0 ? (
@@ -466,8 +466,8 @@ export default function AnalyticsDashboardClient() {
 
         <SectionCard
           eyebrow="Actividad"
-          title="Accesos por día"
-          description="Mide el ritmo de uso real del módulo de cuenta en el periodo actual."
+          title="Accesos por dÃ­a"
+          description="Mide el ritmo de uso real del mÃ³dulo de cuenta en el periodo actual."
         >
           {activityChartData.length > 0 ? (
             <div className="h-80">
@@ -504,7 +504,7 @@ export default function AnalyticsDashboardClient() {
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <SectionCard
           eyebrow="Embudo"
-          title="Embudo de activación"
+          title="Embudo de activaciÃ³n"
           description="Resume el paso desde registro hasta perfil completo."
         >
           {state.funnel.length > 0 ? (
@@ -546,14 +546,14 @@ export default function AnalyticsDashboardClient() {
               </div>
             </div>
           ) : (
-            <EmptyState text="Todavía no hay datos suficientes para mostrar el embudo." />
+            <EmptyState text="TodavÃ­a no hay datos suficientes para mostrar el embudo." />
           )}
         </SectionCard>
 
         <SectionCard
           eyebrow="Eventos"
           title="Tipos de evento en el rango"
-          description="Distribución de los eventos visibles ya filtrados desde backend."
+          description="DistribuciÃ³n de los eventos visibles ya filtrados desde backend."
         >
           <div className="space-y-3">
             {state.eventTypes.length > 0 ? (
@@ -565,7 +565,7 @@ export default function AnalyticsDashboardClient() {
                   <div>
                     <p className="text-sm font-medium text-white">{eventLabel(item.event_type)}</p>
                     <p className="text-xs text-white/45">
-                      {item.unique_customers} clientes únicos
+                      {item.unique_customers} clientes Ãºnicos
                     </p>
                   </div>
                   <p className="text-sm font-semibold text-white">{item.total_events}</p>
@@ -580,7 +580,7 @@ export default function AnalyticsDashboardClient() {
 
       <section className="grid gap-6 xl:grid-cols-2">
         <SectionCard
-          eyebrow="Adquisición"
+          eyebrow="AdquisiciÃ³n"
           title="Fuentes principales"
           description="Canales declarados por los clientes al completar su perfil."
         >
@@ -595,7 +595,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{row.label}</p>
                       <p className="text-xs text-white/45">
-                        Verificados: {row.verified_customers} · Activos en rango: {row.active_last_30d}
+                        Verificados: {row.verified_customers} Â· Activos en rango: {row.active_last_30d}
                       </p>
                     </div>
                     <div className="text-right">
@@ -607,14 +607,14 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="Aún no hay fuentes de adquisición con datos útiles." />
+            <EmptyState text="AÃºn no hay fuentes de adquisiciÃ³n con datos Ãºtiles." />
           )}
         </SectionCard>
 
         <SectionCard
           eyebrow="Intereses"
           title="Intereses principales"
-          description="Qué temas y preferencias capturan más atención dentro del perfil."
+          description="QuÃ© temas y preferencias capturan mÃ¡s atenciÃ³n dentro del perfil."
         >
           {topInterests.length > 0 ? (
             <div className="grid gap-3 sm:grid-cols-2">
@@ -635,7 +635,7 @@ export default function AnalyticsDashboardClient() {
               ))}
             </div>
           ) : (
-            <EmptyState text="Todavía no hay intereses capturados para mostrar." />
+            <EmptyState text="TodavÃ­a no hay intereses capturados para mostrar." />
           )}
         </SectionCard>
       </section>
@@ -644,7 +644,7 @@ export default function AnalyticsDashboardClient() {
         <SectionCard
           eyebrow="Eventos recientes"
           title="Actividad reciente"
-          description="Lectura cronológica de los eventos capturados para clientes."
+          description="Lectura cronolÃ³gica de los eventos capturados para clientes."
         >
           {state.recentEvents.length > 0 ? (
             <div className="space-y-3">
@@ -666,7 +666,7 @@ export default function AnalyticsDashboardClient() {
                         ) : null}
                       </div>
                       <p className="mt-1 text-xs text-white/45">
-                        {event.email ?? "Sin correo"} · {event.page_path ?? "sin ruta"}
+                        {event.email ?? "Sin correo"} Â· {event.page_path ?? "sin ruta"}
                       </p>
                     </div>
                     <p className="text-xs text-white/45">{formatDate(event.event_timestamp)}</p>
@@ -695,7 +695,7 @@ export default function AnalyticsDashboardClient() {
                     <div>
                       <p className="text-sm font-medium text-white">{customerName(customer)}</p>
                       <p className="mt-1 text-xs text-white/45">
-                        {customer.email ?? "Sin correo"} · {customer.customer_type ?? "sin tipo"}
+                        {customer.email ?? "Sin correo"} Â· {customer.customer_type ?? "sin tipo"}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {customer.country_code ? (
@@ -734,8 +734,8 @@ export default function AnalyticsDashboardClient() {
       <section className="grid gap-6 xl:grid-cols-2">
         <SectionCard
           eyebrow="Detalle"
-          title="Adquisición completa"
-          description="Tabla compacta para lectura rápida y validación manual."
+          title="AdquisiciÃ³n completa"
+          description="Tabla compacta para lectura rÃ¡pida y validaciÃ³n manual."
         >
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-white/80">
@@ -770,8 +770,8 @@ export default function AnalyticsDashboardClient() {
             <table className="min-w-full text-sm text-white/80">
               <thead className="text-left text-white/40">
                 <tr className="border-b border-white/8">
-                  <th className="pb-3 pr-4 font-medium">Interés</th>
-                  <th className="pb-3 pr-4 font-medium">Categoría</th>
+                  <th className="pb-3 pr-4 font-medium">InterÃ©s</th>
+                  <th className="pb-3 pr-4 font-medium">CategorÃ­a</th>
                   <th className="pb-3 pr-4 font-medium">Clientes</th>
                   <th className="pb-3 font-medium">Activos en rango</th>
                 </tr>
@@ -793,3 +793,4 @@ export default function AnalyticsDashboardClient() {
     </div>
   );
 }
+
