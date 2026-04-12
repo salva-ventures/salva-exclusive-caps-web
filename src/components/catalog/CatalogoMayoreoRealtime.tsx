@@ -98,6 +98,19 @@ export default function CatalogoMayoreoRealtime() {
       setError(null);
       const data = await fetchPublicCatalog("wholesale");
       setItems(data);
+
+      if (data.length > 0) {
+        trackClientEvent({
+          eventType: "catalog_view",
+          entityType: "catalog",
+          entitySlug: "mayoreo",
+          pagePath: "/catalogo/mayoreo",
+          pageTitle: "Catálogo Mayoreo",
+          eventData: {
+            item_count: data.length,
+          },
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
@@ -111,15 +124,6 @@ export default function CatalogoMayoreoRealtime() {
 
   
   useEffect(() => {
-    trackClientEvent({
-      eventType: "catalog_view",
-      entityType: "catalog",
-      entitySlug: "mayoreo",
-      pagePath: "/catalogo/mayoreo",
-      pageTitle: "Catálogo Mayoreo",
-    });
-  }, []);
-useEffect(() => {
     let cancelled = false;
 
     async function loadFilters() {
@@ -380,9 +384,4 @@ useEffect(() => {
     </section>
   );
 }
-
-
-
-
-
 

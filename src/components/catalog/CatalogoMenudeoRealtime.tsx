@@ -97,6 +97,19 @@ export default function CatalogoMenudeoRealtime() {
       setError(null);
       const data = await fetchPublicCatalog("retail");
       setItems(data);
+
+      if (data.length > 0) {
+        trackClientEvent({
+          eventType: "catalog_view",
+          entityType: "catalog",
+          entitySlug: "menudeo",
+          pagePath: "/catalogo/menudeo",
+          pageTitle: "Catálogo Menudeo",
+          eventData: {
+            item_count: data.length,
+          },
+        });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
@@ -110,15 +123,6 @@ export default function CatalogoMenudeoRealtime() {
 
   
   useEffect(() => {
-    trackClientEvent({
-      eventType: "catalog_view",
-      entityType: "catalog",
-      entitySlug: "menudeo",
-      pagePath: "/catalogo/menudeo",
-      pageTitle: "Catálogo Menudeo",
-    });
-  }, []);
-useEffect(() => {
     let cancelled = false;
 
     async function loadFilters() {
@@ -413,6 +417,4 @@ useEffect(() => {
     </section>
   );
 }
-
-
 
