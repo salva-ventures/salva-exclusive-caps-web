@@ -114,3 +114,50 @@ export type TopCatalogRow = {
   entity_slug: string | null;
   total_events: number;
 };
+
+export type IntentScoreRow = {
+  customer_id: string;
+  commercial_intent_score: number;
+  commercial_intent_level: "low" | "medium" | "high";
+  total_scored_events: number;
+  catalog_views: number;
+  product_views: number;
+  searches: number;
+  filters: number;
+  cta_clicks: number;
+  whatsapp_clicks: number;
+  menudeo_events: number;
+  mayoreo_events: number;
+  dominant_catalog: string | null;
+  unique_sessions: number;
+  first_activity_at: string | null;
+  last_activity_at: string | null;
+};
+
+export type CommercialSegmentRow = {
+  customer_id: string;
+  commercial_intent_score: number;
+  commercial_intent_level: "low" | "medium" | "high";
+  dominant_catalog: string | null;
+  total_scored_events: number;
+  catalog_views: number;
+  product_views: number;
+  searches: number;
+  filters: number;
+  cta_clicks: number;
+  whatsapp_clicks: number;
+  unique_sessions: number;
+  first_activity_at: string | null;
+  last_activity_at: string | null;
+  customer_type: string | null;
+  profile_completion_percent: number | null;
+  accepted_marketing: boolean | null;
+  preferred_contact_channel: string | null;
+  acquisition_source: string | null;
+  first_seen_at: string | null;
+  last_seen_at: string | null;
+  profile_completed_at: string | null;
+  is_active: boolean | null;
+  segment_code: string;
+  segment_label: string;
+};
