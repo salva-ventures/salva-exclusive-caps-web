@@ -331,7 +331,7 @@ export default function CatalogoMenudeoRealtime() {
             const statusLabel = getAvailabilityLabel(item.availability_status, item.stock_available);
 
             return (
-              <article
+              <article onClick={() => trackClientEvent({ eventType: "product_view", entityType: "product", entityId: item.id, entitySlug: item.slug, eventData: { name: item.name, price: item.price, in_stock: item.stock_available > 0 } })}
                 key={item.id}
                 className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 backdrop-blur"
               >
@@ -417,4 +417,5 @@ export default function CatalogoMenudeoRealtime() {
     </section>
   );
 }
+
 
