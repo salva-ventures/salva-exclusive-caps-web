@@ -405,11 +405,11 @@ export default function CatalogoMenudeoRealtime() {
             const statusLabel = getAvailabilityLabel(item.availability_status, item.stock_available);
 
             return (
-              <article onClick={() => trackClientEvent({ eventType: "product_view", entityType: "product", entityId: item.id, entitySlug: item.slug, eventData: { name: item.name, price: item.price, in_stock: item.stock_available > 0 } })}
+              <article
                 key={item.id}
                 className="overflow-hidden rounded-3xl border border-white/10 bg-black/30 backdrop-blur"
               >
-                <div className="aspect-square w-full bg-white/5">
+                <div onClick={() => trackClientEvent({ eventType: "product_view", entityType: "product", entityId: item.id, entitySlug: item.slug, eventData: { name: item.name, price: item.price, in_stock: item.stock_available > 0 } })} className="aspect-square w-full bg-white/5 cursor-pointer">
                   {item.image_url ? (
                     <Image src={item.image_url} alt={item.image_alt} width={800} height={800} className="h-full w-full object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" />
                   ) : (
@@ -491,6 +491,7 @@ export default function CatalogoMenudeoRealtime() {
     </section>
   );
 }
+
 
 
 
