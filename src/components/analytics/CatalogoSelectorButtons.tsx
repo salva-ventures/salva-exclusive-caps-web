@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { trackClientEvent } from "@/lib/analytics/track-client";
@@ -38,3 +38,4 @@ export default function CatalogoSelectorButtons({
     </div>
   );
 }
+

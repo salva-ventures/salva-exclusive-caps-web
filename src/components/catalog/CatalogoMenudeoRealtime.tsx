@@ -10,6 +10,7 @@ import {
   type SelectedCatalogFilters,
 } from "@/lib/catalog/filter-engine";
 import { fetchPublicCatalog, type PublicCatalogItem } from "@/lib/catalog/public-catalog";
+import { trackClientEvent } from "@/lib/analytics/track-client";
 
 type SortOption =
   | "featured"
@@ -107,7 +108,17 @@ export default function CatalogoMenudeoRealtime() {
     void loadCatalog();
   }, []);
 
+  
   useEffect(() => {
+    trackClientEvent({
+      eventType: "catalog_view",
+      entityType: "catalog",
+      entitySlug: "menudeo",
+      pagePath: "/catalogo/menudeo",
+      pageTitle: "Catálogo Menudeo",
+    });
+  }, []);
+useEffect(() => {
     let cancelled = false;
 
     async function loadFilters() {
@@ -402,5 +413,6 @@ export default function CatalogoMenudeoRealtime() {
     </section>
   );
 }
+
 
 

@@ -10,6 +10,7 @@ import {
   type SelectedCatalogFilters,
 } from "@/lib/catalog/filter-engine";
 import { fetchPublicCatalog, type PublicCatalogItem } from "@/lib/catalog/public-catalog";
+import { trackClientEvent } from "@/lib/analytics/track-client";
 
 type SortOption =
   | "featured"
@@ -108,7 +109,17 @@ export default function CatalogoMayoreoRealtime() {
     void loadCatalog();
   }, []);
 
+  
   useEffect(() => {
+    trackClientEvent({
+      eventType: "catalog_view",
+      entityType: "catalog",
+      entitySlug: "mayoreo",
+      pagePath: "/catalogo/mayoreo",
+      pageTitle: "Catálogo Mayoreo",
+    });
+  }, []);
+useEffect(() => {
     let cancelled = false;
 
     async function loadFilters() {
@@ -369,6 +380,7 @@ export default function CatalogoMayoreoRealtime() {
     </section>
   );
 }
+
 
 
 
