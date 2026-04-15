@@ -79,16 +79,34 @@ export default async function BackInStockAdminPage() {
 
   return (
     <section className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-[0.28em] text-white/50">
-          Back in stock
-        </p>
-        <h2 className="mt-2 text-3xl font-semibold text-white">
-          Solicitudes de reposición
-        </h2>
-        <p className="mt-2 text-white/65">
-          Usuarios que quieren ser notificados cuando un producto vuelva a tener stock.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.28em] text-white/50">
+            Back in stock
+          </p>
+          <h2 className="mt-2 text-3xl font-semibold text-white">
+            Solicitudes de reposición
+          </h2>
+          <p className="mt-2 text-white/65">
+            Usuarios que quieren ser notificados cuando un producto vuelva a tener stock.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="/api/admin/back-in-stock/export?format=csv"
+            className="rounded-2xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90"
+          >
+            Exportar CSV
+          </a>
+
+          <a
+            href="/api/admin/back-in-stock/export"
+            className="rounded-2xl border border-white/10 px-5 py-3 text-sm text-white/80 transition hover:bg-white/[0.04]"
+          >
+            Ver JSON
+          </a>
+        </div>
       </div>
 
       <div className="text-sm text-white/50">

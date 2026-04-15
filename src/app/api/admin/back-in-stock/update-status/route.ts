@@ -3,7 +3,7 @@ import { requireAdminUser } from "@/lib/admin/auth";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(request: Request) {
-    await requireAdminUser();
+    const adminUser = await requireAdminUser();
 
     const body = (await request.json().catch(() => null)) as
         | {

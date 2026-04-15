@@ -35,7 +35,9 @@ export default function ProductDetailClient({
     const [imageMap, setImageMap] = useState<ProductImagesMap>({});
     const [activeImage, setActiveImage] = useState(0);
     const [showBackInStock, setShowBackInStock] = useState(false);
+    const [channel, setChannel] = useState<"email" | "whatsapp">("email");
     const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
 
@@ -101,17 +103,27 @@ export default function ProductDetailClient({
         setMessage(null);
 
         try {
+            const payload =
+                channel === "email"
+                    ? {
+                        productId: product.id,
+                        channel: "email" as const,
+                        email,
+                        source: "product_page",
+                    }
+                    : {
+                        productId: product.id,
+                        channel: "whatsapp" as const,
+                        phone,
+                        source: "product_page",
+                    };
+
             const res = await fetch("/api/back-in-stock/request", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    productId: product.id,
-                    channel: "email",
-                    email,
-                    source: "product_page",
-                }),
+                body: JSON.stringify(payload),
             });
 
             const data = await res.json();
@@ -120,8 +132,9 @@ export default function ProductDetailClient({
                 throw new Error(data.error || "Error al registrar solicitud");
             }
 
-            setMessage("Listo. Te avisaremos cuando haya stock.");
+            setMessage("Listo. Te avisaremos cuando haya disponibilidad.");
             setEmail("");
+            setPhone("");
         } catch (err) {
             setMessage(err instanceof Error ? err.message : "Error inesperado");
         } finally {
@@ -131,12 +144,12 @@ export default function ProductDetailClient({
 
     return (
         <div className="bg-black min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div className="mx-auto max-w-7xl px-4 py-12">
+                <div className="mb-16 grid grid-cols-1 gap-12 lg:grid-cols-2">
                     <div>
-                        <div className="relative aspect-square bg-[#111] border border-[#222] overflow-hidden mb-4 shadow-[0_0_30px_rgba(220,38,38,0.15)]">
+                        <div className="relative mb-4 aspect-square overflow-hidden border border-[#222] bg-[#111] shadow-[0_0_30px_rgba(220,38,38,0.15)]">
                             <div
-                                className="w-full h-full transition-all duration-500 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
+                                className="h-full w-full bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] transition-all duration-500"
                                 style={{
                                     backgroundImage: `url(${productGalleryUrls[activeImage]})`,
                                     backgroundSize: "cover",
@@ -151,13 +164,13 @@ export default function ProductDetailClient({
                                     <button
                                         key={`${img}-${i}`}
                                         onClick={() => setActiveImage(i)}
-                                        className={`flex-1 aspect-square border-2 overflow-hidden transition-all duration-300 ${activeImage === i
+                                        className={`aspect-square flex-1 overflow-hidden border-2 transition-all duration-300 ${activeImage === i
                                                 ? "border-red-600 shadow-[0_0_20px_rgba(220,38,38,0.4)]"
                                                 : "border-[#222] hover:border-[#444]"
                                             }`}
                                     >
                                         <div
-                                            className="w-full h-full bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
+                                            className="h-full w-full bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]"
                                             style={{
                                                 backgroundImage: `url(${img})`,
                                                 backgroundSize: "cover",
@@ -171,27 +184,27 @@ export default function ProductDetailClient({
                     </div>
 
                     <div className="flex flex-col">
-                        <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-2">
+                        <p className="mb-2 text-xs uppercase tracking-[0.4em] text-red-600">
                             {product.tipo}
                         </p>
-                        <h1 className="text-white font-bold text-3xl md:text-4xl tracking-tight mb-4">
+                        <h1 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl">
                             {product.name}
                         </h1>
-                        <p className="text-[#888] text-sm mb-6">SKU: {product.sku}</p>
+                        <p className="mb-6 text-sm text-[#888]">SKU: {product.sku}</p>
 
-                        <p className="text-[#ccc] leading-relaxed mb-8">
+                        <p className="mb-8 leading-relaxed text-[#ccc]">
                             {product.shortDescription}
                         </p>
 
                         <div className="mb-6">
-                            <p className="text-white text-xs tracking-widest uppercase mb-3">
+                            <p className="mb-3 text-xs uppercase tracking-widest text-white">
                                 Colores disponibles
                             </p>
                             <div className="flex flex-wrap gap-2">
                                 {product.colors.map((color) => (
                                     <span
                                         key={color}
-                                        className="border border-[#333] text-[#888] px-3 py-1 text-xs"
+                                        className="border border-[#333] px-3 py-1 text-xs text-[#888]"
                                     >
                                         {color}
                                     </span>
@@ -199,42 +212,77 @@ export default function ProductDetailClient({
                             </div>
                         </div>
 
-                        <div className="bg-[#111] border border-[#222] p-5 mb-8 space-y-4">
-                            <p className="text-white text-sm font-medium">Disponibilidad</p>
+                        <div className="mb-8 space-y-4 border border-[#222] bg-[#111] p-5">
+                            <p className="text-sm font-medium text-white">Disponibilidad</p>
 
                             {!isOutOfStock ? (
-                                <p className="text-green-400 text-sm">
+                                <p className="text-sm text-green-400">
                                     Disponible ({stockAvailable} en stock)
                                 </p>
                             ) : (
                                 <>
-                                    <p className="text-red-400 text-sm">Actualmente sin stock</p>
+                                    <p className="text-sm text-red-400">Actualmente sin stock</p>
 
                                     {!showBackInStock ? (
                                         <button
                                             onClick={() => setShowBackInStock(true)}
-                                            className="border border-red-600 text-red-500 hover:bg-red-600 hover:text-white px-6 py-3 text-xs tracking-[0.2em] uppercase transition"
+                                            className="px-6 py-3 text-xs uppercase tracking-[0.2em] text-red-500 transition hover:bg-red-600 hover:text-white border border-red-600"
                                         >
                                             Avisarme cuando haya stock
                                         </button>
                                     ) : (
                                         <form
                                             onSubmit={handleBackInStockSubmit}
-                                            className="space-y-3"
+                                            className="space-y-4"
                                         >
-                                            <input
-                                                type="email"
-                                                placeholder="Tu correo"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                required
-                                                className="w-full bg-black border border-[#333] px-4 py-3 text-sm text-white outline-none focus:border-red-600"
-                                            />
+                                            <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setChannel("email")}
+                                                    className={`flex-1 px-4 py-3 text-xs uppercase tracking-[0.16em] transition ${channel === "email"
+                                                            ? "bg-white text-black"
+                                                            : "border border-[#333] text-[#aaa] hover:border-[#555] hover:text-white"
+                                                        }`}
+                                                >
+                                                    Correo
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setChannel("whatsapp")}
+                                                    className={`flex-1 px-4 py-3 text-xs uppercase tracking-[0.16em] transition ${channel === "whatsapp"
+                                                            ? "bg-white text-black"
+                                                            : "border border-[#333] text-[#aaa] hover:border-[#555] hover:text-white"
+                                                        }`}
+                                                >
+                                                    WhatsApp
+                                                </button>
+                                            </div>
+
+                                            {channel === "email" ? (
+                                                <input
+                                                    type="email"
+                                                    placeholder="Tu correo"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    required
+                                                    className="w-full border border-[#333] bg-black px-4 py-3 text-sm text-white outline-none focus:border-red-600"
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Tu WhatsApp"
+                                                    value={phone}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    required
+                                                    className="w-full border border-[#333] bg-black px-4 py-3 text-sm text-white outline-none focus:border-red-600"
+                                                />
+                                            )}
 
                                             <button
                                                 type="submit"
                                                 disabled={loading}
-                                                className="w-full bg-white text-black px-6 py-3 text-xs tracking-[0.2em] uppercase font-medium hover:bg-gray-200 transition disabled:opacity-50"
+                                                className="w-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.2em] text-black transition hover:bg-gray-200 disabled:opacity-50"
                                             >
                                                 {loading ? "Enviando..." : "Recibir aviso"}
                                             </button>
@@ -252,13 +300,14 @@ export default function ProductDetailClient({
                             href={waLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 text-center mb-4"
+                            className="mb-4 bg-red-600 px-8 py-4 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-red-700"
                         >
                             Consultar por WhatsApp
                         </a>
+
                         <Link
                             href="/catalogo"
-                            className="border border-[#333] hover:border-white text-[#888] hover:text-white px-8 py-4 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300 text-center"
+                            className="border border-[#333] px-8 py-4 text-center text-xs font-medium uppercase tracking-[0.2em] text-[#888] transition-all duration-300 hover:border-white hover:text-white"
                         >
                             Volver al Catálogo
                         </Link>
@@ -268,14 +317,15 @@ export default function ProductDetailClient({
                 {relatedProductsWithImages.length > 0 && (
                     <div className="border-t border-[#222] pt-16">
                         <div className="mb-12">
-                            <p className="text-red-600 text-xs tracking-[0.4em] uppercase mb-3">
+                            <p className="mb-3 text-xs uppercase tracking-[0.4em] text-red-600">
                                 Relacionados
                             </p>
-                            <h2 className="text-white font-bold text-3xl md:text-4xl tracking-tight">
+                            <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
                                 Productos Similares
                             </h2>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {relatedProductsWithImages.map((relatedProduct) => (
                                 <ProductCard key={relatedProduct.id} product={relatedProduct} />
                             ))}
