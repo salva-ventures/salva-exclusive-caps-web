@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import MediaQuickActions from "@/components/admin/MediaQuickActions";
+import MediaSortableGrid from "@/components/admin/MediaSortableGrid";
 import { requireAdminUser } from "@/lib/admin/auth";
 import { getAdminProductHistory } from "@/lib/admin/history";
 import { getAdminProductMedia } from "@/lib/admin/product-media";
@@ -32,12 +33,12 @@ function Badge({
     tone === "green"
       ? "bg-green-500/15 text-green-300"
       : tone === "blue"
-      ? "bg-blue-500/15 text-blue-300"
-      : tone === "yellow"
-      ? "bg-yellow-500/15 text-yellow-200"
-      : tone === "red"
-      ? "bg-red-500/15 text-red-200"
-      : "bg-white/10 text-white/70";
+        ? "bg-blue-500/15 text-blue-300"
+        : tone === "yellow"
+          ? "bg-yellow-500/15 text-yellow-200"
+          : tone === "red"
+            ? "bg-red-500/15 text-red-200"
+            : "bg-white/10 text-white/70";
 
   return (
     <span className={`rounded-full px-3 py-1 text-xs ${toneClasses}`}>
@@ -321,58 +322,70 @@ export default async function AdminProductMediaPage({
       </div>
 
       <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="mb-4">
+          <p className="text-xs uppercase tracking-[0.28em] text-white/50">
+            Reordenamiento visual
+          </p>
+          <h3 className="mt-2 text-xl font-semibold text-white">
+            Drag & drop de imagenes activas
+          </h3>
+        </div>
+
+        <MediaSortableGrid
+          productId={product.id}
+          productName={product.name}
+          media={product.media}
+        />
+      </div>
+
+      <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
         <div className="mb-5 flex flex-wrap gap-2">
           <a
             href={`/admin/products/${product.id}/media`}
-            className={`rounded-xl px-4 py-2 text-sm transition ${
-              view === "all"
+            className={`rounded-xl px-4 py-2 text-sm transition ${view === "all"
                 ? "bg-white text-black"
                 : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-            }`}
+              }`}
           >
             Todos
           </a>
 
           <a
             href={`/admin/products/${product.id}/media?view=images`}
-            className={`rounded-xl px-4 py-2 text-sm transition ${
-              view === "images"
+            className={`rounded-xl px-4 py-2 text-sm transition ${view === "images"
                 ? "bg-white text-black"
                 : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-            }`}
+              }`}
           >
             Imagenes
           </a>
 
           <a
             href={`/admin/products/${product.id}/media?view=videos`}
-            className={`rounded-xl px-4 py-2 text-sm transition ${
-              view === "videos"
+            className={`rounded-xl px-4 py-2 text-sm transition ${view === "videos"
                 ? "bg-white text-black"
                 : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-            }`}
+              }`}
           >
             Videos
           </a>
 
           <a
             href={`/admin/products/${product.id}/media?view=active`}
-            className={`rounded-xl px-4 py-2 text-sm transition ${
-              view === "active"
+            className={`rounded-xl px-4 py-2 text-sm transition ${view === "active"
                 ? "bg-white text-black"
                 : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-            }`}
+              }`}
           >
             Activos
           </a>
 
           <a
             href={`/admin/products/${product.id}/media?view=archived`}
-            className={`rounded-xl px-4 py-2 text-sm transition ${
-              view === "archived"
+            className={`rounded-xl px-4 py-2 text-sm transition ${view === "archived"
                 ? "bg-white text-black"
                 : "border border-white/10 text-white/80 hover:bg-white/[0.04]"
-            }`}
+              }`}
           >
             Archivados
           </a>
@@ -435,10 +448,106 @@ export default async function AdminProductMediaPage({
                     <p>Alt actual: {media.alt_text ?? "-"}</p>
                   </div>
 
-                  <MediaQuickActions
-                    publicUrl={media.public_url}
-                    storagePath={media.storage_path}
-                  />
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      {media.status === "active" && (
+                        <>
+                          <form
+                            action={`/api/admin/media/${media.id}/move`}
+                            method="post"
+                          >
+                            <input type="hidden" name="direction" value="up" />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                            >
+                              Subir
+                            </button>
+                          </form>
+
+                          <form
+                            action={`/api/admin/media/${media.id}/move`}
+                            method="post"
+                          >
+                            <input type="hidden" name="direction" value="down" />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                            >
+                              Bajar
+                            </button>
+                          </form>
+
+                          {!media.is_primary && (
+                            <form
+                              action={`/api/admin/media/${media.id}/set-primary`}
+                              method="post"
+                            >
+                              <button
+                                type="submit"
+                                className="rounded-xl border border-yellow-500/20 px-3 py-2 text-xs text-yellow-200 transition hover:bg-yellow-500/10"
+                              >
+                                Marcar principal
+                              </button>
+                            </form>
+                          )}
+
+                          <form
+                            action={`/api/admin/media/${media.id}/archive`}
+                            method="post"
+                          >
+                            <input
+                              type="hidden"
+                              name="confirm_archive"
+                              value="yes"
+                            />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-white/10 px-3 py-2 text-xs text-white/85 transition hover:bg-white/[0.06]"
+                            >
+                              Archivar
+                            </button>
+                          </form>
+
+                          <form
+                            action={`/api/admin/media/${media.id}/delete`}
+                            method="post"
+                          >
+                            <input
+                              type="hidden"
+                              name="confirm_delete"
+                              value="yes"
+                            />
+                            <button
+                              type="submit"
+                              className="rounded-xl border border-red-500/20 px-3 py-2 text-xs text-red-200 transition hover:bg-red-500/10"
+                            >
+                              Eliminar
+                            </button>
+                          </form>
+                        </>
+                      )}
+
+                      {media.status === "archived" && (
+                        <form
+                          action={`/api/admin/media/${media.id}/restore`}
+                          method="post"
+                        >
+                          <button
+                            type="submit"
+                            className="rounded-xl border border-green-500/20 px-3 py-2 text-xs text-green-200 transition hover:bg-green-500/10"
+                          >
+                            Restaurar
+                          </button>
+                        </form>
+                      )}
+                    </div>
+
+                    <MediaQuickActions
+                      publicUrl={media.public_url}
+                      storagePath={media.storage_path}
+                    />
+                  </div>
                 </div>
               </article>
             ))
@@ -482,7 +591,7 @@ export default async function AdminProductMediaPage({
 
                 {event.details_json && Object.keys(event.details_json).length > 0 && (
                   <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-3 text-xs text-white/70">
-{JSON.stringify(event.details_json, null, 2)}
+                    {JSON.stringify(event.details_json, null, 2)}
                   </pre>
                 )}
               </div>
